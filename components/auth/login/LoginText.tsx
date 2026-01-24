@@ -49,5 +49,5 @@ const LoginText = () => {
         </div>
     );
 };
-
+//login page
 export default LoginText;
