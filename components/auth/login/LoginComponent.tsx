@@ -7,7 +7,6 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import z from "zod";
 import { Eye, EyeOff, MoveRight } from "lucide-react";
-import Link from "next/link";
 import { usePasswordToggle } from "@/hooks/usePasswordToggle";
 import { useUser } from "@/providers/AuthProvider";
 import LargeYellowSvg from "@/components/svgIcon/LargeYellowSvg";

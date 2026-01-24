@@ -33,6 +33,10 @@
   --color-secondary: var(--secondary);
   --color-primary-foreground: var(--primary-foreground);
   --color-primary: var(--primary);
+  --color-brand: rgb(var(--brand-color));
+  --color-success: var(--success-color);
+  --color-alternative: var(--alt-color);
+  --color-text-secondary: var(--secondary-text-color);
   --color-popover-foreground: var(--popover-foreground);
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
@@ -41,9 +45,6 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
-  --radius-2xl: calc(var(--radius) + 8px);
-  --radius-3xl: calc(var(--radius) + 12px);
-  --radius-4xl: calc(var(--radius) + 16px);
 }
 
 :root {
@@ -54,6 +55,10 @@
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
+  --brand-color: 222 156 58;
+  --success-color: rgb(5 223 114);
+  --alt-color: rgb(81 162 255);
+  --secondary-text-color: rgb(177 177 177);
   --primary: oklch(0.205 0 0);
   --primary-foreground: oklch(0.985 0 0);
   --secondary: oklch(0.97 0 0);
@@ -119,7 +124,77 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
   }
+}
+
+.primary {}
+
+.no-scrollbar {
+  scrollbar-width: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.bgGlass {
+  background-color: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(100px);
+  -webkit-backdrop-filter: blur(100px);
+  border-radius: 8px;
+  border: 1 solid rgba(255, 255, 255, 0.2);
+}
+
+.custom-border-bg {
+  border-style: solid;
+  border-width: 0;
+  border-top-width: 1px;
+  border-left-width: 1px;
+  border-bottom-width: 1px;
+  border-right-width: 1px;
+
+  /* Border color */
+  border-color: rgba(255, 255, 255, 0.25);
+
+  /* Rounded corners */
+  border-radius: 6px;
+}
+
+.effect {
+  box-shadow: 1.2px 1.1px 1px -.5px #ffffff8b,
+    -1.2px -1.1px 1px -.5px #ffffff8d,
+    1px 1px 10px 2px #00000044;
+  background-color: #FDFDFD1A;
+  backdrop-filter: blur(20px);
+}
+
+.effectBlack {
+  box-shadow: 1.2px 1.1px 1px -.5px #ffffff8b,
+    -1.2px -1.1px 1px -.5px #ffffff8d,
+    1px 1px 10px 2px #00000044;
+  background-color: #DFE3E71A;
+  backdrop-filter: blur(20px);
+}
+
+.overviewButtonEffect {
+  box-shadow: 1.2px 1.1px 1px -.5px #ffffff67,
+    -1.2px -1.1px 1px -.5px #ffffff8d,
+    0px 0px 0px 0px #000000a1 inset,
+    -4px -4px 10px 10px #0000005b inset;
+  backdrop-filter: blur(100px);
+}
+
+.neumorphism {
+  background: #4b00660f;
+  box-shadow:
+    10px 10px 10px #0000004a,
+    -10px -10px 10px #00000024,
+    1.2px 1.1px 1px -.5px #ffffff74,
+    -1.2px -1.1px 1px -.5px #ffffff74,
+    4px 4px 32px 32px #9292920b inset,
+    -4px -4px 12px 12px #0000000b inset;
+    backdrop-filter: blur(100px);
 }

@@ -1,9 +1,10 @@
-import { AppSidebar } from "@/components/pages/shared/dashboard/sidebar/app-sidebar";
+
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import "../../globals.css";
-import Navbar from "@/components/pages/shared/dashboard/navbar";
+import { AppSidebar } from "@/components/dashboard/sidebar/app-sidebar";
+import Navbar from "@/components/dashboard/navbar/navbar";
+
 
 // Load custom fonts
 const geistSans = Geist({
@@ -38,12 +39,12 @@ export default function RootLayout({
         text-white`}
         >
             {/* Layout Structure */}
-            <div className="max-w-360 mx-auto relative">
+            <div className="max-w-360 mx-auto relative text-white">
                 <SidebarProvider className="px-4" defaultOpen={true}>
                     <AppSidebar />
                     <SidebarInset>
                         <Navbar />
-                        <div className="flex flex-1 flex-col w-full mx-auto gap-4 py-4 px-1 overflow-hidden max-w-[1135px]">
+                        <div className="flex flex-1 flex-col w-full mx-auto gap-4 py-4 px-1 overflow-hidden ">
                             {children}
                         </div>
                     </SidebarInset>
