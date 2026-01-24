@@ -35,7 +35,9 @@ type TLogin = {
 
 // login functionality
 export const login = async (loginData: TLogin) => {
+  console.log("from login function......");
   try {
+    // console.log(`${config.next_public_base_api}/auth/login`);
     const res = await fetch(`${config.next_public_base_api}/auth/login`, {
       method: "POST",
       headers: {
@@ -44,9 +46,10 @@ export const login = async (loginData: TLogin) => {
       body: JSON.stringify(loginData),
     });
     const result = await res.json();
+    console.log(result);
     if (result?.success) {
-      (await cookies()).set("refreshToken", result?.data?.refreshToken);
-      (await cookies()).set("accessToken", result?.data?.accessToken);
+      // (await cookies()).set("refreshToken", result?.data?.refreshToken);
+      (await cookies()).set("accessToken", result?.data?.token);
     }
     return result;
   } catch (error: any) {
