@@ -31,16 +31,16 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <Provider>
-            <ThemeProvider
-              attribute="class"
-              defaultTheme="dark"
-              enableSystem
-              disableTransitionOnChange
-            >
-              {/* <ServiceWorkerRegistration /> */}
-              <div className="">{children}</div>
-              <Toaster richColors position="top-center" />
-            </ThemeProvider>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="dark"
+            enableSystem
+            disableTransitionOnChange
+          >
+            {/* <ServiceWorkerRegistration /> */}
+            <div className="">{children}</div>
+            <Toaster richColors position="top-center" />
+          </ThemeProvider>
         </Provider>
       </body>
     </html>
