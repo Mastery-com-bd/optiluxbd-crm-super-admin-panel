@@ -1,10 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import Image from "next/image";
 
-const ProductCard = ({ product }) => {
+const ProductCard = ({ product }: { product: any }) => {
   return (
-    <div
-      className="flex items-center justify-between gap-10 p-3 rounded-xl hover:bg-white/10 duration-500 relative"
-    >
+    <div className="flex items-center justify-between gap-10 p-3 rounded-xl hover:bg-white/10 duration-500 relative">
       <div className="flex gap-4">
         <Image
           src={
@@ -25,14 +24,16 @@ const ProductCard = ({ product }) => {
           <span>{product?.price.toFixed(2)}</span>
         </p>
         <div
-          className={`relative rounded-lg px-3 effect ${product?.status === "Active"
+          className={`relative rounded-lg px-3 effect ${
+            product?.status === "Active"
               ? "bg-[rgba(0,166,86,0.05)]"
               : "bg-[rgba(255,106,85,0.05)] "
-            }`}
+          }`}
         >
           <span
-            className={`text-xs ${product?.status === "Active" ? "text-success" : "text-[#F85E5E]"
-              }`}
+            className={`text-xs ${
+              product?.status === "Active" ? "text-success" : "text-[#F85E5E]"
+            }`}
           >
             {product?.status}
           </span>

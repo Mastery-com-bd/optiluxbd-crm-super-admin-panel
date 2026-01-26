@@ -28,6 +28,9 @@ import { toast } from "sonner";
 // import { getPermissions } from "@/utills/getPermissionAndRole";
 import SidebarButtonEffect from "./buttons/ItemButton";
 import { logout } from "@/service/authService";
+import { useUser } from "@/providers/AuthProvider";
+import { TUser } from "@/types/user.types";
+import { NavUser } from "./nav-user";
 // This is sample data.
 const data = {
   teams: [
@@ -48,6 +51,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   // const dispatch = useAppDispatch();
   // const [logout] = useLogoutMutation();
   // const user = useAppSelector(currentUser);
+  const { user } = useUser();
   // const { role } = getPermissions(user as TAuthUSer);
   const role = ["Owner"];
   const percent = 50;
@@ -57,13 +61,14 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     try {
       const res = await logout();
       if (res?.success) {
-        // dispatch(logOut());
-        // dispatch(baseApi.util.resetApiState());
         toast.success(res?.message, {
           id: toastId,
           duration: 3000,
         });
+
         router.push("/login");
+      } else {
+        toast.error(res?.message, { id: toastId, duration: 3000 });
       }
     } catch (error: any) {
       const errorInfo =
@@ -90,7 +95,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </div>
 
         <SidebarFooter>
-          {/* <NavUser user={user as TAuthUSer} /> */}
+          <NavUser user={user as TUser} />
           {role.includes("Agent") && (
             <div className="w-full bg-[rgba(255,255,255,0.05)] effect rounded-3xl p-3 space-y-3 group-data-[collapsible=icon]:hidden">
               <div className="flex items-center gap-2">

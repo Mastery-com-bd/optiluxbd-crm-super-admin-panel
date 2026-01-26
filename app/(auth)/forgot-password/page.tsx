@@ -1,11 +1,9 @@
-// import ForgetPasswordComponent from "@/components/auth/forgetPassword/ForgetPasswordComponent";
+const ForgetPassowrd = () => {
+  return (
+    <section className="min-h-screen flex items-center justify-center">
+      this is forget password
+    </section>
+  );
+};
 
-// const ForgetPassowrd = () => {
-//   return (
-//     <section className="min-h-screen flex items-center justify-center">
-//       <ForgetPasswordComponent />
-//     </section>
-//   );
-// };
-
-// export default ForgetPassowrd;
+export default ForgetPassowrd;

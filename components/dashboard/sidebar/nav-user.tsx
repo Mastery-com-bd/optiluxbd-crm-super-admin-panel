@@ -1,15 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import {
-  BadgeCheck,
-  Bell,
-  ChevronsUpDown,
-  CreditCard,
-  LogOut,
-  Router,
-  Sparkles,
-} from "lucide-react";
+import { BadgeCheck, Bell, ChevronsUpDown, LogOut } from "lucide-react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -34,8 +26,9 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { logout } from "@/service/authService";
+import { TUser } from "@/types/user.types";
 
-export function NavUser({ user }) {
+export function NavUser({ user }: { user: TUser }) {
   const { isMobile } = useSidebar();
   // const dispatch = useAppDispatch();
   // const [logout] = useLogoutMutation();
@@ -75,16 +68,15 @@ export function NavUser({ user }) {
               <Avatar className="h-8 w-8 rounded-lg">
                 <AvatarImage
                   src={
-                    user?.avatar_secure_url ||
                     "https://images.unsplash.com/photo-1676195470090-7c90bf539b3b?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=687"
                   }
-                  alt={user?.name}
+                  alt={user?.role}
                 />
                 <AvatarFallback className="rounded-lg">CN</AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-medium">{user?.name}</span>
-                <span className="truncate text-xs">{user?.email}</span>
+                <span className="truncate font-medium">{user?.role}</span>
+                <span className="truncate text-xs">{user?.userId}</span>
               </div>
               <ChevronsUpDown className="ml-auto size-4" />
             </SidebarMenuButton>
@@ -100,16 +92,15 @@ export function NavUser({ user }) {
                 <Avatar className="h-8 w-8 rounded-lg">
                   <AvatarImage
                     src={
-                      user?.avatar_secure_url ||
                       "https://images.unsplash.com/photo-1676195470090-7c90bf539b3b?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=687"
                     }
-                    alt={user?.name}
+                    alt={user?.role}
                   />
                   <AvatarFallback className="rounded-lg">CN</AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-medium">{user?.name}</span>
-                  <span className="truncate text-xs">{user?.email}</span>
+                  <span className="truncate font-medium">{user?.role}</span>
+                  <span className="truncate text-xs">{user?.userId}</span>
                 </div>
               </div>
             </DropdownMenuLabel>

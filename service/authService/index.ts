@@ -13,19 +13,29 @@ type TLogin = {
 // login functionality
 export const login = async (loginData: TLogin) => {
   try {
-    const res = await fetch(`${config.next_public_base_api}/auth/login`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
+    const res = await fetch(
+      `${config.next_public_base_api as string}/auth/login`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(loginData),
       },
-      body: JSON.stringify(loginData),
-    });
+    );
     const result = await res.json();
-    console.log(result);
     if (result?.success) {
       const cookieStore = await cookies();
       cookieStore.set("accessToken", result?.data?.token, {
-        maxAge: 60 * 60 * 24 * 7, // 1 day
+        maxAge: 60 * 60 * 24 * 7, // 7 day
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        path: "/",
+        sameSite: "lax",
+      });
+
+      cookieStore.set("refreshToken", result?.data?.refreshToken, {
+        maxAge: 60 * 60 * 24 * 30, // 30 day
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
         path: "/",
@@ -39,19 +49,22 @@ export const login = async (loginData: TLogin) => {
 };
 
 // get new token functionality
-// export const getNewToken = async () => {
-//   try {
-//     const res = await fetch(`${config.next_public_base_api}/auth/get-token`, {
-//       method: "POST",
-//       headers: {
-//         Authorization: (await cookies()).get("refreshToken")!.value,
-//       },
-//     });
-//     return res.json();
-//   } catch (error: any) {
-//     return Error(error);
-//   }
-// };
+export const getNewToken = async () => {
+  try {
+    const res = await fetch(
+      `${config.next_public_base_api}/auth/refresh-token`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: (await cookies()).get("refreshToken")!.value,
+        },
+      },
+    );
+    return res.json();
+  } catch (error: any) {
+    return Error(error);
+  }
+};
 
 // get curretn user functionality
 export const getCurrentUser = async () => {
@@ -69,22 +82,21 @@ export const getCurrentUser = async () => {
 export const logout = async () => {
   try {
     const cookieStore = await cookies();
-    const token = cookieStore.get("accessToken")?.value;
+    const token = cookieStore.get("refreshToken")?.value;
     if (!token) {
       throw new Error("you are not authorized");
     }
     const res = await fetch(`${config.next_public_base_api}/auth/logout`, {
       method: "POST",
-      credentials: "include",
       headers: {
-        Authorization: token,
+        Authorization: `Bearer ${token}`,
       },
     });
     const result = await res.json();
     console.log(result);
     if (result.success) {
-      // (await cookies()).delete("refreshToken");
       (await cookies()).delete("accessToken");
+      (await cookies()).delete("refreshToken");
     }
     return result;
   } catch (error: any) {

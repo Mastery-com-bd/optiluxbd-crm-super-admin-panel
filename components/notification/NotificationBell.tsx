@@ -13,18 +13,8 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 // import NotificationSvgComponent from "../svgIcon/NotificationSvgComponent";
-import { useNotifications } from "@/hooks/useNotifications";
 
 export function NotificationBell() {
-  const {
-    notifications,
-    unreadCount,
-    handleMarkAsRead,
-    handleMarkAllAsRead,
-    isConnected,
-    isLoading,
-    handleDeleteNotification,
-  } = useNotifications();
   // const [isOpen, setIsOpen] = useState(false);
   const [isPushSupported, setIsPushSupported] = useState(false);
   const [isSubscribed, setIsSubscribed] = useState(false);
@@ -33,7 +23,7 @@ export function NotificationBell() {
   useEffect(() => {
     if (typeof window === "undefined") return;
     const supported = "serviceWorker" in navigator && "PushManager" in window;
-    setIsPushSupported(supported);
+    // setIsPushSupported(supported);
 
     if (!supported) return;
 
@@ -49,55 +39,55 @@ export function NotificationBell() {
   }, []);
 
   // Subscribe to push: fetch VAPID key, call subscribe on service worker and POST to backend
-  async function subscribeToPush() {
-    if (!isPushSupported) return;
-    setPushLoading(true);
-    try {
-      // Ensure service worker is ready
-      const registration = await navigator.serviceWorker.ready;
+  // async function subscribeToPush() {
+  //   if (!isPushSupported) return;
+  //   setPushLoading(true);
+  //   try {
+  //     // Ensure service worker is ready
+  //     const registration = await navigator.serviceWorker.ready;
 
-      // Get VAPID public key from backend
-      const res = await fetch(
-        `${config.next_public_base_api}/notifications/push/vapid-key`,
-        {
-          credentials: "include",
-        }
-      );
-      if (!res.ok) throw new Error(`Failed to get VAPID key: ${res.status}`);
-      const { data } = await res.json();
-      const vapidKey = data?.publicKey || data?.vapidKey || data;
-      if (!vapidKey) throw new Error("No VAPID key returned from server");
+  //     // Get VAPID public key from backend
+  //     const res = await fetch(
+  //       `${config.next_public_base_api}/notifications/push/vapid-key`,
+  //       {
+  //         credentials: "include",
+  //       },
+  //     );
+  //     if (!res.ok) throw new Error(`Failed to get VAPID key: ${res.status}`);
+  //     const { data } = await res.json();
+  //     const vapidKey = data?.publicKey || data?.vapidKey || data;
+  //     if (!vapidKey) throw new Error("No VAPID key returned from server");
 
-      // const convertedKey = urlBase64ToUint8Array(vapidKey);
+  //     // const convertedKey = urlBase64ToUint8Array(vapidKey);
 
-      // const subscription = await registration.pushManager.subscribe({
-      //   userVisibleOnly: true,
-      //   applicationServerKey: convertedKey,
-      // });
+  //     // const subscription = await registration.pushManager.subscribe({
+  //     //   userVisibleOnly: true,
+  //     //   applicationServerKey: convertedKey,
+  //     // });
 
-      // Send subscription to backend
-      const subRes = await fetch(
-        `${config.next_public_base_api}/notifications/push/subscribe`,
-        {
-          method: "POST",
-          credentials: "include",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ subscription }),
-        }
-      );
-      if (!subRes.ok) {
-        const txt = await subRes.text();
-        throw new Error(`Subscribe failed: ${subRes.status} ${txt}`);
-      }
+  //     // Send subscription to backend
+  //     const subRes = await fetch(
+  //       `${config.next_public_base_api}/notifications/push/subscribe`,
+  //       {
+  //         method: "POST",
+  //         credentials: "include",
+  //         headers: { "Content-Type": "application/json" },
+  //         body: JSON.stringify({ subscription }),
+  //       },
+  //     );
+  //     if (!subRes.ok) {
+  //       const txt = await subRes.text();
+  //       throw new Error(`Subscribe failed: ${subRes.status} ${txt}`);
+  //     }
 
-      setIsSubscribed(true);
-    } catch (err) {
-      // keep UI responsive
-      setIsSubscribed(false);
-    } finally {
-      setPushLoading(false);
-    }
-  }
+  //     setIsSubscribed(true);
+  //   } catch (err) {
+  //     // keep UI responsive
+  //     setIsSubscribed(false);
+  //   } finally {
+  //     setPushLoading(false);
+  //   }
+  // }
 
   return (
     <div className="relative">
@@ -117,20 +107,17 @@ export function NotificationBell() {
 
             {/* Link text */}
             <Bell size={18} />
-            {/* {unreadCount > 0 && (
-            )} */}
+
             <span
               className="absolute top-2 right-2 bg-red-600 rounded-full h-2 w-2 border-white"
               style={{ borderWidth: "2px" }}
             />
 
-            {unreadCount > 0 && (
-              <span
-                className={`absolute -top-1.5 -right-1.5 flex items-center justify-center text-[10px] font-bold text-white bg-red-600 rounded-full h-5 min-w-5 px-1 `}
-              >
-                {unreadCount > 99 ? "99+" : unreadCount}
-              </span>
-            )}
+            <span
+              className={`absolute -top-1.5 -right-1.5 flex items-center justify-center text-[10px] font-bold text-white bg-red-600 rounded-full h-5 min-w-5 px-1 `}
+            >
+              99
+            </span>
           </button>
         </PopoverTrigger>
         <PopoverContent
@@ -141,26 +128,12 @@ export function NotificationBell() {
             {/* Header */}
             <div className="p-2 space-y-3">
               <div className="flex items-center gap-3">
-                <h3 className="text-lg font-semibold ">
-                  Notifications {unreadCount > 0 && `(${unreadCount})`}
-                </h3>
+                <h3 className="text-lg font-semibold ">Notifications</h3>
 
                 {/* Connection indicator */}
                 <span
-                  title={
-                    isConnected
-                      ? "Connected"
-                      : isLoading
-                      ? "Loading..."
-                      : "Disconnected"
-                  }
-                  className={`w-3 h-3 rounded-full inline-block ${
-                    isConnected
-                      ? "bg-green-500"
-                      : isLoading
-                      ? "bg-yellow-400"
-                      : "bg-gray-300 dark:bg-gray-500"
-                  }`}
+                  title={"connected"}
+                  className={`w-3 h-3 rounded-full inline-block `}
                 ></span>
               </div>
               <div className="flex flex-row-reverse justify-between items-center">
@@ -168,9 +141,7 @@ export function NotificationBell() {
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
-                    handleMarkAllAsRead();
                   }}
-                  disabled={unreadCount === 0}
                   className="px-2 py-1 text-xs rounded bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 disabled:opacity-50"
                 >
                   Mark all read
@@ -182,7 +153,7 @@ export function NotificationBell() {
                     onClick={async (e) => {
                       e.stopPropagation();
                       if (isSubscribed) return;
-                      await subscribeToPush();
+                      // await subscribeToPush();
                     }}
                     disabled={pushLoading || isSubscribed}
                     className="px-3 py-1 rounded bg-blue-600 text-white text-xs hover:opacity-90 disabled:opacity-60"
@@ -190,8 +161,8 @@ export function NotificationBell() {
                     {pushLoading
                       ? "..."
                       : isSubscribed
-                      ? "Push Enabled"
-                      : "Enable Push"}
+                        ? "Push Enabled"
+                        : "Enable Push"}
                   </button>
                 )}
               </div>
@@ -199,7 +170,7 @@ export function NotificationBell() {
 
             {/* Notification List */}
             <div className="overflow-y-auto max-h-96 scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-gray-100 dark:scrollbar-track-gray-700">
-              {notifications.length === 0 ? (
+              {/* {notifications.length === 0 ? (
                 <div className="p-8 text-center text-gray-500 dark:text-gray-400">
                   No notifications yet
                 </div>
@@ -214,7 +185,6 @@ export function NotificationBell() {
                           : ""
                       }`}
                       onClick={() => {
-                        handleMarkAsRead(notification.id);
                         if (notification.actionUrl) {
                           window.location.href = notification.actionUrl;
                         }
@@ -240,7 +210,6 @@ export function NotificationBell() {
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
-                            handleDeleteNotification(notification.id);
                           }}
                           className="text-gray-400 hover:text-red-600 dark:text-gray-300 dark:hover:text-red-500 ml-2"
                         >
@@ -262,7 +231,10 @@ export function NotificationBell() {
                     </div>
                   ))}
                 </div>
-              )}
+              )} */}
+              <div className="p-8 text-center text-gray-500 dark:text-gray-400">
+                No notifications yet
+              </div>
             </div>
           </div>
         </PopoverContent>
