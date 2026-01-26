@@ -1,11 +1,9 @@
 'use server'
 import { readData } from "@/service/apiService/crud";
 
-export async function fetchProducts() {
-
+export async function fetchOrganizations() {
   try {
-    console.log("hi.....");
-    const data = await readData('/product', ["Product"]);
+    const data = await readData('/admin/organizations', ["Organization"]);
     return data;
   } catch (error) {
     console.error("Error fetching data:", error);

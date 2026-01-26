@@ -4,6 +4,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Provider } from "@radix-ui/react-tooltip";
 import { ThemeProvider } from "next-themes";
+import AuthProvider from "@/providers/AuthProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -30,7 +31,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <Provider>
+        <AuthProvider>
           <ThemeProvider
             attribute="class"
             defaultTheme="dark"
@@ -41,7 +42,7 @@ export default function RootLayout({
             <div className="">{children}</div>
             <Toaster richColors position="top-center" />
           </ThemeProvider>
-        </Provider>
+        </AuthProvider>
       </body>
     </html>
   );

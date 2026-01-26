@@ -1,3 +1,5 @@
+'use client'
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import ButtonComponent from "@/components/ui/ButtonComponent";
@@ -7,22 +9,216 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSepara
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Organization } from "@/types/organizations";
 import { Eye, Funnel, MoreVertical, Pencil, Plus, Search, Trash2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
+import { toast } from "sonner";
 const keys = [
-    "Product",
-    "SKU",
-    "Category",
-    "Stock",
-    "Price",
-    "Status",
-    "Created Date",
-    "Actions",
+    "NAME",
+    "STATUS",
+    "PLAN",
+    "MRR",
+    "JOINED DATE",
+    "ACTIONS",
 ];
 export default function AllOrganizations() {
     const [inputValue, setInputValue] = useState("");
+    const [filters, setFilters] = useState({
+        search: "",
+        sortBy: "created_at",
+        order: "desc",
+        limit: 10,
+        page: 1,
+    });
+    const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+    const [deleteProductId, setDeleteProductId] = useState<number | null>(null);
+    const organizations = [
+        {
+            "id": 19,
+            "name": "Acme Corporation",
+            "slug": "acmery",
+            "email": "contassssct10@acme.com",
+            "plan": "Starter",
+            "planExpiresAt": null,
+            "isActive": false,
+            "isSuspended": true,
+            "createdAt": "2026-01-22T09:15:21.580Z",
+            "_count": {
+                "users": 1
+            }
+        },
+        {
+            "id": 18,
+            "name": "Acme Corporation",
+            "slug": "acmer9",
+            "email": "contassssct9@acme.com",
+            "plan": "Starter",
+            "planExpiresAt": null,
+            "isActive": true,
+            "isSuspended": false,
+            "createdAt": "2026-01-22T09:13:08.574Z",
+            "_count": {
+                "users": 1
+            }
+        },
+        {
+            "id": 17,
+            "name": "Acme Corporation",
+            "slug": "acmer3",
+            "email": "contassssct8@acme.com",
+            "plan": "Starter",
+            "planExpiresAt": null,
+            "isActive": true,
+            "isSuspended": false,
+            "createdAt": "2026-01-22T07:07:44.719Z",
+            "_count": {
+                "users": 1
+            }
+        },
+        {
+            "id": 16,
+            "name": "Acme Corporation",
+            "slug": "acme-corporation-1500c5",
+            "email": "contassssct7@acme.com",
+            "plan": "Starter",
+            "planExpiresAt": null,
+            "isActive": true,
+            "isSuspended": false,
+            "createdAt": "2026-01-22T05:42:06.518Z",
+            "_count": {
+                "users": 1
+            }
+        },
+        {
+            "id": 15,
+            "name": "Acme Corporation",
+            "slug": "acmer8",
+            "email": "contassssct6@acme.com",
+            "plan": "Starter",
+            "planExpiresAt": null,
+            "isActive": true,
+            "isSuspended": false,
+            "createdAt": "2026-01-22T05:24:52.196Z",
+            "_count": {
+                "users": 1
+            }
+        },
+        {
+            "id": 14,
+            "name": "Acme Corporation",
+            "slug": "acmer2",
+            "email": "contassssct5@acme.com",
+            "plan": "Starter",
+            "planExpiresAt": null,
+            "isActive": true,
+            "isSuspended": false,
+            "createdAt": "2026-01-22T05:22:18.692Z",
+            "_count": {
+                "users": 1
+            }
+        },
+        {
+            "id": 13,
+            "name": "Acme Corporation",
+            "slug": "acmer",
+            "email": "contassssct3@acme.com",
+            "plan": "Starter",
+            "planExpiresAt": null,
+            "isActive": true,
+            "isSuspended": false,
+            "createdAt": "2026-01-21T13:12:00.373Z",
+            "_count": {
+                "users": 1
+            }
+        },
+        {
+            "id": 12,
+            "name": "Acme Corporation",
+            "slug": "acme-corporation-00b1e2",
+            "email": "contassssct2@acme.com",
+            "plan": "Starter",
+            "planExpiresAt": null,
+            "isActive": true,
+            "isSuspended": false,
+            "createdAt": "2026-01-21T13:09:20.630Z",
+            "_count": {
+                "users": 1
+            }
+        },
+        {
+            "id": 10,
+            "name": "Acme Corporation",
+            "slug": "acme-corporation-673035",
+            "email": "contassssct4@acme.com",
+            "plan": "Starter",
+            "planExpiresAt": null,
+            "isActive": true,
+            "isSuspended": false,
+            "createdAt": "2026-01-21T13:07:41.510Z",
+            "_count": {
+                "users": 1
+            }
+        },
+        {
+            "id": 9,
+            "name": "Acme Corporation",
+            "slug": "acme",
+            "email": "contassssct@acme.com",
+            "plan": "Starter",
+            "planExpiresAt": null,
+            "isActive": true,
+            "isSuspended": false,
+            "createdAt": "2026-01-21T12:57:43.364Z",
+            "_count": {
+                "users": 1
+            }
+        },
+        {
+            "id": 2,
+            "name": "Demo Electronics Ltd",
+            "slug": "demo-electronics",
+            "email": "admin@demo-electronics.com",
+            "plan": "Professional",
+            "planExpiresAt": null,
+            "isActive": true,
+            "isSuspended": false,
+            "createdAt": "2026-01-20T06:19:56.941Z",
+            "_count": {
+                "users": 1
+            }
+        },
+        {
+            "id": 1,
+            "name": "Optilux Bangladesh",
+            "slug": "optilux-bd",
+            "email": "admin@optilux-bd.com",
+            "plan": "Enterprise",
+            "planExpiresAt": null,
+            "isActive": true,
+            "isSuspended": false,
+            "createdAt": "2026-01-20T06:19:49.763Z",
+            "_count": {
+                "users": 1
+            }
+        }
+    ]
+    const handleSearch = async (val: any) => {
+        setFilters({ ...filters, search: val });
+    };
+    const handleDelete = async (id: number) => {
+        try {
+            toast.success("Hi...");
+            //   toast.promise(deleteProduct(id), {
+            //     loading: "Deleting product...",
+            //     success: "Product deleted successfully!",
+            //     error: "Failed to delete product.",
+            //   });
+        } catch (error) {
+            console.error("Error deleting product:", error);
+        }
+    };
     return (
         <div className="bg-transparent text-foreground my-4">
             <div className="w-full">
@@ -108,63 +304,50 @@ export default function AllOrganizations() {
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
-                                {PRODUCTS?.map((product: Product) => (
+                                {organizations?.map((organization: Organization) => (
                                     <TableRow
-                                        key={product.id}
+                                        key={organization.id}
                                         className="border-muted hover:bg-muted/50 transition-colors">
                                         <TableCell className="px-4 py-3">
-                                            <div>
-                                                <div className="flex items-center gap-3">
-                                                    <Image
+                                            <div className="flex items-center gap-3">
+                                                <Image
                                                         src={
-                                                            product?.image_url ||
                                                             "https://res.cloudinary.com/dbb6nen3p/image/upload/v1762848442/no_image_s3demz.png"
                                                         }
-                                                        alt={product.name}
+                                                        alt={organization.name}
                                                         width={48}
                                                         height={48}
                                                         className="w-12 h-12 rounded-lg object-cover"
                                                     />
-                                                    <div>
-                                                        <p className="font-medium">{product.name}</p>
-                                                        <p className="text-xs text-muted-foreground">
-                                                            by {product.by}
-                                                        </p>
-                                                    </div>
+                                                <div>
+                                                    <p className="font-medium">{organization.name}</p>
                                                 </div>
                                             </div>
                                         </TableCell>
-                                        <TableCell className="px-4 py-3 text-sm text-center">
-                                            {product.sku}
+                                        <TableCell className="px-4 py-3 text-sm text-center ">
+                                            {
+                                                organization.isActive ?
+                                                    <div className="mx-auto py-1 text-green-600 effect text-center w-25 rounded-[3px]">Active</div> :
+                                                    <div className="mx-auto py-1 text-red-600 effect text-center w-25  rounded-[3px]">Suspended</div>
+                                            }
                                         </TableCell>
                                         <TableCell className="px-4 py-3 text-sm text-center">
-                                            {product?.subCategory?.name}
+                                            {organization.plan}
                                         </TableCell>
                                         <TableCell className="px-4 py-3 text-sm font-medium text-center">
-                                            {product.stock}
+                                            ---
                                         </TableCell>
                                         <TableCell className="px-4 py-3 text-sm font-semibold text-center">
-                                            ${product.price}
-                                        </TableCell>
-                                        <TableCell className="px-4 py-3 text-center">
-                                            <span
-                                                className={`px-6 bg-white/10 border border-white/20 py-1 text-sm font-medium rounded-md
-                                                  ${product.status === "ACTIVE"
-                                                        ? "text-green-500"
-                                                        : "text-red-500"
-                                                    }`}>
-                                                {product.status.toLocaleLowerCase()}
-                                            </span>
-                                        </TableCell>
-                                        <TableCell className="text-center">
-                                            {new Date(product.created_at).toLocaleDateString(
-                                                "en-US",
-                                                {
-                                                    year: "numeric",
-                                                    month: "short",
-                                                    day: "2-digit",
-                                                },
-                                            )}
+                                            {
+                                                new Date(organization.createdAt).toLocaleDateString(
+                                                    "en-US",
+                                                    {
+                                                        year: "numeric",
+                                                        month: "short",
+                                                        day: "2-digit",
+                                                    },
+                                                )
+                                            }
                                         </TableCell>
                                         <TableCell className="px-4 py-3 text-center ">
                                             <DropdownMenu>
@@ -175,7 +358,7 @@ export default function AllOrganizations() {
                                                     align="end"
                                                     className="w-[180px] flex flex-col ">
                                                     <Link
-                                                        href={`/dashboard/admin/products/all-products/${product.id}`}>
+                                                        href={`/dashboard/admin/products/all-products/${organization.id}`}>
                                                         <DropdownMenuItem className="cursor-pointer">
                                                             <Eye className="w-4 h-4 mr-2" /> view
                                                         </DropdownMenuItem>
@@ -187,7 +370,7 @@ export default function AllOrganizations() {
                                                     <DropdownMenuSeparator />
                                                     <DropdownMenuItem
                                                         onClick={() => {
-                                                            setDeleteProductId(product.id);
+                                                            setDeleteProductId(organization.id);
                                                             setDeleteDialogOpen(true);
                                                         }}
                                                         className="cursor-pointer">
@@ -205,14 +388,14 @@ export default function AllOrganizations() {
                 </Card>
 
                 {/* Pagination */}
-                <CustomPagination
+                {/* <CustomPagination
                     currentPage={pagination.page}
                     totalPages={pagination.totalPages}
                     onPageChange={(page) => setFilters({ ...filters, page })}
                     show={show}
                     setShow={setShow}
                     setFilters={setFilters}
-                />
+                /> */}
             </div>
 
             {/* Delete Confirm Dialog */}
