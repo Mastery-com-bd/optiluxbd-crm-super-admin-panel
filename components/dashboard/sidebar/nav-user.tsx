@@ -27,9 +27,11 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { logout } from "@/service/authService";
 import { TUser } from "@/types/user.types";
+import { useUser } from "@/providers/AuthProvider";
 
 export function NavUser({ user }: { user: TUser }) {
   const { isMobile } = useSidebar();
+  const { setUser, setIsLoading } = useUser();
   // const dispatch = useAppDispatch();
   // const [logout] = useLogoutMutation();
   const router = useRouter();
@@ -38,13 +40,13 @@ export function NavUser({ user }: { user: TUser }) {
     const toastId = toast.loading("logging out", { duration: 3000 });
     try {
       const res = await logout();
-      if (res?.success) {
-        // dispatch(logOut());
-        toast.success(res?.message, {
-          id: toastId,
-          duration: 3000,
-        });
+      if (res.success) {
+        setIsLoading(true);
+        setUser(null);
+        toast.success(res?.message, { id: toastId, duration: 3000 });
         router.push("/login");
+      } else {
+        toast.error(res.message);
       }
     } catch (error: any) {
       const errorInfo =

@@ -9,8 +9,6 @@ import CoreManagement from "./sidebarRoutes/CoreManagement";
 export function NavMain({ items }: { items: TCrmNavigation }) {
   // const user = useAppSelector(currentUser);
   // const { role } = getPermissions(user as TAuthUSer);
-  const role = ["Team Leader"];
-
 
   return (
     <SidebarGroup className="space-y-2">

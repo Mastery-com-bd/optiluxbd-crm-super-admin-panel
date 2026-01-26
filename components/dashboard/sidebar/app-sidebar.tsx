@@ -51,7 +51,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   // const dispatch = useAppDispatch();
   // const [logout] = useLogoutMutation();
   // const user = useAppSelector(currentUser);
-  const { user } = useUser();
+  const { setUser, setIsLoading, user } = useUser();
   // const { role } = getPermissions(user as TAuthUSer);
   const role = ["Owner"];
   const percent = 50;
@@ -60,15 +60,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     const toastId = toast.loading("logging out", { duration: 3000 });
     try {
       const res = await logout();
-      if (res?.success) {
-        toast.success(res?.message, {
-          id: toastId,
-          duration: 3000,
-        });
-
+      if (res.success) {
+        setIsLoading(true);
+        setUser(null);
+        toast.success(res?.message, { id: toastId, duration: 3000 });
         router.push("/login");
       } else {
-        toast.error(res?.message, { id: toastId, duration: 3000 });
+        toast.error(res.message);
       }
     } catch (error: any) {
       const errorInfo =

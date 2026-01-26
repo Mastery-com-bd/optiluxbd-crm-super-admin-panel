@@ -10,6 +10,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { SidebarTrigger, useSidebar } from "@/components/ui/sidebar";
+import { useUser } from "@/providers/AuthProvider";
 import { logout } from "@/service/authService";
 // import { baseApi } from "@/redux/api/baseApi";
 // import { useLogoutMutation } from "@/redux/features/auth/authApi";
@@ -35,6 +36,7 @@ const Navbar: React.FC = () => {
   const router = useRouter();
   const [inputValue, setInputValue] = useState("");
   const [scrolled, setScrolled] = useState(false);
+  const { setUser, setIsLoading } = useUser();
 
   // const { role } = getPermissions(user as TAuthUSer);
   const handleSearch = async (val: any) => {
@@ -55,14 +57,13 @@ const Navbar: React.FC = () => {
     const toastId = toast.loading("logging out", { duration: 3000 });
     try {
       const res = await logout();
-      if (res?.success) {
-        // dispatch(logOut());
-        // dispatch(baseApi.util.resetApiState());
-        toast.success(res?.message, {
-          id: toastId,
-          duration: 3000,
-        });
+      if (res.success) {
+        setIsLoading(true);
+        setUser(null);
+        toast.success(res?.message, { id: toastId, duration: 3000 });
         router.push("/login");
+      } else {
+        toast.error(res.message);
       }
     } catch (error: any) {
       const errorInfo =
@@ -90,14 +91,13 @@ const Navbar: React.FC = () => {
       >
         <div className="w-full flex items-center justify-between gap-2">
           <div className="relative">
-            
             <Input
               className="px-10 py-1.5 w-64 text-sm bg-transparent"
               value={inputValue}
               icon={<Search className="size-4" />}
               onChange={(e) => {
-                // debouncedLog(e.target.value);
                 setInputValue(e.target.value);
+                handleSearch(e.target.value);
               }}
               placeholder="Search "
             />
@@ -128,7 +128,7 @@ const Navbar: React.FC = () => {
                             r.charAt(0).toUpperCase() + r.slice(1).toLowerCase()
                         )
                         .join(", ")} */}
-                        SUPER ADMIN
+                      SUPER ADMIN
                     </span>
                   </div>
                   <span>

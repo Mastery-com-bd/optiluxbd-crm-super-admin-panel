@@ -24,8 +24,8 @@ const LoginComponent = () => {
   const router = useRouter();
   const { visible, toggle } = usePasswordToggle();
   const [redirect, setRedirect] = useState<string | null>(null);
-  const { refetchUser, setIsLoading } = useUser();
-
+  const { refetchUser, setIsLoading, user } = useUser();
+  console.log(user);
   const {
     handleSubmit,
     register,
