@@ -5,29 +5,6 @@ import { config } from "@/config";
 import { jwtDecode } from "jwt-decode";
 import { cookies } from "next/headers";
 
-type TRegister = {
-  name: string;
-  email: string;
-  password: string;
-};
-
-// register functionality
-export const register = async (data: TRegister) => {
-  try {
-    const res = await fetch(`${config.next_public_base_api}/auth/signup`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    });
-    const result = await res.json();
-    return result;
-  } catch (error: any) {
-    return Error(error);
-  }
-};
-
 type TLogin = {
   email: string;
   password: string;
@@ -35,9 +12,7 @@ type TLogin = {
 
 // login functionality
 export const login = async (loginData: TLogin) => {
-  console.log("from login function......");
   try {
-    // console.log(`${config.next_public_base_api}/auth/login`);
     const res = await fetch(`${config.next_public_base_api}/auth/login`, {
       method: "POST",
       headers: {
@@ -48,8 +23,14 @@ export const login = async (loginData: TLogin) => {
     const result = await res.json();
     console.log(result);
     if (result?.success) {
-      // (await cookies()).set("refreshToken", result?.data?.refreshToken);
-      (await cookies()).set("accessToken", result?.data?.token);
+      const cookieStore = await cookies();
+      cookieStore.set("accessToken", result?.data?.token, {
+        maxAge: 60 * 60 * 24 * 7, // 1 day
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        path: "/",
+        sameSite: "lax",
+      });
     }
     return result;
   } catch (error: any) {
@@ -58,26 +39,26 @@ export const login = async (loginData: TLogin) => {
 };
 
 // get new token functionality
-export const getNewToken = async () => {
-  try {
-    const res = await fetch(`${config.next_public_base_api}/auth/get-token`, {
-      method: "POST",
-      headers: {
-        Authorization: (await cookies()).get("refreshToken")!.value,
-      },
-    });
-    return res.json();
-  } catch (error: any) {
-    return Error(error);
-  }
-};
+// export const getNewToken = async () => {
+//   try {
+//     const res = await fetch(`${config.next_public_base_api}/auth/get-token`, {
+//       method: "POST",
+//       headers: {
+//         Authorization: (await cookies()).get("refreshToken")!.value,
+//       },
+//     });
+//     return res.json();
+//   } catch (error: any) {
+//     return Error(error);
+//   }
+// };
 
 // get curretn user functionality
 export const getCurrentUser = async () => {
-  const refreshToken = (await cookies()).get("refreshToken")?.value;
+  const accessToken = (await cookies()).get("accessToken")?.value;
   let decodedData = null;
-  if (refreshToken) {
-    decodedData = await jwtDecode(refreshToken);
+  if (accessToken) {
+    decodedData = await jwtDecode(accessToken);
     return decodedData;
   } else {
     return null;
@@ -86,14 +67,27 @@ export const getCurrentUser = async () => {
 
 // logout functionality
 export const logout = async () => {
-  const res = await fetch(`${config.next_public_base_api}/auth/logout`, {
-    method: "POST",
-    credentials: "include",
-  });
-  const result = await res.json();
-  if (result.success) {
-    (await cookies()).delete("refreshToken");
-    (await cookies()).delete("accessToken");
+  try {
+    const cookieStore = await cookies();
+    const token = cookieStore.get("accessToken")?.value;
+    if (!token) {
+      throw new Error("you are not authorized");
+    }
+    const res = await fetch(`${config.next_public_base_api}/auth/logout`, {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        Authorization: token,
+      },
+    });
+    const result = await res.json();
+    console.log(result);
+    if (result.success) {
+      // (await cookies()).delete("refreshToken");
+      (await cookies()).delete("accessToken");
+    }
+    return result;
+  } catch (error: any) {
+    return Error(error);
   }
-  return result;
 };
