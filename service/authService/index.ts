@@ -51,12 +51,17 @@ export const login = async (loginData: TLogin) => {
 // get new token functionality
 export const getNewToken = async () => {
   try {
+    const cookieStore = await cookies();
+    const token = cookieStore.get("refreshToken")?.value;
+    if (!token) {
+      throw new Error("you are not authorized");
+    }
     const res = await fetch(
       `${config.next_public_base_api}/auth/refresh-token`,
       {
         method: "POST",
         headers: {
-          Authorization: (await cookies()).get("refreshToken")!.value,
+          Authorization: `Bearer ${token}`,
         },
       },
     );
@@ -93,7 +98,7 @@ export const logout = async () => {
       },
     });
     const result = await res.json();
-    console.log(result);
+
     if (result.success) {
       (await cookies()).delete("accessToken");
       (await cookies()).delete("refreshToken");
