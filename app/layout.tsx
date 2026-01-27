@@ -2,7 +2,6 @@ import { Toaster } from "@/components/ui/sonner";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { Provider } from "@radix-ui/react-tooltip";
 import { ThemeProvider } from "next-themes";
 import AuthProvider from "@/providers/AuthProvider";
 
@@ -17,8 +16,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Optilux CRM",
-  description: "This is a customer management system for optiluxbd",
+  title: "Optilux CRM Super Admin Panel",
+  description: "This is super admin panel for optiluxbd crm",
 };
 
 export default function RootLayout({
@@ -31,18 +30,18 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <AuthProvider>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="dark"
-            enableSystem
-            disableTransitionOnChange
-          >
-            {/* <ServiceWorkerRegistration /> */}
-            <div className="">{children}</div>
-            <Toaster richColors position="top-center" />
-          </ThemeProvider>
-        </AuthProvider>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <div className="w-full">
+            <AuthProvider>{children}</AuthProvider>
+          </div>
+
+          <Toaster position="top-center" richColors />
+        </ThemeProvider>
       </body>
     </html>
   );
