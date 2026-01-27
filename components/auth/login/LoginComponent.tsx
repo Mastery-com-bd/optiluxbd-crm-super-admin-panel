@@ -10,7 +10,7 @@ import { Eye, EyeOff, MoveRight } from "lucide-react";
 import { usePasswordToggle } from "@/hooks/usePasswordToggle";
 import { useUser } from "@/providers/AuthProvider";
 import LargeYellowSvg from "@/components/svgIcon/LargeYellowSvg";
-import { getCurrentUser, login } from "@/service/authService";
+import { login } from "@/service/authService";
 import { config } from "@/config";
 
 const loginSchema = z.object({
@@ -24,8 +24,7 @@ const LoginComponent = () => {
   const router = useRouter();
   const { visible, toggle } = usePasswordToggle();
   const [redirect, setRedirect] = useState<string | null>(null);
-  const { refetchUser, setIsLoading, user } = useUser();
-  console.log(user);
+  const { refetchUser, setIsLoading } = useUser();
   const {
     handleSubmit,
     register,
@@ -72,14 +71,12 @@ const LoginComponent = () => {
     const toastId = toast.loading("logging in");
     try {
       const res = await login(data);
-      console.log(res);
+
       if (res?.success) {
         setIsLoading(false);
         await refetchUser();
         toast.success(res?.message, { id: toastId, duration: 3000 });
         reset();
-        const userInfo = await getCurrentUser();
-        console.log(userInfo);
         router.push(redirect ? redirect : "/dashboard");
       }
     } catch (error: any) {

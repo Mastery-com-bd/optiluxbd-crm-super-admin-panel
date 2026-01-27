@@ -30,7 +30,6 @@ const chartConfig = {
 const PieChartSection = () => {
   const [activeCategory, setActiveCategory] = useState(chartData[0].name);
   const categories = useMemo(() => chartData.map((item) => item.name), []);
-  console.log(categories);
   return (
     <div className="space-y-3">
       {/* header */}
