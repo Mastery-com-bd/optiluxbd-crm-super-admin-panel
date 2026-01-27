@@ -9,7 +9,8 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSepara
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Organization } from "@/types/organizations";
+import { deleteOrganization } from "@/service/OrganaizationService";
+import { Organization, Organizations } from "@/types/organizations";
 import { Eye, Funnel, MoreVertical, Pencil, Plus, Search, Trash2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -23,7 +24,7 @@ const keys = [
     "JOINED DATE",
     "ACTIONS",
 ];
-export default function AllOrganizations() {
+export default function AllOrganizations({ organizations }: { organizations: Organizations }) {
     const [inputValue, setInputValue] = useState("");
     const [filters, setFilters] = useState({
         search: "",
@@ -34,187 +35,16 @@ export default function AllOrganizations() {
     });
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
     const [deleteProductId, setDeleteProductId] = useState<number | null>(null);
-    const organizations = [
-        {
-            "id": 19,
-            "name": "Acme Corporation",
-            "slug": "acmery",
-            "email": "contassssct10@acme.com",
-            "plan": "Starter",
-            "planExpiresAt": null,
-            "isActive": false,
-            "isSuspended": true,
-            "createdAt": "2026-01-22T09:15:21.580Z",
-            "_count": {
-                "users": 1
-            }
-        },
-        {
-            "id": 18,
-            "name": "Acme Corporation",
-            "slug": "acmer9",
-            "email": "contassssct9@acme.com",
-            "plan": "Starter",
-            "planExpiresAt": null,
-            "isActive": true,
-            "isSuspended": false,
-            "createdAt": "2026-01-22T09:13:08.574Z",
-            "_count": {
-                "users": 1
-            }
-        },
-        {
-            "id": 17,
-            "name": "Acme Corporation",
-            "slug": "acmer3",
-            "email": "contassssct8@acme.com",
-            "plan": "Starter",
-            "planExpiresAt": null,
-            "isActive": true,
-            "isSuspended": false,
-            "createdAt": "2026-01-22T07:07:44.719Z",
-            "_count": {
-                "users": 1
-            }
-        },
-        {
-            "id": 16,
-            "name": "Acme Corporation",
-            "slug": "acme-corporation-1500c5",
-            "email": "contassssct7@acme.com",
-            "plan": "Starter",
-            "planExpiresAt": null,
-            "isActive": true,
-            "isSuspended": false,
-            "createdAt": "2026-01-22T05:42:06.518Z",
-            "_count": {
-                "users": 1
-            }
-        },
-        {
-            "id": 15,
-            "name": "Acme Corporation",
-            "slug": "acmer8",
-            "email": "contassssct6@acme.com",
-            "plan": "Starter",
-            "planExpiresAt": null,
-            "isActive": true,
-            "isSuspended": false,
-            "createdAt": "2026-01-22T05:24:52.196Z",
-            "_count": {
-                "users": 1
-            }
-        },
-        {
-            "id": 14,
-            "name": "Acme Corporation",
-            "slug": "acmer2",
-            "email": "contassssct5@acme.com",
-            "plan": "Starter",
-            "planExpiresAt": null,
-            "isActive": true,
-            "isSuspended": false,
-            "createdAt": "2026-01-22T05:22:18.692Z",
-            "_count": {
-                "users": 1
-            }
-        },
-        {
-            "id": 13,
-            "name": "Acme Corporation",
-            "slug": "acmer",
-            "email": "contassssct3@acme.com",
-            "plan": "Starter",
-            "planExpiresAt": null,
-            "isActive": true,
-            "isSuspended": false,
-            "createdAt": "2026-01-21T13:12:00.373Z",
-            "_count": {
-                "users": 1
-            }
-        },
-        {
-            "id": 12,
-            "name": "Acme Corporation",
-            "slug": "acme-corporation-00b1e2",
-            "email": "contassssct2@acme.com",
-            "plan": "Starter",
-            "planExpiresAt": null,
-            "isActive": true,
-            "isSuspended": false,
-            "createdAt": "2026-01-21T13:09:20.630Z",
-            "_count": {
-                "users": 1
-            }
-        },
-        {
-            "id": 10,
-            "name": "Acme Corporation",
-            "slug": "acme-corporation-673035",
-            "email": "contassssct4@acme.com",
-            "plan": "Starter",
-            "planExpiresAt": null,
-            "isActive": true,
-            "isSuspended": false,
-            "createdAt": "2026-01-21T13:07:41.510Z",
-            "_count": {
-                "users": 1
-            }
-        },
-        {
-            "id": 9,
-            "name": "Acme Corporation",
-            "slug": "acme",
-            "email": "contassssct@acme.com",
-            "plan": "Starter",
-            "planExpiresAt": null,
-            "isActive": true,
-            "isSuspended": false,
-            "createdAt": "2026-01-21T12:57:43.364Z",
-            "_count": {
-                "users": 1
-            }
-        },
-        {
-            "id": 2,
-            "name": "Demo Electronics Ltd",
-            "slug": "demo-electronics",
-            "email": "admin@demo-electronics.com",
-            "plan": "Professional",
-            "planExpiresAt": null,
-            "isActive": true,
-            "isSuspended": false,
-            "createdAt": "2026-01-20T06:19:56.941Z",
-            "_count": {
-                "users": 1
-            }
-        },
-        {
-            "id": 1,
-            "name": "Optilux Bangladesh",
-            "slug": "optilux-bd",
-            "email": "admin@optilux-bd.com",
-            "plan": "Enterprise",
-            "planExpiresAt": null,
-            "isActive": true,
-            "isSuspended": false,
-            "createdAt": "2026-01-20T06:19:49.763Z",
-            "_count": {
-                "users": 1
-            }
-        }
-    ]
     const handleSearch = async (val: any) => {
         setFilters({ ...filters, search: val });
     };
     const handleDelete = async (id: number) => {
         try {
-            toast.success("Hi...");
-            //   toast.promise(deleteProduct(id), {
-            //     loading: "Deleting product...",
-            //     success: "Product deleted successfully!",
-            //     error: "Failed to delete product.",
-            //   });
+            toast.promise(deleteOrganization(id), {
+                loading: "Deleting product...",
+                success: "Product deleted successfully!",
+                error: "Failed to delete product.",
+            });
         } catch (error) {
             console.error("Error deleting product:", error);
         }
@@ -282,7 +112,9 @@ export default function AllOrganizations() {
                                     <SelectItem value="Rejected">Rejected</SelectItem>
                                 </SelectContent>
                             </Select> */}
-                            <ButtonComponent buttonName="Create Organization" icon={Plus} />
+                            <Link href={"/dashboard/add"}>
+                                <ButtonComponent buttonName="Create Organization" icon={Plus} />
+                            </Link>
                         </div>
                     </div>
                 </Card>
@@ -311,14 +143,14 @@ export default function AllOrganizations() {
                                         <TableCell className="px-4 py-3">
                                             <div className="flex items-center gap-3">
                                                 <Image
-                                                        src={
-                                                            "https://res.cloudinary.com/dbb6nen3p/image/upload/v1762848442/no_image_s3demz.png"
-                                                        }
-                                                        alt={organization.name}
-                                                        width={48}
-                                                        height={48}
-                                                        className="w-12 h-12 rounded-lg object-cover"
-                                                    />
+                                                    src={
+                                                        "https://res.cloudinary.com/dbb6nen3p/image/upload/v1762848442/no_image_s3demz.png"
+                                                    }
+                                                    alt={organization.name}
+                                                    width={48}
+                                                    height={48}
+                                                    className="w-12 h-12 rounded-lg object-cover"
+                                                />
                                                 <div>
                                                     <p className="font-medium">{organization.name}</p>
                                                 </div>

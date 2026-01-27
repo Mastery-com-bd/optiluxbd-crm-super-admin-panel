@@ -6,8 +6,14 @@ import { config } from "@/config";
 import { buildParams } from "@/utils/paramsBuilder";
 import { cookies } from "next/headers";
 
+// const getCookie = async () => {
+
+//     return cookieStore;
+// }
+// const cookieStore = getCookie();
+
 export async function createData<T>(endPoint: string, data: T, tags: string) {
-    const token = await getValidToken();
+    const token = cookieStore.get("accessToken")!.value;
     try {
         const res = await fetch(`${config.next_public_base_api}${endPoint}`, {
             method: "POST",
@@ -26,20 +32,45 @@ export async function createData<T>(endPoint: string, data: T, tags: string) {
 }
 
 //get 
+const cookieStore = await cookies();
+
 export async function readData(endPoint: string, tags: string[], query?: {
     [key: string]: string | string[] | undefined
 }) {
-    const cookieStore = await cookies();
+
     const token = cookieStore.get("accessToken")!.value;
-    console.log(token);
     try {
-        console.log(`${config.next_public_base_api}${endPoint}?${query ? buildParams(query) : ""}}`);
         const res = await fetch(
-            `${config.next_public_base_api}${endPoint}?${query ? buildParams(query) : ""}}`,
+            `${config.next_public_base_api}${endPoint}?${query ? buildParams(query) : ""}`,
             {
                 method: "GET",
                 headers: {
-                    Authorization: token,
+                    Authorization: `Bearer ${token}`,
+                },
+                next: {
+                    tags: [...tags],
+                },
+            } as RequestInit
+        );
+        const result = await res.json();
+        console.log("responce--->", result);
+        return result;
+    } catch (error: any) {
+        return error;
+    }
+}
+
+
+// delete
+export async function deleteData(endPoint: string, tags: string[]) {
+    const token = cookieStore.get("accessToken")!.value;
+    try {
+        const res = await fetch(
+            `${config.next_public_base_api}${endPoint}`,
+            {
+                method: "DELETE",
+                headers: {
+                    Authorization: `Bearer ${token}`,
                 },
                 next: {
                     tags: [...tags],

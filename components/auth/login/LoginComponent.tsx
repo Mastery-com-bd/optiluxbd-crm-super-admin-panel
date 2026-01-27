@@ -91,6 +91,29 @@ const LoginComponent = () => {
       toast.error(errorInfo, { id: toastId, duration: 3000 });
     }
   };
+    const onSubmit = async (data: TLoginData) => {
+        const toastId = toast.loading("logging in");
+        try {
+            const res = await login(data);
+            if (res?.success) {
+                setIsLoading(false);
+                await refetchUser();
+                toast.success(res?.message, { id: toastId, duration: 3000 });
+                reset();
+                router.push(redirect ? redirect : "/");
+            }
+            else {
+                toast.error(res.message, { id: toastId, duration: 3000 })
+            }
+        } catch (error: any) {
+            const errorInfo =
+                error?.error ||
+                error?.data?.message ||
+                error?.data?.errors[0]?.message ||
+                "Something went wrong!";
+            toast.error(errorInfo, { id: toastId, duration: 3000 });
+        }
+    };
 
   return (
     <div className="rounded-lg bg-[linear-gradient(331deg,rgba(238,235,255,0.04)_-7.38%,rgba(238,235,255,0.02)_-7.37%,rgba(238,235,255,0.08)_107.38%)] px-4 py-4 relative max-w-sm">
