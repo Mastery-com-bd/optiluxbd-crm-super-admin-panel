@@ -1,25 +1,30 @@
 'use server'
-import { createData, readData } from "@/service/apiService/crud";
+import { createData, patchData, readData } from "@/service/apiService/crud";
 import { OrgFormValues } from "@/types/organizations";
-import { unstable_cache } from "next/cache";
+import { Query } from "@/types/shared";
+
+type Plan = {
+  planId: number
+}
 
 export async function createOrganization(data: OrgFormValues) {
   try {
-    return await createData("/organizations/register", data, "Organization");
+    const res = await createData<OrgFormValues>("/organizations/register", data, "Organization");
+    return res;
   }
   catch (e) { return e }
 }
-export async function fetchOrganizations() {
-  return unstable_cache(
-    async () => {
-      const data = await readData('/admin/organizations', ["Organization"]);
-      return data;
-    },
-    ['organizations-list'],
-    { tags: ['Organization'], revalidate: 300 }
-  )();
+
+export async function fetchOrganizations(query?: Query) {
+  const data = await readData('/admin/organizations', ["Organization"], query);
+  return data;
 }
 
 export async function deleteOrganization(id: number) {
   console.log(id);
+}
+
+export async function updateOrganizationPlan(id: number, data: Plan) {
+  const res = await patchData<Plan>(`/admin/organizations/${id}/plan`, data, "/dashboard/organizations");
+  return res;
 }

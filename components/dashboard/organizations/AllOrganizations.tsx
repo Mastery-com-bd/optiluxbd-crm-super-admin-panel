@@ -11,11 +11,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { deleteOrganization } from "@/service/OrganaizationService";
 import { Organization, Organizations } from "@/types/organizations";
+import { ChangeInput } from "@/types/shared";
 import { Eye, Funnel, MoreVertical, Pencil, Plus, Search, Trash2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
+import UpdatePlanModal from "./UpdatePlanModal";
 const keys = [
     "NAME",
     "STATUS",
@@ -25,19 +28,31 @@ const keys = [
     "ACTIONS",
 ];
 export default function AllOrganizations({ organizations }: { organizations: Organizations }) {
-    const [inputValue, setInputValue] = useState("");
-    const [filters, setFilters] = useState({
-        search: "",
-        sortBy: "created_at",
-        order: "desc",
-        limit: 10,
-        page: 1,
-    });
+    const [searchTerm, setSearchTerm] = useState("");
+    const router = useRouter();
+    const pathName = usePathname();
+    const searchParams = useSearchParams();
+    const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
+    const [selectedOrg, setSelectedOrg] = useState<Organization | null>(null);
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
     const [deleteProductId, setDeleteProductId] = useState<number | null>(null);
-    const handleSearch = async (val: any) => {
-        setFilters({ ...filters, search: val });
-    };
+
+    const handleChange = (input: ChangeInput) => {
+        const name = "target" in input ? input.target.name : input.name;
+        const value = "target" in input ? input.target.value : input.value;
+        const params = new URLSearchParams(searchParams.toString());
+
+
+        if (value) {
+            params.set(name, value);
+        } else {
+            params.delete(name);
+        }
+        router.push(`${pathName}?${params.toString()}`, {
+            scroll: false,
+        });
+    }
+
     const handleDelete = async (id: number) => {
         try {
             toast.promise(deleteOrganization(id), {
@@ -57,11 +72,13 @@ export default function AllOrganizations({ organizations }: { organizations: Org
                     <div className="flex flex-col lg:flex-row gap-4 my-7 justify-between">
                         <div className="flex  gap-3 items-center">
                             <Input
+                                name="search"
                                 className="w-64 text-sm bg-transparent"
-                                value={inputValue}
+                                value={searchTerm}
                                 icon={<Search />}
                                 onChange={(e) => {
-                                    setInputValue(e.target.value);
+                                    setSearchTerm(e.target.value);
+                                    handleChange(e);
                                 }}
                                 placeholder="Search product by name"
                             />
@@ -112,7 +129,7 @@ export default function AllOrganizations({ organizations }: { organizations: Org
                                     <SelectItem value="Rejected">Rejected</SelectItem>
                                 </SelectContent>
                             </Select> */}
-                            <Link href={"/dashboard/add"}>
+                            <Link href={"/dashboard/organizations/create-organizations"}>
                                 <ButtonComponent buttonName="Create Organization" icon={Plus} />
                             </Link>
                         </div>
@@ -196,8 +213,18 @@ export default function AllOrganizations({ organizations }: { organizations: Org
                                                         </DropdownMenuItem>
                                                     </Link>
                                                     <DropdownMenuItem className="cursor-pointer">
-                                                        <Pencil className="w-4 h-4 mr-2" />
-                                                        Update
+                                                        <DropdownMenuItem
+                                                            onSelect={(e) => {
+                                                                e.preventDefault();
+                                                                setSelectedOrg(organization);
+                                                                setIsUpdateModalOpen(true);
+                                                            }}
+                                                            className="cursor-pointer"
+                                                        >
+                                                            <Pencil className="w-4 h-4 mr-2" />
+                                                            Update
+                                                        </DropdownMenuItem>
+
                                                     </DropdownMenuItem>
                                                     <DropdownMenuSeparator />
                                                     <DropdownMenuItem
@@ -254,6 +281,11 @@ export default function AllOrganizations({ organizations }: { organizations: Org
                     </AlertDialogFooter>
                 </AlertDialogContent>
             </AlertDialog>
+            <UpdatePlanModal
+                organization={selectedOrg}
+                open={isUpdateModalOpen}
+                setOpen={setIsUpdateModalOpen}
+            />
         </div>
     )
 }

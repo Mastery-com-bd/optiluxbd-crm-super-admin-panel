@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client"
 
 import { useForm } from "react-hook-form";
@@ -9,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Organization, OrgFormValues, orgSchema } from "@/types/organizations";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { createOrganization } from "@/service/OrganaizationService";
+import { toast } from "sonner";
 
 interface OrgFormProps {
     initialData?: Organization;
@@ -17,9 +19,27 @@ interface OrgFormProps {
 export default function OrganizationForm({ initialData }: OrgFormProps) {
     const isUpdate = !!initialData;
     const onFormSubmit = async (data: OrgFormValues) => {
-        const res = await createOrganization(data);
-        console.log("res->>> ", res);
-    }
+        const toastId = toast.loading(isUpdate ? "Updating..." : "Creating organization...");
+        try {
+            const res = await createOrganization(data);
+
+            if (res && !res.error) {
+                toast.success(
+                    isUpdate ? "Organization updated!" : "Organization created successfully!",
+                    { id: toastId }
+                );
+
+                if (!isUpdate) {
+                    form.reset();
+                }
+            } else {
+                toast.error(res.message || "Something went wrong", { id: toastId });
+            }
+        } catch (error: any) {
+            console.error("Submission Error:", error);
+            toast.error(error.message || "Failed to submit request", { id: toastId });
+        }
+    };
     const form = useForm<OrgFormValues>({
         resolver: zodResolver(orgSchema()),
         defaultValues: {
