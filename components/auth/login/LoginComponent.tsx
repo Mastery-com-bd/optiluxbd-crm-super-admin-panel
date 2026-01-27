@@ -45,7 +45,6 @@ const LoginComponent = () => {
     }, []);
 
     const onSubmit = async (data: TLoginData) => {
-        console.log("logging... in...");
         const toastId = toast.loading("logging in");
         try {
             const res = await login(data);
@@ -55,6 +54,9 @@ const LoginComponent = () => {
                 toast.success(res?.message, { id: toastId, duration: 3000 });
                 reset();
                 router.push(redirect ? redirect : "/");
+            }
+            else {
+                toast.error(res.message, { id: toastId, duration: 3000 })
             }
         } catch (error: any) {
             const errorInfo =
