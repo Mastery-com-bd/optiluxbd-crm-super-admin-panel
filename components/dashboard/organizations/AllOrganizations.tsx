@@ -9,35 +9,50 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSepara
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { deleteOrganization } from "@/service/OrganaizationService";
-import { Organization, Organizations } from "@/types/organizations";
+import { deleteOrganization, updateOrganizationStatus, updateOrganizationSuspendStatus } from "@/service/OrganaizationService";
+import { OrganizationData, Organizations } from "@/types/organizations";
+import { ChangeInput } from "@/types/shared";
 import { Eye, Funnel, MoreVertical, Pencil, Plus, Search, Trash2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
+import UpdatePlanModal from "./UpdatePlanModal";
+import { Switch } from "@/components/ui/switch";
 const keys = [
     "NAME",
     "STATUS",
+    "IS SUSPENDED",
     "PLAN",
     "MRR",
     "JOINED DATE",
     "ACTIONS",
 ];
 export default function AllOrganizations({ organizations }: { organizations: Organizations }) {
-    const [inputValue, setInputValue] = useState("");
-    const [filters, setFilters] = useState({
-        search: "",
-        sortBy: "created_at",
-        order: "desc",
-        limit: 10,
-        page: 1,
-    });
+    const [searchTerm, setSearchTerm] = useState("");
+    const router = useRouter();
+    const pathName = usePathname();
+    const searchParams = useSearchParams();
+    const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
+    const [selectedOrg, setSelectedOrg] = useState<OrganizationData | null>(null);
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
     const [deleteProductId, setDeleteProductId] = useState<number | null>(null);
-    const handleSearch = async (val: any) => {
-        setFilters({ ...filters, search: val });
-    };
+
+    const handleChange = (input: ChangeInput) => {
+        const name = "target" in input ? input.target.name : input.name;
+        const value = "target" in input ? input.target.value : input.value;
+        const params = new URLSearchParams(searchParams.toString());
+        if (value) {
+            params.set(name, value);
+        } else {
+            params.delete(name);
+        }
+        router.push(`${pathName}?${params.toString()}`, {
+            scroll: false,
+        });
+    }
+
     const handleDelete = async (id: number) => {
         try {
             toast.promise(deleteOrganization(id), {
@@ -49,6 +64,30 @@ export default function AllOrganizations({ organizations }: { organizations: Org
             console.error("Error deleting product:", error);
         }
     };
+    const handleToggleStatus = async (id: number) => {
+        const toastId = toast.loading("Updating...");
+        try {
+            const r = await updateOrganizationStatus(id);
+            if (r.success)
+                toast.success(r.message, { id: toastId });
+            else
+                toast.error(r.message, { id: toastId });
+        } catch (error) {
+            console.error(error);
+        }
+    }
+    const handleToggleSuspend = async (id: number) => {
+        const toastId = toast.loading("Updating...");
+        try {
+            const r = await updateOrganizationSuspendStatus(id);
+            if (r.success)
+                toast.success(r.message, { id: toastId });
+            else
+                toast.error(r.message, { id: toastId });
+        } catch (error) {
+            console.error(error);
+        }
+    }
     return (
         <div className="bg-transparent text-foreground my-4">
             <div className="w-full">
@@ -57,11 +96,13 @@ export default function AllOrganizations({ organizations }: { organizations: Org
                     <div className="flex flex-col lg:flex-row gap-4 my-7 justify-between">
                         <div className="flex  gap-3 items-center">
                             <Input
+                                name="search"
                                 className="w-64 text-sm bg-transparent"
-                                value={inputValue}
+                                value={searchTerm}
                                 icon={<Search />}
                                 onChange={(e) => {
-                                    setInputValue(e.target.value);
+                                    setSearchTerm(e.target.value);
+                                    handleChange(e);
                                 }}
                                 placeholder="Search product by name"
                             />
@@ -112,7 +153,7 @@ export default function AllOrganizations({ organizations }: { organizations: Org
                                     <SelectItem value="Rejected">Rejected</SelectItem>
                                 </SelectContent>
                             </Select> */}
-                            <Link href={"/dashboard/add"}>
+                            <Link href={"/dashboard/organizations/create-organizations"}>
                                 <ButtonComponent buttonName="Create Organization" icon={Plus} />
                             </Link>
                         </div>
@@ -136,7 +177,7 @@ export default function AllOrganizations({ organizations }: { organizations: Org
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
-                                {organizations?.map((organization: Organization) => (
+                                {organizations?.map((organization: OrganizationData) => (
                                     <TableRow
                                         key={organization.id}
                                         className="border-muted hover:bg-muted/50 transition-colors">
@@ -157,14 +198,39 @@ export default function AllOrganizations({ organizations }: { organizations: Org
                                             </div>
                                         </TableCell>
                                         <TableCell className="px-4 py-3 text-sm text-center ">
-                                            {
-                                                organization.isActive ?
-                                                    <div className="mx-auto py-1 text-green-600 effect text-center w-25 rounded-[3px]">Active</div> :
-                                                    <div className="mx-auto py-1 text-red-600 effect text-center w-25  rounded-[3px]">Suspended</div>
-                                            }
+                                            <div className="flex items-center justify-center gap-2">
+                                                <Switch
+                                                    id={`status-${organization.id}`}
+                                                    checked={organization.isActive}
+                                                    onCheckedChange={() => handleToggleStatus(organization.id)}
+                                                    className={`${organization.isActive
+                                                        ? "data-[state=checked]:bg-green-600"
+                                                        : "data-[state=unchecked]:bg-red-600"
+                                                        }`}
+                                                />
+                                                <span className={`text-xs font-bold ${organization.isActive ? "text-green-600" : "text-red-600"}`}>
+                                                    {organization.isActive ? "ACTIVE" : "SUSPENDED"}
+                                                </span>
+                                            </div>
+                                        </TableCell>
+                                        <TableCell className="px-4 py-3 text-sm text-center ">
+                                            <div className="flex items-center justify-center gap-2">
+                                                <Switch
+                                                    id={`status-${organization.id}`}
+                                                    checked={organization.isSuspended}
+                                                    onCheckedChange={() => { handleToggleSuspend(organization.id) }}
+                                                    className={`${organization.isSuspended
+                                                        ? "data-[state=checked]:bg-red-600"
+                                                        : "data-[state=unchecked]:bg-green-600"
+                                                        }`}
+                                                />
+                                                <span className={`text-xs font-bold ${organization.isSuspended ? " text-red-600" : "text-green-600"}`}>
+                                                    {organization.isSuspended ? "SUSPENDED" : "SUSPENDED"}
+                                                </span>
+                                            </div>
                                         </TableCell>
                                         <TableCell className="px-4 py-3 text-sm text-center">
-                                            {organization.plan}
+                                            {organization.plan.name}
                                         </TableCell>
                                         <TableCell className="px-4 py-3 text-sm font-medium text-center">
                                             ---
@@ -190,14 +256,24 @@ export default function AllOrganizations({ organizations }: { organizations: Org
                                                     align="end"
                                                     className="w-[180px] flex flex-col ">
                                                     <Link
-                                                        href={`/dashboard/admin/products/all-products/${organization.id}`}>
+                                                        href={`/dashboard/organizations/${organization.id}`}>
                                                         <DropdownMenuItem className="cursor-pointer">
                                                             <Eye className="w-4 h-4 mr-2" /> view
                                                         </DropdownMenuItem>
                                                     </Link>
                                                     <DropdownMenuItem className="cursor-pointer">
-                                                        <Pencil className="w-4 h-4 mr-2" />
-                                                        Update
+                                                        <DropdownMenuItem
+                                                            onSelect={(e) => {
+                                                                e.preventDefault();
+                                                                setSelectedOrg(organization);
+                                                                setIsUpdateModalOpen(true);
+                                                            }}
+                                                            className="cursor-pointer"
+                                                        >
+                                                            <Pencil className="w-4 h-4 mr-2" />
+                                                            Update
+                                                        </DropdownMenuItem>
+
                                                     </DropdownMenuItem>
                                                     <DropdownMenuSeparator />
                                                     <DropdownMenuItem
@@ -254,6 +330,11 @@ export default function AllOrganizations({ organizations }: { organizations: Org
                     </AlertDialogFooter>
                 </AlertDialogContent>
             </AlertDialog>
+            <UpdatePlanModal
+                organization={selectedOrg}
+                open={isUpdateModalOpen}
+                setOpen={setIsUpdateModalOpen}
+            />
         </div>
     )
 }

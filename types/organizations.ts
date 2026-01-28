@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import * as z from "zod";
 
 export const orgSchema = (isUpdate?: boolean) => z.object({
@@ -18,21 +19,63 @@ export const orgSchema = (isUpdate?: boolean) => z.object({
 
 export type OrgFormValues = z.infer<ReturnType<typeof orgSchema>>;
 
+export interface Plan {
+    id: number;
+    name: string;
+    slug: string;
+    description: string | null;
+    isActive: boolean;
+    isPublic: boolean;
+    priceDaily: string | null;
+    priceMonthly: string;
+    priceYearly: string;
+    priceOneTime: string | null;
+    maxUsers: number;
+    maxCustomers: number;
+    maxLocations: number;
+    maxProducts: number;
+    maxInvoices: number;
+    maxStorage: number;
+    trialDays: number;
+    isOneTime: boolean;
+    createdAt: string;
+    updatedAt: string;
+}
 
-export interface Organization {
-    "id": number,
-    "name": string,
-    "slug": string,
-    "email": string,
-    "plan": string,
-    "planExpiresAt": string | null,
-    "isActive": boolean,
-    "isSuspended": boolean,
-    "createdAt": string,
-    "_count": {
-        "users": number
-    }
+
+export interface OrganizationData {
+    id: number;
+    name: string;
+    slug: string;
+    email: string;
+    phone: string;
+    logo_url: string | null;
+    logo_public_id: string | null;
+    website: string;
+    planId: number;
+    planExpiresAt: string;
+    stripeCustomerId: string | null;
+    stripeSubscriptionId: string | null;
+    maxUsers: number;
+    maxCustomers: number;
+    maxLocations: number;
+    maxProducts: number;
+    maxOrdersPerMonth: number;
+    featureOverrides: Record<string, any>;
+    timezone: string;
+    currency: string;
+    dateFormat: string;
+    allowedDomains: string[];
+    ipWhitelist: string[];
+    isActive: boolean;
+    isSuspended: boolean;
+    suspendedAt: string | null;
+    suspendedReason: string | null;
+    createdAt: string;
+    updatedAt: string;
+    trialEndsAt: string;
+    plan: Plan;
 }
 
 export type Organizations =
-    Organization[]
+    OrganizationData[]
