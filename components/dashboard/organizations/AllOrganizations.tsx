@@ -1,246 +1,156 @@
-'use client'
+"use client";
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import ButtonComponent from "@/components/ui/ButtonComponent";
 import { Card } from "@/components/ui/card";
 import CustomPagination from "@/components/ui/CustomPagination";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Organization } from "@/types/organizations";
-import { Eye, Funnel, MoreVertical, Pencil, Plus, Search, Trash2 } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  deleteOrganization,
+  updateOrganizationStatus,
+  updateOrganizationSuspendStatus,
+} from "@/service/OrganaizationService";
+import { OrganizationData, Organizations } from "@/types/organizations";
+import { ChangeInput } from "@/types/shared";
+import {
+  Eye,
+  Funnel,
+  MoreVertical,
+  Pencil,
+  Plus,
+  Search,
+  Trash2,
+} from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
+import UpdatePlanModal from "./UpdatePlanModal";
+import { Switch } from "@/components/ui/switch";
 const keys = [
-    "NAME",
-    "STATUS",
-    "PLAN",
-    "MRR",
-    "JOINED DATE",
-    "ACTIONS",
+  "NAME",
+  "STATUS",
+  "IS SUSPENDED",
+  "PLAN",
+  "MRR",
+  "JOINED DATE",
+  "ACTIONS",
 ];
-export default function AllOrganizations() {
-    const [inputValue, setInputValue] = useState("");
-    const [filters, setFilters] = useState({
-        search: "",
-        sortBy: "created_at",
-        order: "desc",
-        limit: 10,
-        page: 1,
+export default function AllOrganizations({
+  organizations,
+}: {
+  organizations: Organizations;
+}) {
+  const [searchTerm, setSearchTerm] = useState("");
+  const router = useRouter();
+  const pathName = usePathname();
+  const searchParams = useSearchParams();
+  const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
+  const [selectedOrg, setSelectedOrg] = useState<OrganizationData | null>(null);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [deleteProductId, setDeleteProductId] = useState<number | null>(null);
+
+  const handleChange = (input: ChangeInput) => {
+    const name = "target" in input ? input.target.name : input.name;
+    const value = "target" in input ? input.target.value : input.value;
+    const params = new URLSearchParams(searchParams.toString());
+    if (value) {
+      params.set(name, value);
+    } else {
+      params.delete(name);
+    }
+    router.push(`${pathName}?${params.toString()}`, {
+      scroll: false,
     });
-    const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-    const [deleteProductId, setDeleteProductId] = useState<number | null>(null);
-    const organizations = [
-        {
-            "id": 19,
-            "name": "Acme Corporation",
-            "slug": "acmery",
-            "email": "contassssct10@acme.com",
-            "plan": "Starter",
-            "planExpiresAt": null,
-            "isActive": false,
-            "isSuspended": true,
-            "createdAt": "2026-01-22T09:15:21.580Z",
-            "_count": {
-                "users": 1
-            }
-        },
-        {
-            "id": 18,
-            "name": "Acme Corporation",
-            "slug": "acmer9",
-            "email": "contassssct9@acme.com",
-            "plan": "Starter",
-            "planExpiresAt": null,
-            "isActive": true,
-            "isSuspended": false,
-            "createdAt": "2026-01-22T09:13:08.574Z",
-            "_count": {
-                "users": 1
-            }
-        },
-        {
-            "id": 17,
-            "name": "Acme Corporation",
-            "slug": "acmer3",
-            "email": "contassssct8@acme.com",
-            "plan": "Starter",
-            "planExpiresAt": null,
-            "isActive": true,
-            "isSuspended": false,
-            "createdAt": "2026-01-22T07:07:44.719Z",
-            "_count": {
-                "users": 1
-            }
-        },
-        {
-            "id": 16,
-            "name": "Acme Corporation",
-            "slug": "acme-corporation-1500c5",
-            "email": "contassssct7@acme.com",
-            "plan": "Starter",
-            "planExpiresAt": null,
-            "isActive": true,
-            "isSuspended": false,
-            "createdAt": "2026-01-22T05:42:06.518Z",
-            "_count": {
-                "users": 1
-            }
-        },
-        {
-            "id": 15,
-            "name": "Acme Corporation",
-            "slug": "acmer8",
-            "email": "contassssct6@acme.com",
-            "plan": "Starter",
-            "planExpiresAt": null,
-            "isActive": true,
-            "isSuspended": false,
-            "createdAt": "2026-01-22T05:24:52.196Z",
-            "_count": {
-                "users": 1
-            }
-        },
-        {
-            "id": 14,
-            "name": "Acme Corporation",
-            "slug": "acmer2",
-            "email": "contassssct5@acme.com",
-            "plan": "Starter",
-            "planExpiresAt": null,
-            "isActive": true,
-            "isSuspended": false,
-            "createdAt": "2026-01-22T05:22:18.692Z",
-            "_count": {
-                "users": 1
-            }
-        },
-        {
-            "id": 13,
-            "name": "Acme Corporation",
-            "slug": "acmer",
-            "email": "contassssct3@acme.com",
-            "plan": "Starter",
-            "planExpiresAt": null,
-            "isActive": true,
-            "isSuspended": false,
-            "createdAt": "2026-01-21T13:12:00.373Z",
-            "_count": {
-                "users": 1
-            }
-        },
-        {
-            "id": 12,
-            "name": "Acme Corporation",
-            "slug": "acme-corporation-00b1e2",
-            "email": "contassssct2@acme.com",
-            "plan": "Starter",
-            "planExpiresAt": null,
-            "isActive": true,
-            "isSuspended": false,
-            "createdAt": "2026-01-21T13:09:20.630Z",
-            "_count": {
-                "users": 1
-            }
-        },
-        {
-            "id": 10,
-            "name": "Acme Corporation",
-            "slug": "acme-corporation-673035",
-            "email": "contassssct4@acme.com",
-            "plan": "Starter",
-            "planExpiresAt": null,
-            "isActive": true,
-            "isSuspended": false,
-            "createdAt": "2026-01-21T13:07:41.510Z",
-            "_count": {
-                "users": 1
-            }
-        },
-        {
-            "id": 9,
-            "name": "Acme Corporation",
-            "slug": "acme",
-            "email": "contassssct@acme.com",
-            "plan": "Starter",
-            "planExpiresAt": null,
-            "isActive": true,
-            "isSuspended": false,
-            "createdAt": "2026-01-21T12:57:43.364Z",
-            "_count": {
-                "users": 1
-            }
-        },
-        {
-            "id": 2,
-            "name": "Demo Electronics Ltd",
-            "slug": "demo-electronics",
-            "email": "admin@demo-electronics.com",
-            "plan": "Professional",
-            "planExpiresAt": null,
-            "isActive": true,
-            "isSuspended": false,
-            "createdAt": "2026-01-20T06:19:56.941Z",
-            "_count": {
-                "users": 1
-            }
-        },
-        {
-            "id": 1,
-            "name": "Optilux Bangladesh",
-            "slug": "optilux-bd",
-            "email": "admin@optilux-bd.com",
-            "plan": "Enterprise",
-            "planExpiresAt": null,
-            "isActive": true,
-            "isSuspended": false,
-            "createdAt": "2026-01-20T06:19:49.763Z",
-            "_count": {
-                "users": 1
-            }
-        }
-    ]
-    const handleSearch = async (val: any) => {
-        setFilters({ ...filters, search: val });
-    };
-    const handleDelete = async (id: number) => {
-        try {
-            toast.success("Hi...");
-            //   toast.promise(deleteProduct(id), {
-            //     loading: "Deleting product...",
-            //     success: "Product deleted successfully!",
-            //     error: "Failed to delete product.",
-            //   });
-        } catch (error) {
-            console.error("Error deleting product:", error);
-        }
-    };
-    return (
-        <div className="bg-transparent text-foreground my-4">
-            <div className="w-full">
-                {/* Filters */}
-                <Card className="bg-transparent border-none text-card-foreground border shadow-sm p-0">
-                    <div className="flex flex-col lg:flex-row gap-4 my-7 justify-between">
-                        <div className="flex  gap-3 items-center">
-                            <Input
-                                className="w-64 text-sm bg-transparent"
-                                value={inputValue}
-                                icon={<Search />}
-                                onChange={(e) => {
-                                    setInputValue(e.target.value);
-                                }}
-                                placeholder="Search product by name"
-                            />
-                            <Button className="w-9 h-9 p-2.5 rounded-[12px] bg-transparent effect cursor-pointer">
-                                <Funnel size={16} />
-                            </Button>
-                        </div>
-                        <div className="flex flex-wrap items-center gap-3">
-                            {/* <Select
+  };
+
+  const handleDelete = async (id: number) => {
+    try {
+      toast.promise(deleteOrganization(id), {
+        loading: "Deleting product...",
+        success: "Product deleted successfully!",
+        error: "Failed to delete product.",
+      });
+    } catch (error) {
+      console.error("Error deleting product:", error);
+    }
+  };
+  const handleToggleStatus = async (id: number) => {
+    const toastId = toast.loading("Updating...");
+    try {
+      const r = await updateOrganizationStatus(id);
+      if (r.success) toast.success(r.message, { id: toastId });
+      else toast.error(r.message, { id: toastId });
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  const handleToggleSuspend = async (id: number) => {
+    const toastId = toast.loading("Updating...");
+    try {
+      const r = await updateOrganizationSuspendStatus(id);
+      if (r.success) toast.success(r.message, { id: toastId });
+      else toast.error(r.message, { id: toastId });
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  return (
+    <div className="bg-transparent text-foreground my-4">
+      <div className="w-full">
+        {/* Filters */}
+        <Card className="bg-transparent border-none text-card-foreground border shadow-sm p-0">
+          <div className="flex flex-col lg:flex-row gap-4 my-7 justify-between">
+            <div className="flex  gap-3 items-center">
+              <Input
+                name="search"
+                className="w-64 text-sm bg-transparent"
+                value={searchTerm}
+                onChange={(e) => {
+                  setSearchTerm(e.target.value);
+                  handleChange(e);
+                }}
+                placeholder="Search product by name"
+              />
+              <Button className="w-9 h-9 p-2.5 rounded-[12px] bg-transparent effect cursor-pointer">
+                <Funnel size={16} />
+              </Button>
+            </div>
+            <div className="flex flex-wrap items-center gap-3">
+              {/* <Select
                                 value={category}
                                 onValueChange={(value) => {
                                     setCategory(value);
@@ -282,113 +192,162 @@ export default function AllOrganizations() {
                                     <SelectItem value="Rejected">Rejected</SelectItem>
                                 </SelectContent>
                             </Select> */}
-                            <ButtonComponent buttonName="Create Organization" icon={Plus} />
+              <Link href={"/dashboard/organizations/create-organizations"}>
+                <ButtonComponent buttonName="Create Organization" icon={Plus} />
+              </Link>
+            </div>
+          </div>
+        </Card>
+        {/* Product Table */}
+        <Card className="bg-transparent text-card-foreground shadow-sm overflow-hidden mb-5 p-0 pt-2 border-none ">
+          <div className="overflow-x-auto w-full">
+            <Table className="w-full">
+              <TableHeader>
+                <TableRow>
+                  {keys.map((label, ind) => (
+                    <TableHead
+                      first={ind === 0}
+                      last={ind === keys.length - 1}
+                      key={label}
+                      className="text-left text-xs font-semibold uppercase text-muted-foreground"
+                    >
+                      {label}
+                    </TableHead>
+                  ))}
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {organizations?.map((organization: OrganizationData) => (
+                  <TableRow
+                    key={organization.id}
+                    className="border-muted hover:bg-muted/50 transition-colors"
+                  >
+                    <TableCell className="px-4 py-3">
+                      <div className="flex items-center gap-3">
+                        <Image
+                          src={
+                            "https://res.cloudinary.com/dbb6nen3p/image/upload/v1762848442/no_image_s3demz.png"
+                          }
+                          alt={organization.name}
+                          width={48}
+                          height={48}
+                          className="w-12 h-12 rounded-lg object-cover"
+                        />
+                        <div>
+                          <p className="font-medium">{organization.name}</p>
                         </div>
-                    </div>
-                </Card>
-                {/* Product Table */}
-                <Card className="bg-transparent text-card-foreground shadow-sm overflow-hidden mb-5 p-0 pt-2 border-none ">
-                    <div className="overflow-x-auto w-full">
-                        <Table className="w-full">
-                            <TableHeader>
-                                <TableRow>
-                                    {keys.map((label, ind) => (
-                                        <TableHead
-                                            first={ind === 0}
-                                            last={ind === keys.length - 1}
-                                            key={label}
-                                            className="text-left text-xs font-semibold uppercase text-muted-foreground">
-                                            {label}
-                                        </TableHead>
-                                    ))}
-                                </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                                {organizations?.map((organization: Organization) => (
-                                    <TableRow
-                                        key={organization.id}
-                                        className="border-muted hover:bg-muted/50 transition-colors">
-                                        <TableCell className="px-4 py-3">
-                                            <div className="flex items-center gap-3">
-                                                <Image
-                                                        src={
-                                                            "https://res.cloudinary.com/dbb6nen3p/image/upload/v1762848442/no_image_s3demz.png"
-                                                        }
-                                                        alt={organization.name}
-                                                        width={48}
-                                                        height={48}
-                                                        className="w-12 h-12 rounded-lg object-cover"
-                                                    />
-                                                <div>
-                                                    <p className="font-medium">{organization.name}</p>
-                                                </div>
-                                            </div>
-                                        </TableCell>
-                                        <TableCell className="px-4 py-3 text-sm text-center ">
-                                            {
-                                                organization.isActive ?
-                                                    <div className="mx-auto py-1 text-green-600 effect text-center w-25 rounded-[3px]">Active</div> :
-                                                    <div className="mx-auto py-1 text-red-600 effect text-center w-25  rounded-[3px]">Suspended</div>
-                                            }
-                                        </TableCell>
-                                        <TableCell className="px-4 py-3 text-sm text-center">
-                                            {organization.plan}
-                                        </TableCell>
-                                        <TableCell className="px-4 py-3 text-sm font-medium text-center">
-                                            ---
-                                        </TableCell>
-                                        <TableCell className="px-4 py-3 text-sm font-semibold text-center">
-                                            {
-                                                new Date(organization.createdAt).toLocaleDateString(
-                                                    "en-US",
-                                                    {
-                                                        year: "numeric",
-                                                        month: "short",
-                                                        day: "2-digit",
-                                                    },
-                                                )
-                                            }
-                                        </TableCell>
-                                        <TableCell className="px-4 py-3 text-center ">
-                                            <DropdownMenu>
-                                                <DropdownMenuTrigger className="cursor-pointer">
-                                                    <MoreVertical className="h-4 w-4" />
-                                                </DropdownMenuTrigger>
-                                                <DropdownMenuContent
-                                                    align="end"
-                                                    className="w-[180px] flex flex-col ">
-                                                    <Link
-                                                        href={`/dashboard/admin/products/all-products/${organization.id}`}>
-                                                        <DropdownMenuItem className="cursor-pointer">
-                                                            <Eye className="w-4 h-4 mr-2" /> view
-                                                        </DropdownMenuItem>
-                                                    </Link>
-                                                    <DropdownMenuItem className="cursor-pointer">
-                                                        <Pencil className="w-4 h-4 mr-2" />
-                                                        Update
-                                                    </DropdownMenuItem>
-                                                    <DropdownMenuSeparator />
-                                                    <DropdownMenuItem
-                                                        onClick={() => {
-                                                            setDeleteProductId(organization.id);
-                                                            setDeleteDialogOpen(true);
-                                                        }}
-                                                        className="cursor-pointer">
-                                                        <Trash2 className="w-4 h-4 text-destructive mr-2" />
-                                                        Delete
-                                                    </DropdownMenuItem>
-                                                </DropdownMenuContent>
-                                            </DropdownMenu>
-                                        </TableCell>
-                                    </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
-                    </div>
-                </Card>
+                      </div>
+                    </TableCell>
+                    <TableCell className="px-4 py-3 text-sm text-center ">
+                      <div className="flex items-center justify-center gap-2">
+                        <Switch
+                          id={`status-${organization.id}`}
+                          checked={organization.isActive}
+                          onCheckedChange={() =>
+                            handleToggleStatus(organization.id)
+                          }
+                          className={`${
+                            organization.isActive
+                              ? "data-[state=checked]:bg-green-600"
+                              : "data-[state=unchecked]:bg-red-600"
+                          }`}
+                        />
+                        <span
+                          className={`text-xs font-bold ${organization.isActive ? "text-green-600" : "text-red-600"}`}
+                        >
+                          {organization.isActive ? "ACTIVE" : "SUSPENDED"}
+                        </span>
+                      </div>
+                    </TableCell>
+                    <TableCell className="px-4 py-3 text-sm text-center ">
+                      <div className="flex items-center justify-center gap-2">
+                        <Switch
+                          id={`status-${organization.id}`}
+                          checked={organization.isSuspended}
+                          onCheckedChange={() => {
+                            handleToggleSuspend(organization.id);
+                          }}
+                          className={`${
+                            organization.isSuspended
+                              ? "data-[state=checked]:bg-red-600"
+                              : "data-[state=unchecked]:bg-green-600"
+                          }`}
+                        />
+                        <span
+                          className={`text-xs font-bold ${organization.isSuspended ? " text-red-600" : "text-green-600"}`}
+                        >
+                          {organization.isSuspended ? "SUSPENDED" : "SUSPENDED"}
+                        </span>
+                      </div>
+                    </TableCell>
+                    <TableCell className="px-4 py-3 text-sm text-center">
+                      {organization.plan.name}
+                    </TableCell>
+                    <TableCell className="px-4 py-3 text-sm font-medium text-center">
+                      ---
+                    </TableCell>
+                    <TableCell className="px-4 py-3 text-sm font-semibold text-center">
+                      {new Date(organization.createdAt).toLocaleDateString(
+                        "en-US",
+                        {
+                          year: "numeric",
+                          month: "short",
+                          day: "2-digit",
+                        },
+                      )}
+                    </TableCell>
+                    <TableCell className="px-4 py-3 text-center ">
+                      <DropdownMenu>
+                        <DropdownMenuTrigger className="cursor-pointer">
+                          <MoreVertical className="h-4 w-4" />
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent
+                          align="end"
+                          className="w-[180px] flex flex-col "
+                        >
+                          <Link
+                            href={`/dashboard/organizations/${organization.id}`}
+                          >
+                            <DropdownMenuItem className="cursor-pointer">
+                              <Eye className="w-4 h-4 mr-2" /> view
+                            </DropdownMenuItem>
+                          </Link>
+                          <DropdownMenuItem className="cursor-pointer">
+                            <DropdownMenuItem
+                              onSelect={(e) => {
+                                e.preventDefault();
+                                setSelectedOrg(organization);
+                                setIsUpdateModalOpen(true);
+                              }}
+                              className="cursor-pointer"
+                            >
+                              <Pencil className="w-4 h-4 mr-2" />
+                              Update
+                            </DropdownMenuItem>
+                          </DropdownMenuItem>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem
+                            onClick={() => {
+                              setDeleteProductId(organization.id);
+                              setDeleteDialogOpen(true);
+                            }}
+                            className="cursor-pointer"
+                          >
+                            <Trash2 className="w-4 h-4 text-destructive mr-2" />
+                            Delete
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        </Card>
 
-                {/* Pagination */}
-                {/* <CustomPagination
+        {/* Pagination */}
+        {/* <CustomPagination
                     currentPage={pagination.page}
                     totalPages={pagination.totalPages}
                     onPageChange={(page) => setFilters({ ...filters, page })}
@@ -396,32 +355,38 @@ export default function AllOrganizations() {
                     setShow={setShow}
                     setFilters={setFilters}
                 /> */}
-            </div>
+      </div>
 
-            {/* Delete Confirm Dialog */}
-            <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-                <AlertDialogContent>
-                    <AlertDialogHeader>
-                        <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                        <AlertDialogDescription>
-                            This action cannot be undone. This will permanently delete your
-                            product and remove your data from our servers.
-                        </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-                        <AlertDialogAction
-                            onClick={() => {
-                                if (deleteProductId) {
-                                    handleDelete(deleteProductId);
-                                    setDeleteDialogOpen(false);
-                                }
-                            }}>
-                            Continue
-                        </AlertDialogAction>
-                    </AlertDialogFooter>
-                </AlertDialogContent>
-            </AlertDialog>
-        </div>
-    )
+      {/* Delete Confirm Dialog */}
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete your
+              product and remove your data from our servers.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                if (deleteProductId) {
+                  handleDelete(deleteProductId);
+                  setDeleteDialogOpen(false);
+                }
+              }}
+            >
+              Continue
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+      <UpdatePlanModal
+        organization={selectedOrg}
+        open={isUpdateModalOpen}
+        setOpen={setIsUpdateModalOpen}
+      />
+    </div>
+  );
 }

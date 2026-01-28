@@ -1,24 +1,30 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use server";
 import { getValidToken } from "../authService/validToken";
-import { revalidateTag } from "next/cache";
+import { revalidatePath } from "next/cache";
 import { config } from "@/config";
 import { buildParams } from "@/utils/paramsBuilder";
 import { cookies } from "next/headers";
+import { Query } from "@/types/shared";
 
-export async function createData<T>(endPoint: string, data: T, tags: string) {
+export async function createData<T>(
+  endPoint: string,
+  revalPath: string,
+  data?: T,
+) {
   const token = await getValidToken();
   try {
     const res = await fetch(`${config.next_public_base_api}${endPoint}`, {
       method: "POST",
       headers: {
-        Authorization: token,
+        Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify(data),
     });
     const result = await res.json();
-    revalidateTag(tags, "default");
+    console.log(result);
+    revalidatePath(revalPath);
     return result;
   } catch (error: any) {
     return Error(error);
@@ -29,19 +35,17 @@ export async function createData<T>(endPoint: string, data: T, tags: string) {
 export async function readData(
   endPoint: string,
   tags: string[],
-  query?: {
-    [key: string]: string | string[] | undefined;
-  },
+  query?: Query,
 ) {
   const cookieStore = await cookies();
   const token = cookieStore.get("accessToken")!.value;
   try {
     const res = await fetch(
-      `${config.next_public_base_api}${endPoint}?${query ? buildParams(query) : ""}}`,
+      `${config.next_public_base_api}${endPoint}?${query ? buildParams(query) : ""}`,
       {
         method: "GET",
         headers: {
-          Authorization: token,
+          Authorization: `Bearer ${token}`,
         },
         next: {
           tags: [...tags],
@@ -49,7 +53,53 @@ export async function readData(
       } as RequestInit,
     );
     const result = await res.json();
+    return result;
+  } catch (error: any) {
+    return error;
+  }
+}
 
+// delete
+export async function deleteData(endPoint: string, tags: string[]) {
+  const token = getValidToken();
+  try {
+    const res = await fetch(`${config.next_public_base_api}${endPoint}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      next: {
+        tags: [...tags],
+      },
+    } as RequestInit);
+    const result = await res.json();
+    console.log("responce--->", result);
+    return result;
+  } catch (error: any) {
+    return error;
+  }
+}
+
+// update
+export async function patchData<T>(
+  endPoint: string,
+  revalPath: string,
+  data?: T,
+) {
+  const token = await getValidToken();
+  console.log("token->>>", token);
+  try {
+    const res = await fetch(`${config.next_public_base_api}${endPoint}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(data),
+    } as RequestInit);
+    const result = await res.json();
+    console.log("response from patch--->", result);
+    revalidatePath(revalPath);
     return result;
   } catch (error: any) {
     return error;

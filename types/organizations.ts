@@ -1,17 +1,81 @@
-export interface Organization {
-    "id": number,
-    "name": string,
-    "slug": string,
-    "email": string,
-    "plan": string,
-    "planExpiresAt": string | null,
-    "isActive": boolean,
-    "isSuspended": boolean,
-    "createdAt": string,
-    "_count": {
-        "users": number
-    }
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import * as z from "zod";
+
+export const orgSchema = (isUpdate?: boolean) => z.object({
+    name: z.string().min(2, "Name is required"),
+    email: z.string().email("Invalid email"),
+    ownerName: z.string().min(2, "Owner name is required"),
+    ownerEmail: z.string().email("Invalid owner email"),
+    ownerPassword: isUpdate
+        ? z.string().optional()
+        : z.string().min(8, "Password must be at least 8 characters"),
+    phone: z.string().min(10, "Phone number is required"),
+    website: z.string().url("Invalid website URL"),
+    slug: z.string().min(2, "Slug is required"),
+    plan: z.enum(["STARTER", "PRO", "ENTERPRISE"], {
+        message: "Please select a plan",
+    }),
+});
+
+export type OrgFormValues = z.infer<ReturnType<typeof orgSchema>>;
+
+export interface Plan {
+    id: number;
+    name: string;
+    slug: string;
+    description: string | null;
+    isActive: boolean;
+    isPublic: boolean;
+    priceDaily: string | null;
+    priceMonthly: string;
+    priceYearly: string;
+    priceOneTime: string | null;
+    maxUsers: number;
+    maxCustomers: number;
+    maxLocations: number;
+    maxProducts: number;
+    maxInvoices: number;
+    maxStorage: number;
+    trialDays: number;
+    isOneTime: boolean;
+    createdAt: string;
+    updatedAt: string;
+}
+
+
+export interface OrganizationData {
+    id: number;
+    name: string;
+    slug: string;
+    email: string;
+    phone: string;
+    logo_url: string | null;
+    logo_public_id: string | null;
+    website: string;
+    planId: number;
+    planExpiresAt: string;
+    stripeCustomerId: string | null;
+    stripeSubscriptionId: string | null;
+    maxUsers: number;
+    maxCustomers: number;
+    maxLocations: number;
+    maxProducts: number;
+    maxOrdersPerMonth: number;
+    featureOverrides: Record<string, any>;
+    timezone: string;
+    currency: string;
+    dateFormat: string;
+    allowedDomains: string[];
+    ipWhitelist: string[];
+    isActive: boolean;
+    isSuspended: boolean;
+    suspendedAt: string | null;
+    suspendedReason: string | null;
+    createdAt: string;
+    updatedAt: string;
+    trialEndsAt: string;
+    plan: Plan;
 }
 
 export type Organizations =
-    Organization[]
+    OrganizationData[]

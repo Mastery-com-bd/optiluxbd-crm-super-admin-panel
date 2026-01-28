@@ -78,6 +78,8 @@ const LoginComponent = () => {
         toast.success(res?.message, { id: toastId, duration: 3000 });
         reset();
         router.push(redirect ? redirect : "/dashboard");
+      } else {
+        toast.error(res?.message, { id: toastId, duration: 3000 });
       }
     } catch (error: any) {
       const errorInfo =
