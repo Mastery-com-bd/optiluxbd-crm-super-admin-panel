@@ -3,7 +3,6 @@
 
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useEffect, useState } from "react";
-import { Organization } from "@/types/organizations";
 import { getAllPlan } from "@/service/planService";
 import {
     Select,
@@ -15,13 +14,14 @@ import {
 import { Button } from "@/components/ui/button";
 import { updateOrganizationPlan } from "@/service/OrganaizationService";
 import { toast } from "sonner";
+import { OrganizationData } from "@/types/organizations";
 
 export default function UpdatePlanModal({
     organization,
     open,
     setOpen
 }: {
-    organization: Organization | null;
+    organization: OrganizationData | null;
     open: boolean;
     setOpen: (open: boolean) => void
 }) {

@@ -7,8 +7,8 @@ import { buildParams } from "@/utils/paramsBuilder";
 import { cookies } from "next/headers";
 import { Query } from "@/types/shared";
 
-export async function createData<T>(endPoint: string, data: T, tags: string) {
-    const token = getValidToken();
+export async function createData<T>(endPoint: string, revalPath: string, data?: T,) {
+    const token = await getValidToken();
     try {
         const res = await fetch(`${config.next_public_base_api}${endPoint}`, {
             method: "POST",
@@ -19,7 +19,8 @@ export async function createData<T>(endPoint: string, data: T, tags: string) {
             body: JSON.stringify(data),
         });
         const result = await res.json();
-        revalidateTag(tags, "default");
+        console.log(result);
+        revalidatePath(revalPath);
         return result;
     } catch (error: any) {
         return Error(error);
@@ -77,7 +78,7 @@ export async function deleteData(endPoint: string, tags: string[]) {
 }
 
 // update
-export async function patchData<T>(endPoint: string, data: T, revalPath: string) {
+export async function patchData<T>(endPoint: string, revalPath: string, data?: T,) {
     const token = await getValidToken();
     console.log("token->>>", token);
     try {

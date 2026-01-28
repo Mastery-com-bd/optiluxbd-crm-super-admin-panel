@@ -7,13 +7,13 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Organization, OrgFormValues, orgSchema } from "@/types/organizations";
+import { OrganizationData, OrgFormValues, orgSchema } from "@/types/organizations";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { createOrganization } from "@/service/OrganaizationService";
 import { toast } from "sonner";
 
 interface OrgFormProps {
-    initialData?: Organization;
+    initialData?: OrganizationData;
 }
 
 export default function OrganizationForm({ initialData }: OrgFormProps) {
