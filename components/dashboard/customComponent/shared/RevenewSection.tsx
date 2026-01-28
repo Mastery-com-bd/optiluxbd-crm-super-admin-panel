@@ -1,4 +1,4 @@
-'use client'
+"use client";
 import { Card } from "@/components/ui/card";
 import {
   DropdownMenu,
@@ -16,7 +16,7 @@ const RevenueSection = () => {
   const START_YEAR = 2020;
   const CURRENT_YEAR = new Date().getFullYear();
   const years = Array.from({ length: CURRENT_YEAR - START_YEAR + 1 }, (_, i) =>
-    String(START_YEAR + i)
+    String(START_YEAR + i),
   );
   const [year, setYear] = useState(years[years.length - 1]);
   const [filters, setFilters] = useState({

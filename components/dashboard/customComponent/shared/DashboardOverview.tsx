@@ -1,6 +1,6 @@
 "use client";
+import { OverviewCard } from "@/components/shared/overviewCard";
 import { ArrowUpRight, Box, Briefcase, User } from "lucide-react";
-import { OverviewCard } from "../shared/overviewCard";
 
 export default function DashboardOverview() {
   const stats = [

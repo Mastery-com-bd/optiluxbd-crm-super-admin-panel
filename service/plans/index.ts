@@ -62,7 +62,7 @@ export const createPlan = async (data: TPlanForm) => {
   }
 };
 
-export const updatePlan = async (data: Partial<TPlanForm>, id: string) => {
+export const updatePlan = async (data: Partial<TPlanForm>, id: number) => {
   const token = await getValidToken();
   try {
     const res = await fetch(
@@ -84,7 +84,7 @@ export const updatePlan = async (data: Partial<TPlanForm>, id: string) => {
   }
 };
 
-export const enablePlan = async (id: string) => {
+export const enablePlan = async (id: number) => {
   const token = await getValidToken();
   try {
     const res = await fetch(
@@ -104,7 +104,7 @@ export const enablePlan = async (id: string) => {
   }
 };
 
-export const disablePlan = async (id: string) => {
+export const disablePlan = async (id: number) => {
   const token = await getValidToken();
   try {
     const res = await fetch(

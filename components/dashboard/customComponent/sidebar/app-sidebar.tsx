@@ -13,7 +13,7 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { crmRoutes } from "@/constants/CRM_Navigation";
-import Optilux from "../../../public/images/OptiluxBD.png";
+import Optilux from "../../../../public/images/OptiluxBD.png";
 import Image from "next/image";
 // import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 // import {

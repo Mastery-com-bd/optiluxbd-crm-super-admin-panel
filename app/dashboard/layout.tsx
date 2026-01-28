@@ -1,7 +1,7 @@
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import { AppSidebar } from "@/components/dashboard/sidebar/app-sidebar";
+import { AppSidebar } from "@/components/dashboard/customComponent/sidebar/app-sidebar";
 import Navbar from "@/components/dashboard/navbar/navbar";
 
 // Load custom fonts

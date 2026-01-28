@@ -9,7 +9,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import ReusablePieChart from "../ui/ReusablePieChart";
+import ReusablePieChart from "@/components/ui/ReusablePieChart";
 
 const chartData = [
   { name: "Processing", value: 25, fill: "#1EAAE7" },

@@ -1,3 +1,4 @@
+import AllPlans from "@/components/dashboard/plans/allPlans/AllPlans";
 import { getAllPlans } from "@/service/plans";
 
 export type TSearchParams = Promise<{
@@ -12,9 +13,13 @@ const AllPlansPage = async ({
   const query = await searchParams;
 
   const result = await getAllPlans(query);
-  console.log("plans result", result);
+  const plans = result?.data || [];
 
-  return <div>this is all plans page</div>;
+  return (
+    <section>
+      <AllPlans plans={plans} />
+    </section>
+  );
 };
 
 export default AllPlansPage;

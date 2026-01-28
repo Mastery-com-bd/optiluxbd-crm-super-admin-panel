@@ -130,7 +130,8 @@
   }
 }
 
-.primary {}
+.primary {
+}
 
 .no-scrollbar {
   scrollbar-width: none;
@@ -164,24 +165,27 @@
 }
 
 .effect {
-  box-shadow: 1.2px 1.1px 1px -.5px #ffffff8b,
-    -1.2px -1.1px 1px -.5px #ffffff8d,
+  box-shadow:
+    1.2px 1.1px 1px -0.5px #ffffff8b,
+    -1.2px -1.1px 1px -0.5px #ffffff8d,
     1px 1px 10px 2px #00000044;
-  background-color: #FDFDFD1A;
+  background-color: #fdfdfd1a;
   backdrop-filter: blur(20px);
 }
 
 .effectBlack {
-  box-shadow: 1.2px 1.1px 1px -.5px #ffffff8b,
-    -1.2px -1.1px 1px -.5px #ffffff8d,
+  box-shadow:
+    1.2px 1.1px 1px -0.5px #ffffff8b,
+    -1.2px -1.1px 1px -0.5px #ffffff8d,
     1px 1px 10px 2px #00000044;
-  background-color: #DFE3E71A;
+  background-color: #dfe3e71a;
   backdrop-filter: blur(20px);
 }
 
 .overviewButtonEffect {
-  box-shadow: 1.2px 1.1px 1px -.5px #ffffff67,
-    -1.2px -1.1px 1px -.5px #ffffff8d,
+  box-shadow:
+    1.2px 1.1px 1px -0.5px #ffffff67,
+    -1.2px -1.1px 1px -0.5px #ffffff8d,
     0px 0px 0px 0px #000000a1 inset,
     -4px -4px 10px 10px #0000005b inset;
   backdrop-filter: blur(100px);
@@ -192,9 +196,18 @@
   box-shadow:
     10px 10px 10px #0000004a,
     -10px -10px 10px #00000024,
-    1.2px 1.1px 1px -.5px #ffffff74,
-    -1.2px -1.1px 1px -.5px #ffffff74,
+    1.2px 1.1px 1px -0.5px #ffffff74,
+    -1.2px -1.1px 1px -0.5px #ffffff74,
     4px 4px 32px 32px #9292920b inset,
     -4px -4px 12px 12px #0000000b inset;
-    backdrop-filter: blur(100px);
+  backdrop-filter: blur(100px);
+}
+
+.hide-scrollbar {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE 10+ */
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Edge */
 }
