@@ -94,7 +94,6 @@ const Navbar: React.FC = () => {
             <Input
               className="px-10 py-1.5 w-64 text-sm bg-transparent"
               value={inputValue}
-              icon={<Search className="size-4" />}
               onChange={(e) => {
                 setInputValue(e.target.value);
                 handleSearch(e.target.value);

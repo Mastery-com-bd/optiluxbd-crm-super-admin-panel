@@ -1,11 +1,8 @@
 "use client";
+import { OverviewCard } from "@/components/shared/overviewCard";
 import { ArrowUpRight, Box, Briefcase, User } from "lucide-react";
-import { OverviewCard } from "../shared/overviewCard";
-import { useUser } from "@/providers/AuthProvider";
 
 export default function DashboardOverview() {
-  const { user } = useUser();
-  console.log(user);
   const stats = [
     {
       icon: Box,

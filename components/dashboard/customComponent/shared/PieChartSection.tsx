@@ -9,7 +9,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import ReusablePieChart from "../ui/ReusablePieChart";
+import ReusablePieChart from "@/components/ui/ReusablePieChart";
 
 const chartData = [
   { name: "Processing", value: 25, fill: "#1EAAE7" },
@@ -30,7 +30,6 @@ const chartConfig = {
 const PieChartSection = () => {
   const [activeCategory, setActiveCategory] = useState(chartData[0].name);
   const categories = useMemo(() => chartData.map((item) => item.name), []);
-  console.log(categories);
   return (
     <div className="space-y-3">
       {/* header */}

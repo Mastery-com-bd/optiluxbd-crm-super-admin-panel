@@ -1,4 +1,4 @@
-'use client'
+"use client";
 import { Card } from "@/components/ui/card";
 import Link from "next/link";
 import { useState } from "react";
@@ -10,8 +10,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { ChevronDown } from "lucide-react";
-import ChartComponent from "./AreaChart";
-import ProductCard from "./ProductCard";
+import ChartComponent from "../customComponent/shared/AreaChart";
+import ProductCard from "../ProductCard";
 
 export type TProductdata = {
   name: string;
@@ -88,17 +88,17 @@ const Organization = () => {
               {/* status drodpown */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                    <Button
-                      variant="default"
-                      className="flex items-center text-[14px] font-normal border-none px-3.5 py-2 rounded-[12px] cursor-pointer bg-transparent"
-                    >
-                      <p className="flex items-center gap-2">
-                        <span className="text-[14px]">
-                          {date === "All" ? "Select Days" : date}
-                        </span>
-                        <ChevronDown size={18} />
-                      </p>
-                    </Button>
+                  <Button
+                    variant="default"
+                    className="flex items-center text-[14px] font-normal border-none px-3.5 py-2 rounded-[12px] cursor-pointer bg-transparent"
+                  >
+                    <p className="flex items-center gap-2">
+                      <span className="text-[14px]">
+                        {date === "All" ? "Select Days" : date}
+                      </span>
+                      <ChevronDown size={18} />
+                    </p>
+                  </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent
                   align="end"
