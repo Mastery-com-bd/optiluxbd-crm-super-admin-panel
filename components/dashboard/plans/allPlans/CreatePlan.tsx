@@ -19,7 +19,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { createPlan, updatePlan } from "@/service/plans";
+import { createPlan, TPlanForm, updatePlan } from "@/service/plans";
 import { TPlan } from "@/types/plan.types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Plus, SquarePen, Trash2 } from "lucide-react";
@@ -66,18 +66,23 @@ const CreatePlan = ({ plan }: { plan?: TPlan }) => {
   });
 
   const onSubmit = async (data: TCreatePlan) => {
-    const payload = {
-      ...data,
-      price: Number(data.price),
-      features: data.features.map((f: any) => f.value),
-    };
+    const payload: Partial<TPlanForm> = {};
+    if (plan?.features) {
+      payload.price = Number(data.price);
+      payload.name = data.name;
+    } else {
+      payload.name = data.name;
+      payload.price = Number(data.price);
+      payload.features = data.features.map((f: any) => f.value);
+    }
+
     const toastId = toast.loading("creating plan...", { duration: 3000 });
     try {
       let result;
       if (plan) {
         result = await updatePlan(payload, plan?.id);
       } else {
-        result = await createPlan(payload);
+        result = await createPlan(payload as TPlanForm);
       }
 
       if (result?.success) {
@@ -183,52 +188,54 @@ const CreatePlan = ({ plan }: { plan?: TPlan }) => {
               </div>
 
               {/* Dynamic Features */}
-              <div className="space-y-2">
-                <FormLabel className="text-xs font-normal text-white">
-                  Features
-                </FormLabel>
+              {!plan?.features.length && (
+                <div className="space-y-2">
+                  <FormLabel className="text-xs font-normal text-white">
+                    Features
+                  </FormLabel>
 
-                {fields.map((field, index) => (
-                  <div key={field.id} className="flex items-center gap-2">
-                    <FormField
-                      control={form.control}
-                      name={`features.${index}.value`}
-                      render={({ field }) => (
-                        <FormItem className="w-full">
-                          <FormControl>
-                            <Input
-                              placeholder={`${
-                                plan?.features?.[index]?.name ||
-                                `enter features`
-                              }`}
-                              className="bg-white/10 border-none rounded-lg text-white"
-                              {...field}
-                              value={field.value || ""}
-                            />
-                          </FormControl>
-                          <FormMessage className="text-[10px]" />
-                        </FormItem>
-                      )}
-                    />
+                  {fields.map((field, index) => (
+                    <div key={field.id} className="flex items-center gap-2">
+                      <FormField
+                        control={form.control}
+                        name={`features.${index}.value`}
+                        render={({ field }) => (
+                          <FormItem className="w-full">
+                            <FormControl>
+                              <Input
+                                placeholder={`${
+                                  plan?.features?.[index]?.name ||
+                                  `enter features`
+                                }`}
+                                className="bg-white/10 border-none rounded-lg text-white"
+                                {...field}
+                                value={field.value || ""}
+                              />
+                            </FormControl>
+                            <FormMessage className="text-[10px]" />
+                          </FormItem>
+                        )}
+                      />
 
-                    <button
-                      type="button"
-                      className="text-red-500 text-sm"
-                      onClick={() => remove(index)}
-                    >
-                      <Trash2 size={16} />
-                    </button>
-                  </div>
-                ))}
+                      <button
+                        type="button"
+                        className="text-red-500 text-sm"
+                        onClick={() => remove(index)}
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
+                  ))}
 
-                <button
-                  type="button"
-                  className="text-green-400 mt-1"
-                  onClick={() => append({ value: "" })}
-                >
-                  + Add Feature
-                </button>
-              </div>
+                  <button
+                    type="button"
+                    className="text-green-400 mt-1"
+                    onClick={() => append({ value: "" })}
+                  >
+                    + Add Feature
+                  </button>
+                </div>
+              )}
             </div>
           </form>
         </Form>

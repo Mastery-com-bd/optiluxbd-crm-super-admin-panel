@@ -11,7 +11,7 @@ export type TQuery = {
   [key: string]: string | string[] | number | undefined;
 };
 
-type TPlanForm = {
+export type TPlanForm = {
   name: string;
   price: number;
   features: string[];

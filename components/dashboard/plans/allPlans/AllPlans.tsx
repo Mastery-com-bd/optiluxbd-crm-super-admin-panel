@@ -4,7 +4,6 @@ import PlanCard from "./PlanCard";
 import CreatePlan from "./CreatePlan";
 
 const AllPlans = ({ plans }: { plans: TPlan[] }) => {
-  console.log(plans);
   return (
     <div className="bg-white/5 rounded-2xl p-6 space-y-6 min-h-screen">
       <div className="flex items-center justify-between ">

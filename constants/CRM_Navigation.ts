@@ -1,4 +1,4 @@
-import { CircleGauge, Handbag, Podcast, Tag, Tv } from "lucide-react";
+import { CircleGauge, Handbag, Podcast, Settings, Tag, Tv } from "lucide-react";
 import { LucideIcon } from "lucide-react";
 
 export interface NavRoute {
@@ -50,6 +50,11 @@ export const crmRoutes: TCrmNavigation = {
       title: "Broadcasts",
       icon: Tv,
       path: "/dashboard/broadcasts",
+    },
+    {
+      title: "Settings",
+      icon: Settings,
+      path: "/dashboard/settings",
     },
   ],
 

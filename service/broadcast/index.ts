@@ -17,19 +17,16 @@ type TBroadcastForm = {
 export const getAllBroadcast = async (query?: TQuery) => {
   const token = (await getAccesstoken()) as string;
   try {
-    const res = await fetch(
-      `${config.next_public_base_api}/admin/broadcasts?${buildParams(query)}`,
-      {
-        method: "GET",
-        headers: {
-          Authorization: token,
-        },
-        next: {
-          tags: ["Broadcasts"],
-          revalidate: 30,
-        },
+    const res = await fetch(`${config.next_public_base_api}/admin/broadcasts`, {
+      method: "GET",
+      headers: {
+        Authorization: token,
       },
-    );
+      next: {
+        tags: ["Broadcasts"],
+        revalidate: 30,
+      },
+    });
     const result = await res.json();
     return result;
   } catch (error: any) {
