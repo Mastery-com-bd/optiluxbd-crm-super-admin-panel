@@ -8,7 +8,7 @@ import { Activity } from "react";
 import { Badge } from "@/components/ui/badge";
 export default function OrgDetails({ data }: { data: OrganizationData }) {
     return (
-        <div className="min-h-screen  rounded-2xl p-4 md:p-8">
+        <div className="min-h-screen  rounded-2xl p-4 ">
             <div className="max-w-6xl mx-auto space-y-8">
 
                 {/* --- HERO SECTION --- */}

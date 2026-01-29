@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import * as z from "zod";
+import { TPlan } from "./plan.types";
 
 export const orgSchema = (isUpdate?: boolean) => z.object({
     name: z.string().min(2, "Name is required"),
@@ -19,28 +20,6 @@ export const orgSchema = (isUpdate?: boolean) => z.object({
 
 export type OrgFormValues = z.infer<ReturnType<typeof orgSchema>>;
 
-export interface Plan {
-    id: number;
-    name: string;
-    slug: string;
-    description: string | null;
-    isActive: boolean;
-    isPublic: boolean;
-    priceDaily: string | null;
-    priceMonthly: string;
-    priceYearly: string;
-    priceOneTime: string | null;
-    maxUsers: number;
-    maxCustomers: number;
-    maxLocations: number;
-    maxProducts: number;
-    maxInvoices: number;
-    maxStorage: number;
-    trialDays: number;
-    isOneTime: boolean;
-    createdAt: string;
-    updatedAt: string;
-}
 
 
 export interface OrganizationData {
@@ -74,7 +53,7 @@ export interface OrganizationData {
     createdAt: string;
     updatedAt: string;
     trialEndsAt: string;
-    plan: Plan;
+    plan: TPlan;
 }
 
 export type Organizations =
