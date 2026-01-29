@@ -5,6 +5,7 @@ import { config } from "@/config";
 import { getAccesstoken } from "../authService";
 import { getValidToken } from "../authService/validToken";
 import { revalidatePath } from "next/cache";
+import { TBranding } from "@/types/settings.types";
 
 export const getBranding = async () => {
   const token = (await getAccesstoken()) as string;
@@ -29,7 +30,8 @@ export const getBranding = async () => {
   }
 };
 
-export const updateBranding = async (data: any) => {
+export const updateBranding = async (data: Partial<TBranding>) => {
+  console.log(data);
   const token = await getValidToken();
   try {
     const res = await fetch(

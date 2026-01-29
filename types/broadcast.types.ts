@@ -5,4 +5,12 @@ export type TBroadcast = {
   title: string;
   message: string;
   priority: TPriority;
+  createdAt: string;
+  createdBy: number;
+  expiresAt: string | null;
+  isActive: boolean;
+  isRead: boolean;
+  readAt: string | null;
+  type: string;
+  updatedAt: string;
 };

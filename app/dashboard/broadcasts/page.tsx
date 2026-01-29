@@ -3,7 +3,7 @@ import { getAllBroadcast } from "@/service/broadcast";
 
 const BroadcastPage = async () => {
   const result = await getAllBroadcast();
-  console.log(result);
+  console.log(result?.data);
   const broadcasts = result?.data;
 
   return (

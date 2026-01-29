@@ -1,8 +1,12 @@
+"use client";
 import PageHeader from "@/components/shared/pageHeader";
 import { TBroadcast } from "@/types/broadcast.types";
 import CreateBroadcast from "./CreateBroadcast";
+import { broadcastTableColumn } from "./BroadcastTable";
+import TableComponent from "@/components/ui/TableComponent";
 
 const AllBroadcast = ({ broadcasts }: { broadcasts: TBroadcast[] }) => {
+  const column = broadcastTableColumn();
   return (
     <div className="bg-white/5 rounded-2xl p-6 space-y-6 min-h-screen">
       <div className="flex items-center justify-between ">
@@ -13,11 +17,7 @@ const AllBroadcast = ({ broadcasts }: { broadcasts: TBroadcast[] }) => {
         <CreateBroadcast />
       </div>
 
-      {/* <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        {plans.map((plan) => (
-          <PlanCard key={plan?.id} plan={plan} />
-        ))}
-      </div> */}
+      <TableComponent data={broadcasts} columns={column} />
     </div>
   );
 };

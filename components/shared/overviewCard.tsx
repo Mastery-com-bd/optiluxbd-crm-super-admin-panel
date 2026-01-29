@@ -4,19 +4,17 @@ import { useState } from "react";
 
 const timeFilters = ["1D", "7D", "1M", "6M", "1Y"];
 
-interface OverviewCardProps {
-  stats: {
-    icon: LucideIcon;
-    label: string;
-    value: string;
-    isPositive?: boolean;
-    change?: string;
-    highlight?: boolean;
-    highlightColor?: string;
-  }[];
+export interface OverviewCardProps {
+  icon: LucideIcon;
+  label: string;
+  value: string;
+  isPositive?: boolean;
+  change?: string;
+  highlight?: boolean;
+  highlightColor?: string;
 }
 
-export function OverviewCard({ stats }: OverviewCardProps) {
+export function OverviewCard({ stats }: { stats: OverviewCardProps[] }) {
   const [activeFilter, setActiveFilter] = useState("1M");
 
   return (
@@ -31,8 +29,11 @@ export function OverviewCard({ stats }: OverviewCardProps) {
             <button
               key={idx}
               onClick={() => setActiveFilter(filter)}
-              className={`px-4 py-2 text-sm font-semibold text-white rounded-[21px]  ${activeFilter == filter ? "overviewButtonEffect" : "text-[#F3F3F3]"
-                }`}
+              className={`px-4 py-2 text-sm font-semibold text-white rounded-[21px]  ${
+                activeFilter == filter
+                  ? "overviewButtonEffect"
+                  : "text-[#F3F3F3]"
+              }`}
             >
               {filter}
             </button>
@@ -57,8 +58,11 @@ export function OverviewCard({ stats }: OverviewCardProps) {
 
               {/* Value */}
               <p
-                className={`text-[50px] leading-[1.2] font-normal ${stat.highlight ? `${stat.highlightColor ? stat.highlightColor : "text-[#58E081]"}` : "text-white"
-                  } mb-3`}
+                className={`text-[50px] leading-[1.2] font-normal ${
+                  stat.highlight
+                    ? `${stat.highlightColor ? stat.highlightColor : "text-[#58E081]"}`
+                    : "text-white"
+                } mb-3`}
               >
                 {stat.value}
               </p>
@@ -66,24 +70,27 @@ export function OverviewCard({ stats }: OverviewCardProps) {
               {/* Change */}
               {stat.change && (
                 <div className="flex items-center gap-2">
-                    <div className={`flex justify-center items-center px-2 py-1.5 gap-1 effectBlack bg-transparent rounded-xl ${stat?.isPositive ? "bg-[#00A6560D]!" : "bg-[#FF6A550D]!"}`}>
-                      {stat.isPositive ? (
-                        <div>
-                          {stat?.isPositive ? (
-                            <ArrowUpIcon className="w-3 h-3" />
-                          ) : (
-                            <ArrowDownIcon className="w-3 h-3" />
-                          )}
-                        </div>
-                      ) : null}
-                      <span
-                        className={`${stat?.isPositive ? "text-[#00A656]" : "text-[#FF6A55]"
-                          }`}
-                      >
-                        {stat.change}
-                      </span>{" "}
-                      %
-                    </div>
+                  <div
+                    className={`flex justify-center items-center px-2 py-1.5 gap-1 effectBlack bg-transparent rounded-xl ${stat?.isPositive ? "bg-[#00A6560D]!" : "bg-[#FF6A550D]!"}`}
+                  >
+                    {stat.isPositive ? (
+                      <div>
+                        {stat?.isPositive ? (
+                          <ArrowUpIcon className="w-3 h-3" />
+                        ) : (
+                          <ArrowDownIcon className="w-3 h-3" />
+                        )}
+                      </div>
+                    ) : null}
+                    <span
+                      className={`${
+                        stat?.isPositive ? "text-[#00A656]" : "text-[#FF6A55]"
+                      }`}
+                    >
+                      {stat.change}
+                    </span>{" "}
+                    %
+                  </div>
                   <span className="text-[#EBEBEB] text-sm">vs last year</span>
                 </div>
               )}
