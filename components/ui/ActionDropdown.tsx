@@ -11,10 +11,12 @@ import {
 import Link from "next/link";
 import { Dispatch, ReactNode, SetStateAction, useState } from "react";
 import DeleteComponent from "./DeleteComponent";
+import ConfirmComponent from "./ConfirmComponent";
 
 type TDropdownProps = {
   id: string;
   path?: string;
+  type?: string;
   handleDelete: (
     id: string,
     setOpen: Dispatch<SetStateAction<boolean>>,
@@ -26,6 +28,7 @@ type TDropdownProps = {
 const ActionDropdown = ({
   id,
   path,
+  type,
   handleDelete,
   children,
 }: TDropdownProps) => {
@@ -53,12 +56,21 @@ const ActionDropdown = ({
           className="text-red-600"
           onClick={(e) => e.preventDefault()}
         >
-          <DeleteComponent
-            id={id}
-            onDelete={handleDelete}
-            loading={loading}
-            setLoading={setLoading}
-          />
+          {type ? (
+            <ConfirmComponent
+              id={id}
+              onChange={handleDelete}
+              loading={loading}
+              setLoading={setLoading}
+            />
+          ) : (
+            <DeleteComponent
+              id={id}
+              onDelete={handleDelete}
+              loading={loading}
+              setLoading={setLoading}
+            />
+          )}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

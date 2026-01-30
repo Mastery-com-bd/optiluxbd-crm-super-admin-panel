@@ -1,4 +1,5 @@
 import {
+  CircleDollarSign,
   CircleGauge,
   Handbag,
   Notebook,
@@ -76,6 +77,11 @@ export const crmRoutes: TCrmNavigation = {
       title: "Broadcasts",
       icon: Tv,
       path: "/dashboard/broadcasts",
+    },
+    {
+      title: "Payments",
+      icon: CircleDollarSign,
+      path: "/dashboard/payments",
     },
 
     {

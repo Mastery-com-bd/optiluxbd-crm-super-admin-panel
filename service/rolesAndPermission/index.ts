@@ -98,7 +98,7 @@ export const deleteRole = async (id: string) => {
     const res = await fetch(
       `${config.next_public_base_api}/admin/roles/${id}/remove`,
       {
-        method: "DELETE",
+        method: "POST",
         headers: {
           Authorization: token,
         },

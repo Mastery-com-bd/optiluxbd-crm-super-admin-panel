@@ -122,31 +122,31 @@ export const broadcastTableColumn = (): ColumnDef<TBroadcast>[] => [
       );
     },
   },
-  {
-    accessorKey: "expiresAt",
-    header: "Expires At",
-    cell: ({ row }) => {
-      const readAt = row.original?.expiresAt;
-      return (
-        <>
-          {readAt && (
-            <h1 className="flex flex-col items-start">
-              <span>
-                {
-                  convertDate(new Date(row.original?.expiresAt as string))
-                    .creationDate
-                }
-              </span>
-              <span>
-                {
-                  convertDate(new Date(row.original?.expiresAt as string))
-                    .creationTime
-                }
-              </span>
-            </h1>
-          )}
-        </>
-      );
-    },
-  },
+  // {
+  //   accessorKey: "expiresAt",
+  //   header: "Expires At",
+  //   cell: ({ row }) => {
+  //     const readAt = row.original?.expiresAt;
+  //     return (
+  //       <>
+  //         {readAt && (
+  //           <h1 className="flex flex-col items-start">
+  //             <span>
+  //               {
+  //                 convertDate(new Date(row.original?.expiresAt as string))
+  //                   .creationDate
+  //               }
+  //             </span>
+  //             <span>
+  //               {
+  //                 convertDate(new Date(row.original?.expiresAt as string))
+  //                   .creationTime
+  //               }
+  //             </span>
+  //           </h1>
+  //         )}
+  //       </>
+  //     );
+  //   },
+  // },
 ];

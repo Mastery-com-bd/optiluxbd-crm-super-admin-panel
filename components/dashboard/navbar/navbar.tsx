@@ -89,8 +89,8 @@ const Navbar: React.FC = () => {
           scrolled ? "px-4" : "px-0"
         }`}
       >
-        <div className="w-full flex items-center justify-between gap-2">
-          <div className="relative">
+        <div className="w-full flex items-center justify-end gap-2">
+          {/* <div className="relative">
             <Input
               className="px-10 py-1.5 w-64 text-sm bg-transparent"
               value={inputValue}
@@ -100,7 +100,7 @@ const Navbar: React.FC = () => {
               }}
               placeholder="Search "
             />
-          </div>
+          </div> */}
           <div className="flex items-center gap-4">
             {/* <NotificationBell /> */}
             <Popover>

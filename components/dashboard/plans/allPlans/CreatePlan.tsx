@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import CornerGlowSvg from "@/components/svgIcon/button/CornerGlowSvg";
@@ -30,14 +29,29 @@ import { TFeatureData } from "@/types/feature.types";
 import { TPlan } from "@/types/plan.types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Plus, SquarePen, Trash2 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { toast } from "sonner";
 import z from "zod";
 
 const formSchema = z.object({
   name: z.string().min(1, "Name must be at least 1 character."),
-  price: z.string().min(1, "Price is required."),
+  description: z.string().optional(),
+  priceDaily: z.string().optional(),
+  priceMonthly: z.string().min(1, "Monthly price is required."),
+  priceYearly: z.string().optional(),
+  priceOneTime: z.string().optional(),
+  maxUsers: z.string().optional(),
+  maxCustomers: z.string().optional(),
+  maxLocations: z.string().optional(),
+  maxProducts: z.string().optional(),
+  maxInvoices: z.string().optional(),
+  maxStorage: z.string().optional(),
+  maxApiCalls: z.string().optional(),
+  trialDays: z.string().optional(),
+  isOneTime: z.boolean().optional(),
+  isActive: z.boolean().optional(),
+  isPublic: z.boolean().optional(),
   features: z
     .array(
       z.object({
@@ -47,11 +61,7 @@ const formSchema = z.object({
     .min(1, "At least one feature is required"),
 });
 
-export type TCreatePlan = {
-  name: string;
-  price: string;
-  features: { value: string }[];
-};
+type TCreatePlan = z.infer<typeof formSchema>;
 
 const CreatePlan = ({
   plan,
@@ -65,8 +75,26 @@ const CreatePlan = ({
   const form = useForm<TCreatePlan>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      // Required
       name: plan?.name || "",
-      price: plan?.priceMonthly || "",
+      priceMonthly: plan?.priceMonthly?.toString() || "0",
+
+      // Optional fields
+      description: plan?.description || "",
+      priceDaily: plan?.priceDaily?.toString() || "",
+      priceYearly: plan?.priceYearly?.toString() || "",
+      priceOneTime: plan?.priceOneTime?.toString() || "",
+      maxUsers: plan?.maxUsers?.toString() || "1",
+      maxCustomers: plan?.maxCustomers?.toString() || "100",
+      maxLocations: plan?.maxLocations?.toString() || "1",
+      maxProducts: plan?.maxProducts?.toString() || "100",
+      maxInvoices: plan?.maxInvoices?.toString() || "100",
+      maxStorage: plan?.maxStorage?.toString() || "1024",
+      maxApiCalls: plan?.maxApiCalls?.toString() || "10000",
+      trialDays: plan?.trialDays?.toString() || "0",
+      isOneTime: plan?.isOneTime || false,
+      isActive: plan?.isActive ?? true,
+      isPublic: plan?.isPublic ?? true,
       features:
         plan?.features?.map((f) => ({
           value: f.name,
@@ -74,17 +102,16 @@ const CreatePlan = ({
     },
   });
 
-  useEffect(() => {
-    if (plan) {
-      form.reset({
-        name: plan.name,
-        price: plan.priceMonthly,
-        features: plan.features.map((f) => ({
-          value: f.name,
-        })),
-      });
-    }
-  }, [plan, form]);
+  // useEffect(() => {
+  //   if (plan) {
+  //     form.reset({
+  //       name: plan.name,
+  //       features: plan.features.map((f) => ({
+  //         value: f.name,
+  //       })),
+  //     });
+  //   }
+  // }, [plan, form]);
 
   const { fields, append, remove } = useFieldArray({
     control: form.control,
@@ -96,35 +123,44 @@ const CreatePlan = ({
   );
 
   const onSubmit = async (data: TCreatePlan) => {
-    const payload: Partial<TPlanForm> = {};
-    if (plan?.features) {
-      payload.price = Number(data.price);
-      payload.name = data.name;
-    } else {
-      payload.name = data.name;
-      payload.price = Number(data.price);
-      payload.features = data.features.map((f: any) => f.value);
-    }
-    console.log(payload);
-    const toastId = toast.loading("creating plan...", { duration: 3000 });
+    const payload: TPlanForm = {
+      name: data.name,
+      slug: data.name.toLowerCase().replace(/\s+/g, "-"),
+      description: data.description,
+      priceDaily: data.priceDaily ? Number(data.priceDaily) : undefined,
+      priceMonthly: Number(data.priceMonthly),
+      priceYearly: data.priceYearly ? Number(data.priceYearly) : 0,
+      priceOneTime: data.priceOneTime ? Number(data.priceOneTime) : undefined,
+      maxUsers: data.maxUsers ? Number(data.maxUsers) : 1,
+      maxCustomers: data.maxCustomers ? Number(data.maxCustomers) : 100,
+      maxLocations: data.maxLocations ? Number(data.maxLocations) : 1,
+      maxProducts: data.maxProducts ? Number(data.maxProducts) : 100,
+      maxInvoices: data.maxInvoices ? Number(data.maxInvoices) : 100,
+      maxStorage: data.maxStorage ? Number(data.maxStorage) : 1024,
+      maxApiCalls: data.maxApiCalls ? Number(data.maxApiCalls) : 10000,
+      trialDays: data.trialDays ? Number(data.trialDays) : 0,
+      isOneTime: Boolean(data.isOneTime),
+      isActive: Boolean(data.isActive),
+      isPublic: Boolean(data.isPublic),
+      features: data.features.map((f) => f.value),
+    };
+    const toastId = toast.loading("creating plan...");
+
     try {
-      let result;
-      if (plan) {
-        result = await updatePlan(payload, plan?.id);
-      } else {
-        result = await createPlan(payload as TPlanForm);
-      }
-      console.log(result);
+      const result = plan
+        ? await updatePlan(payload, plan.id)
+        : await createPlan(payload);
+
       if (result?.success) {
-        toast.success(result?.message, { id: toastId, duration: 3000 });
+        toast.success(result.message, { id: toastId });
         form.reset();
         setOpen(false);
       } else {
-        toast.error(result?.message, { id: toastId, duration: 3000 });
+        toast.error(result?.message, { id: toastId });
       }
-    } catch (error: any) {
-      console.log(error);
-      toast.error("Something went wrong", { id: toastId, duration: 3000 });
+    } catch (err) {
+      console.log(err);
+      toast.error("Something went wrong", { id: toastId });
     }
   };
 
@@ -173,7 +209,7 @@ const CreatePlan = ({
             </DialogHeader>
 
             <div className="space-y-4">
-              {/* Name and Price */}
+              {/* Name, Description, and Prices */}
               <div className="grid grid-cols-2 gap-4">
                 <FormField
                   control={form.control}
@@ -197,15 +233,98 @@ const CreatePlan = ({
 
                 <FormField
                   control={form.control}
-                  name="price"
+                  name="description"
                   render={({ field }) => (
                     <FormItem className="space-y-1">
                       <FormLabel className="text-xs font-normal text-white">
-                        Price
+                        Description
                       </FormLabel>
                       <FormControl>
                         <Input
-                          placeholder="Price in Taka"
+                          placeholder="Optional description"
+                          className="bg-white/10 border-none rounded-lg text-white"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage className="text-[10px]" />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="priceDaily"
+                  render={({ field }) => (
+                    <FormItem className="space-y-1">
+                      <FormLabel className="text-xs font-normal text-white">
+                        Daily Price
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Daily price"
+                          type="number"
+                          className="bg-white/10 border-none rounded-lg text-white"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage className="text-[10px]" />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="priceMonthly"
+                  render={({ field }) => (
+                    <FormItem className="space-y-1">
+                      <FormLabel className="text-xs font-normal text-white">
+                        Monthly Price
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Monthly price"
+                          type="number"
+                          className="bg-white/10 border-none rounded-lg text-white"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage className="text-[10px]" />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="priceYearly"
+                  render={({ field }) => (
+                    <FormItem className="space-y-1">
+                      <FormLabel className="text-xs font-normal text-white">
+                        Yearly Price
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Yearly price"
+                          type="number"
+                          className="bg-white/10 border-none rounded-lg text-white"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage className="text-[10px]" />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="priceOneTime"
+                  render={({ field }) => (
+                    <FormItem className="space-y-1">
+                      <FormLabel className="text-xs font-normal text-white">
+                        One-Time Price
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="One-time price"
                           type="number"
                           className="bg-white/10 border-none rounded-lg text-white"
                           {...field}
@@ -217,54 +336,126 @@ const CreatePlan = ({
                 />
               </div>
 
-              {/* Dynamic Features */}
-              <div className="flex gap-4">
-                {/* Dropdown */}
-                <div className="space-y-2 ">
+              {/* Limits */}
+              <div className="grid grid-cols-2 gap-4">
+                {[
+                  { name: "maxUsers", label: "Max Users" },
+                  { name: "maxCustomers", label: "Max Customers" },
+                  { name: "maxLocations", label: "Max Locations" },
+                  { name: "maxProducts", label: "Max Products" },
+                  { name: "maxInvoices", label: "Max Invoices" },
+                  { name: "maxStorage", label: "Max Storage (MB)" },
+                  { name: "maxApiCalls", label: "Max API Calls" },
+                  { name: "trialDays", label: "Trial Days" },
+                ].map((fieldItem) => (
                   <FormField
+                    key={fieldItem.name}
                     control={form.control}
-                    name="features"
-                    render={() => (
-                      <FormItem>
-                        <FormMessage />
+                    name={fieldItem.name as keyof TCreatePlan} // ✅ Correct
+                    render={({ field }) => (
+                      <FormItem className="space-y-1">
+                        <FormLabel className="text-xs font-normal text-white">
+                          {fieldItem.label}
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            type="number"
+                            placeholder={fieldItem.label}
+                            className="bg-white/10 border-none rounded-lg text-white"
+                            {...field}
+                            value={(field.value as string) || ""}
+                          />
+                        </FormControl>
+                        <FormMessage className="text-[10px]" />
                       </FormItem>
                     )}
                   />
+                ))}
+              </div>
 
-                  <FormLabel>Features</FormLabel>
+              <div className="flex items-center justify-between gap-6">
+                {/* featured */}
+                <div className="flex gap-4 w-full">
+                  {/* Dropdown */}
+                  <div className="space-y-2 ">
+                    <FormField
+                      control={form.control}
+                      name="features"
+                      render={() => (
+                        <FormItem>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
 
-                  <Select
-                    onValueChange={(value) => {
-                      if (!value) return;
-                      append({ value });
-                    }}
-                  >
-                    <SelectTrigger className="bg-white/10 border-none rounded-lg text-white">
-                      Select Feature
-                    </SelectTrigger>
+                    <FormLabel>Features</FormLabel>
 
-                    <SelectContent>
-                      {availableFeatures.map((feature) => (
-                        <SelectItem key={feature?.id} value={feature?.slug}>
-                          {feature?.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                    <Select
+                      onValueChange={(value) => {
+                        if (!value) return;
+                        append({ value });
+                      }}
+                    >
+                      <SelectTrigger className="bg-white/10 border-none rounded-lg text-white">
+                        Select Feature
+                      </SelectTrigger>
+
+                      <SelectContent>
+                        {availableFeatures.map((feature) => (
+                          <SelectItem key={feature?.id} value={feature?.slug}>
+                            {feature?.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="space-y-1">
+                    {fields.map((field, index) => (
+                      <div key={field?.id} className="flex items-center gap-2">
+                        <Input value={field?.value} disabled />
+
+                        <button
+                          type="button"
+                          onClick={() => remove(index)}
+                          className="text-red-500"
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
                 </div>
 
-                <div className="space-y-1">
-                  {fields.map((field, index) => (
-                    <div key={field?.id} className="flex items-center gap-2">
-                      <Input value={field?.value} disabled />
-
-                      <button
-                        type="button"
-                        onClick={() => remove(index)}
-                        className="text-red-500"
-                      >
-                        <Trash2 size={16} />
-                      </button>
+                {/* Boolean Flags */}
+                <div className="flex items-center w-full">
+                  {[
+                    { name: "isOneTime", label: "One Time" },
+                    { name: "isActive", label: "Active" },
+                    { name: "isPublic", label: "Public" },
+                  ].map((fieldItem) => (
+                    <div key={fieldItem.name} className="w-full">
+                      <FormField
+                        control={form.control}
+                        name={fieldItem.name as keyof TCreatePlan}
+                        render={({ field }) => (
+                          <FormItem className="flex items-center ">
+                            <Input
+                              type="checkbox"
+                              className="w-4 h-4"
+                              checked={!!field.value}
+                              onChange={(e) => field.onChange(e.target.checked)}
+                              onBlur={field.onBlur}
+                              name={field.name}
+                              ref={field.ref}
+                            />
+                            <FormLabel className="text-xs font-normal text-white w-full">
+                              {fieldItem.label}
+                            </FormLabel>
+                            <FormMessage className="text-xs" />
+                          </FormItem>
+                        )}
+                      />
                     </div>
                   ))}
                 </div>

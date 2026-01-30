@@ -13,7 +13,23 @@ export type TQuery = {
 
 export type TPlanForm = {
   name: string;
-  price: number;
+  slug: string;
+  description?: string;
+  isActive: boolean;
+  isPublic: boolean;
+  priceDaily?: number;
+  priceMonthly: number;
+  priceYearly: number;
+  priceOneTime?: number;
+  maxUsers: number;
+  maxCustomers: number;
+  maxLocations: number;
+  maxProducts: number;
+  maxInvoices: number;
+  maxStorage: number;
+  maxApiCalls: number;
+  trialDays: number;
+  isOneTime: boolean;
   features: string[];
 };
 
