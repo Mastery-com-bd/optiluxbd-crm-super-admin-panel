@@ -19,11 +19,18 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+} from "@/components/ui/select";
 import { createPlan, TPlanForm, updatePlan } from "@/service/plans";
+import { TFeatureData } from "@/types/feature.types";
 import { TPlan } from "@/types/plan.types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Plus, SquarePen, Trash2 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { toast } from "sonner";
 import z from "zod";
@@ -34,7 +41,7 @@ const formSchema = z.object({
   features: z
     .array(
       z.object({
-        value: z.string().min(1, "Feature cannot be empty"),
+        value: z.string().min(1),
       }),
     )
     .min(1, "At least one feature is required"),
@@ -46,7 +53,13 @@ export type TCreatePlan = {
   features: { value: string }[];
 };
 
-const CreatePlan = ({ plan }: { plan?: TPlan }) => {
+const CreatePlan = ({
+  plan,
+  features = [],
+}: {
+  plan?: TPlan;
+  features: TFeatureData[];
+}) => {
   const [open, setOpen] = useState(false);
 
   const form = useForm<TCreatePlan>({
@@ -54,16 +67,33 @@ const CreatePlan = ({ plan }: { plan?: TPlan }) => {
     defaultValues: {
       name: plan?.name || "",
       price: plan?.priceMonthly || "",
-      features: plan?.features.length
-        ? plan?.features.map((f) => ({ value: f?.name }))
-        : [{ value: "" }],
+      features:
+        plan?.features?.map((f) => ({
+          value: f.name,
+        })) || [],
     },
   });
+
+  useEffect(() => {
+    if (plan) {
+      form.reset({
+        name: plan.name,
+        price: plan.priceMonthly,
+        features: plan.features.map((f) => ({
+          value: f.name,
+        })),
+      });
+    }
+  }, [plan, form]);
 
   const { fields, append, remove } = useFieldArray({
     control: form.control,
     name: "features",
   });
+
+  const availableFeatures = features.filter(
+    (f) => !fields.some((field) => field.value === f.slug),
+  );
 
   const onSubmit = async (data: TCreatePlan) => {
     const payload: Partial<TPlanForm> = {};
@@ -75,7 +105,7 @@ const CreatePlan = ({ plan }: { plan?: TPlan }) => {
       payload.price = Number(data.price);
       payload.features = data.features.map((f: any) => f.value);
     }
-
+    console.log(payload);
     const toastId = toast.loading("creating plan...", { duration: 3000 });
     try {
       let result;
@@ -84,7 +114,7 @@ const CreatePlan = ({ plan }: { plan?: TPlan }) => {
       } else {
         result = await createPlan(payload as TPlanForm);
       }
-
+      console.log(result);
       if (result?.success) {
         toast.success(result?.message, { id: toastId, duration: 3000 });
         form.reset();
@@ -188,54 +218,57 @@ const CreatePlan = ({ plan }: { plan?: TPlan }) => {
               </div>
 
               {/* Dynamic Features */}
-              {!plan?.features.length && (
-                <div className="space-y-2">
-                  <FormLabel className="text-xs font-normal text-white">
-                    Features
-                  </FormLabel>
+              <div className="flex gap-4">
+                {/* Dropdown */}
+                <div className="space-y-2 ">
+                  <FormField
+                    control={form.control}
+                    name="features"
+                    render={() => (
+                      <FormItem>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
+                  <FormLabel>Features</FormLabel>
+
+                  <Select
+                    onValueChange={(value) => {
+                      if (!value) return;
+                      append({ value });
+                    }}
+                  >
+                    <SelectTrigger className="bg-white/10 border-none rounded-lg text-white">
+                      Select Feature
+                    </SelectTrigger>
+
+                    <SelectContent>
+                      {availableFeatures.map((feature) => (
+                        <SelectItem key={feature?.id} value={feature?.slug}>
+                          {feature?.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-1">
                   {fields.map((field, index) => (
-                    <div key={field.id} className="flex items-center gap-2">
-                      <FormField
-                        control={form.control}
-                        name={`features.${index}.value`}
-                        render={({ field }) => (
-                          <FormItem className="w-full">
-                            <FormControl>
-                              <Input
-                                placeholder={`${
-                                  plan?.features?.[index]?.name ||
-                                  `enter features`
-                                }`}
-                                className="bg-white/10 border-none rounded-lg text-white"
-                                {...field}
-                                value={field.value || ""}
-                              />
-                            </FormControl>
-                            <FormMessage className="text-[10px]" />
-                          </FormItem>
-                        )}
-                      />
+                    <div key={field?.id} className="flex items-center gap-2">
+                      <Input value={field?.value} disabled />
 
                       <button
                         type="button"
-                        className="text-red-500 text-sm"
                         onClick={() => remove(index)}
+                        className="text-red-500"
                       >
                         <Trash2 size={16} />
                       </button>
                     </div>
                   ))}
-
-                  <button
-                    type="button"
-                    className="text-green-400 mt-1"
-                    onClick={() => append({ value: "" })}
-                  >
-                    + Add Feature
-                  </button>
                 </div>
-              )}
+              </div>
             </div>
           </form>
         </Form>

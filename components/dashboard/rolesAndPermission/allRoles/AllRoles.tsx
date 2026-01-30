@@ -4,6 +4,7 @@ import PageHeader from "@/components/shared/pageHeader";
 import TableComponent from "@/components/ui/TableComponent";
 import { TRoles } from "@/types/roles.types";
 import { RoleTableColumn } from "./RolesTableColumn";
+import CreateRoles from "./CreateRoles";
 
 const AllRoles = ({ roles }: { roles: TRoles[] }) => {
   const column = RoleTableColumn();
@@ -14,6 +15,7 @@ const AllRoles = ({ roles }: { roles: TRoles[] }) => {
           title="Roles List"
           description="Here all the roles with the permission for the system is listed "
         />
+        <CreateRoles />
       </div>
 
       <TableComponent data={roles} columns={column} />
