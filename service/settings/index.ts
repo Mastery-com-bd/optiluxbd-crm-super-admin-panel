@@ -52,3 +52,45 @@ export const updateBranding = async (data: Partial<TBranding>) => {
     return Error(error);
   }
 };
+
+export const uploadLogo = async (data: FormData) => {
+  const token = await getValidToken();
+  try {
+    const res = await fetch(
+      `${config.next_public_base_api}/admin/settings/branding/logo`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: token,
+        },
+        body: data,
+      },
+    );
+    const result = await res.json();
+    revalidatePath("/dashboard/settings");
+    return result;
+  } catch (error: any) {
+    return Error(error);
+  }
+};
+
+export const uploadFavicon = async (data: FormData) => {
+  const token = await getValidToken();
+  try {
+    const res = await fetch(
+      `${config.next_public_base_api}/admin/settings/branding/favicon`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: token,
+        },
+        body: data,
+      },
+    );
+    const result = await res.json();
+    revalidatePath("/dashboard/settings");
+    return result;
+  } catch (error: any) {
+    return Error(error);
+  }
+};

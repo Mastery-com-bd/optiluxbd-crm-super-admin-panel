@@ -17,7 +17,8 @@ import {
 } from "@/redux/slice/settingsSlice";
 import { useEffect } from "react";
 import { toast } from "sonner";
-import { updateBranding } from "@/service/settings";
+import { updateBranding, uploadFavicon, uploadLogo } from "@/service/settings";
+import ImageUploader from "@/components/ui/ImageUploader";
 
 const AllBrandList = ({ branding }: { branding: TBranding }) => {
   const currentBranding = useAppSelector(currentBrand);
@@ -34,6 +35,47 @@ const AllBrandList = ({ branding }: { branding: TBranding }) => {
     value: TBranding[K],
   ) => {
     dispatch(updateBrandingField({ key, value }));
+  };
+
+  const handleLogoChnage = async (image: File) => {
+    const formData = new FormData();
+    const toastId = toast.loading("logo uploading", { duration: 3000 });
+    if (!image) {
+      toast.error("logo is required", { id: toastId, duration: 3000 });
+      return;
+    }
+
+    formData.append("logo", image);
+    try {
+      const result = await uploadLogo(formData);
+      if (result?.success) {
+        toast.success(result?.message, { id: toastId, duration: 3000 });
+      } else {
+        toast.error(result?.message, { id: toastId, duration: 3000 });
+      }
+    } catch (error: any) {
+      console.log(error);
+    }
+  };
+  const handleFaviconChnage = async (image: File) => {
+    const formData = new FormData();
+    const toastId = toast.loading("favicon uploading", { duration: 3000 });
+    if (!image) {
+      toast.error("favicon is required", { id: toastId, duration: 3000 });
+      return;
+    }
+
+    formData.append("favicon", image);
+    try {
+      const result = await uploadFavicon(formData);
+      if (result?.success) {
+        toast.success(result?.message, { id: toastId, duration: 3000 });
+      } else {
+        toast.error(result?.message, { id: toastId, duration: 3000 });
+      }
+    } catch (error: any) {
+      console.log(error);
+    }
   };
 
   const handleSubmit = async () => {
@@ -141,17 +183,14 @@ const AllBrandList = ({ branding }: { branding: TBranding }) => {
             <CardTitle>Brand Assets</CardTitle>
           </CardHeader>
 
-          <CardContent className="grid md:grid-cols-2 gap-4">
-            <InputField
-              label="Logo URL"
-              value={currentBranding.logoUrl}
-              onChange={(v) => handleChange("logoUrl", v)}
+          <CardContent className="flex items-center justify-between">
+            <ImageUploader
+              image={branding?.logoUrl as string}
+              handleChange={handleLogoChnage}
             />
-
-            <InputField
-              label="Favicon URL"
-              value={currentBranding.faviconUrl}
-              onChange={(v) => handleChange("faviconUrl", v)}
+            <ImageUploader
+              image={branding?.faviconUrl as string}
+              handleChange={handleFaviconChnage}
             />
           </CardContent>
         </Card>
