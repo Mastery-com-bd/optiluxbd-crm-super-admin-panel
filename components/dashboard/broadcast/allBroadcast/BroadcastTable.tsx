@@ -29,14 +29,14 @@ export const broadcastTableColumn = (): ColumnDef<TBroadcast>[] => [
       return <TooltipComponent name={name} trimedName={trimedName} />;
     },
   },
-  {
-    accessorKey: "priority",
-    header: "Priority",
-    cell: ({ row }) => {
-      const priority = row.original?.priority;
-      return <Badge variant="secondary">{priority}</Badge>;
-    },
-  },
+  // {
+  //   accessorKey: "priority",
+  //   header: "Priority",
+  //   cell: ({ row }) => {
+  //     const priority = row.original?.priority;
+  //     return <Badge variant="secondary">{priority}</Badge>;
+  //   },
+  // },
   {
     accessorKey: "type",
     header: "Type",

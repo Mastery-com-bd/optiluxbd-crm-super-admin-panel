@@ -1,6 +1,8 @@
 import { OrganizationData } from "./organizations";
 import { TPlan } from "./plan.types";
 
+export type TStatus = "PAID" | "PENDING" | "REJECTED" | "CANCELLED";
+
 export type TPaytment = {
   id: number;
   organization: OrganizationData;
@@ -19,7 +21,7 @@ export type TPaytment = {
   currency: string;
   invoiceNumber: string | null;
   transactionReference: string;
-  status: string;
+  status: TStatus;
   proofUrl: string | null;
   rejectionReason: string | null;
 };

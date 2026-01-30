@@ -7,12 +7,7 @@ import { TQuery } from "../plans";
 import { config } from "@/config";
 import { getValidToken } from "../authService/validToken";
 import { revalidatePath } from "next/cache";
-
-type TBroadcastForm = {
-  title: string;
-  message: string;
-  priority: string;
-};
+import { TCreateBroadCast } from "@/components/dashboard/broadcast/allBroadcast/CreateBroadcast";
 
 export const getAllBroadcast = async (query?: TQuery) => {
   const token = (await getAccesstoken()) as string;
@@ -34,7 +29,7 @@ export const getAllBroadcast = async (query?: TQuery) => {
   }
 };
 
-export const createBroadcast = async (data: TBroadcastForm) => {
+export const createBroadcast = async (data: TCreateBroadCast) => {
   const token = await getValidToken();
   try {
     const res = await fetch(`${config.next_public_base_api}/admin/broadcasts`, {

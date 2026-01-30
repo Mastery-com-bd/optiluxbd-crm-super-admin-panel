@@ -7,7 +7,7 @@ import { convertDate } from "@/utils/convertDate";
 import { ColumnDef } from "@tanstack/react-table";
 import { Dispatch, SetStateAction } from "react";
 import { toast } from "sonner";
-import { TPaytment } from "@/types/payment.types";
+import { TPaytment, TStatus } from "@/types/payment.types";
 import { approvePayment } from "@/service/payment";
 
 export const paymentTableColumn = (): ColumnDef<TPaytment>[] => [
@@ -37,7 +37,9 @@ export const paymentTableColumn = (): ColumnDef<TPaytment>[] => [
     header: "Amount",
     cell: ({ row }) => {
       const amount = row.original?.amount;
-      return <p>{amount}</p>;
+      return (
+        <p className="text-xs whitespace-nowrap text-green-800">{amount}</p>
+      );
     },
   },
   {
@@ -45,15 +47,21 @@ export const paymentTableColumn = (): ColumnDef<TPaytment>[] => [
     header: "Billing",
     cell: ({ row }) => {
       const billingCycle = row.original?.billingCycle;
-      return <p>{billingCycle}</p>;
+      return <p className="text-xs whitespace-nowrap">{billingCycle}</p>;
     },
   },
   {
     accessorKey: "status",
     header: "Status",
     cell: ({ row }) => {
-      const status = row.original?.status;
-      return <p>{status}</p>;
+      const status = row.original?.status as TStatus;
+      return (
+        <span
+          className={`px-3 py-1 rounded-full  font-medium text-xs whitespace-nowrap `}
+        >
+          {status}
+        </span>
+      );
     },
   },
   {
@@ -75,7 +83,7 @@ export const paymentTableColumn = (): ColumnDef<TPaytment>[] => [
           ? transactionId.slice(0, 10) + "..."
           : transactionId;
       return (
-        <div className=" flex items-center gap-2">
+        <div className=" flex items-center gap-2 text-xs whitespace-nowrap">
           <TooltipComponent name={transactionId} trimedName={trimedName} />;
         </div>
       );
@@ -90,10 +98,10 @@ export const paymentTableColumn = (): ColumnDef<TPaytment>[] => [
       );
 
       return (
-        <h1 className="flex flex-col items-start">
-          <span>{creationDate}</span>
-          <span>{creationTime}</span>
-        </h1>
+        <div className="flex flex-col text-xs leading-tight whitespace-nowrap">
+          <span className="font-medium">{creationDate}</span>
+          <span className="text-muted-foreground">{creationTime}</span>
+        </div>
       );
     },
   },
@@ -106,10 +114,10 @@ export const paymentTableColumn = (): ColumnDef<TPaytment>[] => [
       );
 
       return (
-        <h1 className="flex flex-col items-start">
-          <span>{creationDate}</span>
-          <span>{creationTime}</span>
-        </h1>
+        <div className="flex flex-col text-xs leading-tight whitespace-nowrap">
+          <span className="font-medium">{creationDate}</span>
+          <span className="text-muted-foreground">{creationTime}</span>
+        </div>
       );
     },
   },

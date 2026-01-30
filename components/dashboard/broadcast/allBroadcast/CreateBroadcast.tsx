@@ -34,6 +34,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Button } from "@/components/ui/button";
+import { format } from "date-fns";
+import { Calendar } from "@/components/ui/calendar";
 
 const formSchema = z.object({
   title: z
@@ -42,10 +50,14 @@ const formSchema = z.object({
   message: z
     .string({ message: "message is required" })
     .min(1, "Mrssage must be at least 1 character."),
-  priority: z.enum(["LOW", "NORMAL", "HIGH", "URGENT"], "priority is required"),
+  type: z.enum(
+    ["INFO", "WARNING", "MAINTENANCE", "URGENT"],
+    "type is required",
+  ),
+  expiresAt: z.string().optional(),
 });
 
-type TCreateBroadCast = z.infer<typeof formSchema>;
+export type TCreateBroadCast = z.infer<typeof formSchema>;
 
 const CreateBroadcast = ({ broadcast }: { broadcast?: TBroadcast }) => {
   const [open, setOpen] = useState(false);
@@ -55,7 +67,8 @@ const CreateBroadcast = ({ broadcast }: { broadcast?: TBroadcast }) => {
     defaultValues: {
       title: broadcast?.title ?? "",
       message: broadcast?.message ?? "",
-      priority: broadcast?.priority ?? "LOW",
+      type: broadcast?.type ?? "INFO",
+      expiresAt: broadcast?.type ?? "",
     },
   });
 
@@ -146,38 +159,85 @@ const CreateBroadcast = ({ broadcast }: { broadcast?: TBroadcast }) => {
                   </FormItem>
                 )}
               />
+              <div className="flex items-start justify-between">
+                <div className="space-y-2">
+                  <FormLabel>Select Priority</FormLabel>
+                  <Controller
+                    name="type"
+                    control={form.control}
+                    render={({ field }) => (
+                      <Select
+                        value={field.value}
+                        onValueChange={field.onChange}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Type" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {["INFO", "WARNING", "MAINTENANCE", "URGENT"].map(
+                            (item, i) => {
+                              const formatted =
+                                item.charAt(0).toUpperCase() +
+                                item.slice(1).toLowerCase();
 
-              <div className="space-y-2">
-                <FormLabel>Select Priority</FormLabel>
-                <Controller
-                  name="priority"
+                              return (
+                                <SelectItem key={i} value={item}>
+                                  {formatted}
+                                </SelectItem>
+                              );
+                            },
+                          )}
+                        </SelectContent>
+                      </Select>
+                    )}
+                  />
+                  {form.formState.errors.type && (
+                    <p className="text-sm text-destructive">
+                      {form.formState.errors.type.message}
+                    </p>
+                  )}
+                </div>
+
+                <FormField
                   control={form.control}
+                  name="expiresAt"
                   render={({ field }) => (
-                    <Select value={field.value} onValueChange={field.onChange}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Priority" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {["LOW", "NORMAL", "HIGH", "URGENT"].map((item, i) => {
-                          const formatted =
-                            item.charAt(0).toUpperCase() +
-                            item.slice(1).toLowerCase();
-
-                          return (
-                            <SelectItem key={i} value={item}>
-                              {formatted}
-                            </SelectItem>
-                          );
-                        })}
-                      </SelectContent>
-                    </Select>
+                    <FormItem className="space-y-1">
+                      <FormLabel className="font-normal text-white">
+                        Expire Date
+                      </FormLabel>
+                      <FormControl>
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <Button
+                              variant="outline"
+                              className="w-full text-left rounded-lg bg-white/10 border-none text-white"
+                            >
+                              {field.value
+                                ? format(new Date(field.value), "dd MMM yyyy")
+                                : "Select date"}
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-auto p-0">
+                            <Calendar
+                              mode="single"
+                              selected={
+                                field.value ? new Date(field.value) : undefined
+                              }
+                              onSelect={(date) => {
+                                if (date) {
+                                  field.onChange(date.toISOString());
+                                }
+                              }}
+                              disabled={(date) => date < new Date()}
+                            />
+                          </PopoverContent>
+                        </Popover>
+                      </FormControl>
+                      <FormMessage className="text-[10px]" />
+                    </FormItem>
                   )}
                 />
-                {form.formState.errors.priority && (
-                  <p className="text-sm text-destructive">
-                    {form.formState.errors.priority.message}
-                  </p>
-                )}
               </div>
 
               <FormField
