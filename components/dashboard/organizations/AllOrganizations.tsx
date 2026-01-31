@@ -118,10 +118,10 @@ export default function AllOrganizations({
       console.error(error);
     }
   };
-  const handleToggleSuspend = async (id: number) => {
+  const handleToggleSuspend = async (id: number, status: boolean) => {
     const toastId = toast.loading("Updating...");
     try {
-      const r = await updateOrganizationSuspendStatus(id);
+      const r = await updateOrganizationSuspendStatus(id, status);
       if (r.success) toast.success(r.message, { id: toastId });
       else toast.error(r.message, { id: toastId });
     } catch (error) {
@@ -246,11 +246,10 @@ export default function AllOrganizations({
                           onCheckedChange={() =>
                             handleToggleStatus(organization.id)
                           }
-                          className={`${
-                            organization.isActive
-                              ? "data-[state=checked]:bg-green-600"
-                              : "data-[state=unchecked]:bg-red-600"
-                          }`}
+                          className={`${organization.isActive
+                            ? "data-[state=checked]:bg-green-600"
+                            : "data-[state=unchecked]:bg-red-600"
+                            }`}
                         />
                         <span
                           className={`text-xs font-bold ${organization.isActive ? "text-green-600" : "text-red-600"}`}
@@ -265,13 +264,12 @@ export default function AllOrganizations({
                           id={`status-${organization.id}`}
                           checked={organization.isSuspended}
                           onCheckedChange={() => {
-                            handleToggleSuspend(organization.id);
+                            handleToggleSuspend(organization.id, organization.isSuspended);
                           }}
-                          className={`${
-                            organization.isSuspended
-                              ? "data-[state=checked]:bg-red-600"
-                              : "data-[state=unchecked]:bg-green-600"
-                          }`}
+                          className={`${organization.isSuspended
+                            ? "data-[state=checked]:bg-red-600"
+                            : "data-[state=unchecked]:bg-green-600"
+                            }`}
                         />
                         <span
                           className={`text-xs font-bold ${organization.isSuspended ? " text-red-600" : "text-green-600"}`}

@@ -51,6 +51,16 @@ export const crmRoutes: TCrmNavigation = {
       icon: Tv,
       path: "/dashboard/broadcasts",
     },
+    {
+      title: "Supports",
+      icon: Tv,
+      path: "/dashboard/support",
+    },
+    {
+      title: "Contents",
+      icon: Tv,
+      path: "/dashboard/content",
+    },
   ],
 
   // team and sales hub
