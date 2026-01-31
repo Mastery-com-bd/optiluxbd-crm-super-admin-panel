@@ -60,20 +60,17 @@ export async function readData(
 }
 
 // delete
-export async function deleteData(endPoint: string, tags: string[]) {
+export async function deleteData(endPoint: string, revalPath: string,) {
   const token = getValidToken();
   try {
     const res = await fetch(`${config.next_public_base_api}${endPoint}`, {
       method: "DELETE",
       headers: {
         Authorization: `Bearer ${token}`,
-      },
-      next: {
-        tags: [...tags],
-      },
+      }
     } as RequestInit);
+    revalidatePath(revalPath);
     const result = await res.json();
-    console.log("responce--->", result);
     return result;
   } catch (error: any) {
     return error;
