@@ -33,8 +33,8 @@ export async function updateOrganizationStatus(id: number) {
   const res = await createData(`/admin/organizations/${id}/reactivate`, "/dashboard/organizations");
   return res;
 }
-export async function updateOrganizationSuspendStatus(id: number) {
-  const res = await createData(`/admin/organizations/${id}/suspend`, "/dashboard/organizations");
+export async function updateOrganizationSuspendStatus(id: number, status: boolean) {
+  const res = await createData(`/admin/organizations/${id}/${status}`, "/dashboard/organizations");
   return res;
 }
 

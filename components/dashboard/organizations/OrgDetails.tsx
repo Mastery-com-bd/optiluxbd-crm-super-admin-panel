@@ -34,7 +34,7 @@ export default function OrgDetails({ data }: { data: OrganizationData }) {
                         <div className="flex flex-col items-end gap-2 text-right">
                             <span className="text-xs uppercase tracking-widest text-green-600 font-semibold">Active Plan</span>
                             <div className="px-4 py-2 rounded-xl bg-white/10 backdrop-blur-md border border-white/20">
-                                <p className="text-xl font-bold text-indigo-300 uppercase tracking-tighter">{data.plan.name}</p>
+                                <p className="text-xl font-bold text-indigo-300 uppercase tracking-tighter">{data?.plan?.name}</p>
                             </div>
                         </div>
                     </div>
@@ -107,7 +107,7 @@ export default function OrgDetails({ data }: { data: OrganizationData }) {
                                 <div className="space-y-4">
                                     <div className="flex justify-between items-end">
                                         <span className="text-sm  italic">Monthly Fee</span>
-                                        <span className="text-3xl font-black  leading-none">${data.plan.priceMonthly}</span>
+                                        <span className="text-3xl font-black  leading-none">${data?.plan?.priceMonthly}</span>
                                     </div>
                                     <Separator />
                                     <div className="space-y-3">
@@ -117,7 +117,7 @@ export default function OrgDetails({ data }: { data: OrganizationData }) {
                                         </div>
                                         <div className="flex justify-between text-sm">
                                             <span className="">Trial Period</span>
-                                            <span className="font-semibold text-emerald-600 italic">Ends in {data.plan.trialDays} days</span>
+                                            <span className="font-semibold text-emerald-600 italic">Ends in {data?.plan?.trialDays} days</span>
                                         </div>
                                     </div>
                                     <button className="w-full mt-4 bg-slate-900 text-white py-3 rounded-xl font-semibold hover:bg-slate-800 transition-colors ">

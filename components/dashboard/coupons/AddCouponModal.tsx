@@ -2,7 +2,7 @@
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
-import { useState } from "react" // Add this
+import { useState } from "react"
 
 import { Button } from "@/components/ui/button"
 import ButtonComponent from "@/components/ui/ButtonComponent"
@@ -38,7 +38,7 @@ import { toast } from "sonner"
 
 export const CouponFormSchema = z.object({
     code: z.string().min(2, "Code must be at least 2 characters"),
-    discountType: z.enum(["PERCENTAGE", "FIXED"], {
+    discountType: z.enum(["PERCENTAGE", "FIXED_AMOUNT"], {
         message: "Please select a discount type",
     }),
     discountValue: z.number().min(1, "Value must be at least 1"),
@@ -46,12 +46,15 @@ export const CouponFormSchema = z.object({
 })
 
 export default function AddCouponModal() {
-    const [open, setOpen] = useState(false) // Add this
+    const [open, setOpen] = useState(false)
 
     const form = useForm<z.infer<typeof CouponFormSchema>>({
         resolver: zodResolver(CouponFormSchema),
         defaultValues: {
             code: "",
+            discountType: undefined, // Add this
+            discountValue: undefined, // Add this
+            maxUses: undefined, // Add this
         },
     })
 
@@ -62,7 +65,7 @@ export default function AddCouponModal() {
             if (res.success) {
                 toast.success(res.message, { id: toastId });
                 form.reset();
-                setOpen(false); // Close dialog on success
+                setOpen(false);
             } else {
                 toast.error(res.message || "Failed to create coupon", { id: toastId });
             }
@@ -74,7 +77,7 @@ export default function AddCouponModal() {
 
     return (
         <div>
-            <Dialog open={open} onOpenChange={setOpen}> {/* Control dialog state */}
+            <Dialog open={open} onOpenChange={setOpen}>
                 <DialogTrigger asChild>
                     <ButtonComponent buttonName="Add Coupon" icon={Plus} varient="yellow" />
                 </DialogTrigger>
@@ -110,7 +113,10 @@ export default function AddCouponModal() {
                                     name="discountType"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                            <Select
+                                                onValueChange={field.onChange}
+                                                value={field.value} // Change from defaultValue to value
+                                            >
                                                 <FormControl>
                                                     <SelectTrigger>
                                                         <SelectValue placeholder="Select Discount Type" />
@@ -118,7 +124,7 @@ export default function AddCouponModal() {
                                                 </FormControl>
                                                 <SelectContent>
                                                     <SelectItem value="PERCENTAGE">Percentage</SelectItem>
-                                                    <SelectItem value="FIXED">Fixed Amount</SelectItem>
+                                                    <SelectItem value="FIXED_AMOUNT">Fixed Amount</SelectItem>
                                                 </SelectContent>
                                             </Select>
                                             <FormMessage />
@@ -136,8 +142,8 @@ export default function AddCouponModal() {
                                                 <Input
                                                     type="number"
                                                     placeholder="Discount Value"
-                                                    {...field}
-                                                    onChange={(e) => field.onChange(e.target.value === '' ? '' : Number(e.target.value))}
+                                                    value={field.value ?? ""} // Add this to handle undefined
+                                                    onChange={(e) => field.onChange(e.target.value === '' ? undefined : Number(e.target.value))}
                                                 />
                                             </FormControl>
                                             <FormMessage />
@@ -154,8 +160,9 @@ export default function AddCouponModal() {
                                             <FormControl>
                                                 <Input
                                                     type="number"
-                                                    placeholder="Max Uses" {...field}
-                                                    onChange={(e) => field.onChange(e.target.value === '' ? '' : Number(e.target.value))}
+                                                    placeholder="Max Uses"
+                                                    value={field.value ?? ""} // Add this to handle undefined
+                                                    onChange={(e) => field.onChange(e.target.value === '' ? undefined : Number(e.target.value))}
                                                 />
                                             </FormControl>
                                             <FormMessage />
