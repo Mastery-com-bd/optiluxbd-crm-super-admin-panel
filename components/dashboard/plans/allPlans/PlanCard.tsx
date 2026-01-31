@@ -3,13 +3,19 @@
 import Switcher from "@/components/ui/Switcher";
 import { disablePlan, enablePlan } from "@/service/plans";
 import { TPlan } from "@/types/plan.types";
-import { Eye, SquarePen, Trash2 } from "lucide-react";
+import { Eye, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
 import CreatePlan from "./CreatePlan";
+import { TFeatureData } from "@/types/feature.types";
 
-const PlanCard = ({ plan }: { plan: TPlan }) => {
-  console.log(plan);
+const PlanCard = ({
+  plan,
+  features,
+}: {
+  plan: TPlan;
+  features: TFeatureData[];
+}) => {
   // activity change handler
   const handleChange = async () => {
     const toastId = toast.loading("Updating plan status...", {
@@ -35,6 +41,7 @@ const PlanCard = ({ plan }: { plan: TPlan }) => {
   const onPublicChange = async () => {
     console.log(plan?.isPublic);
   };
+
   return (
     <div className="rounded-xl border p-6 shadow-sm hover:shadow-md transition bg-white/5 space-y-4">
       {/* Header */}
@@ -111,7 +118,7 @@ const PlanCard = ({ plan }: { plan: TPlan }) => {
             </button>
           </Link>
 
-          <CreatePlan plan={plan} />
+          <CreatePlan plan={plan} features={features} />
 
           <button className=" w-7 h-7 p-1.5 rounded-[12px] effect cursor-pointer">
             <Trash2 size={16} className="text-[#F50F0F]" />

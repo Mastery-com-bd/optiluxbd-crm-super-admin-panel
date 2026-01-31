@@ -4,6 +4,7 @@
 import { config } from "@/config";
 import { getValidToken } from "../authService/validToken";
 import { revalidatePath } from "next/cache";
+import { TCreateBroadCast } from "@/components/dashboard/broadcast/allBroadcast/CreateBroadcast";
 import { readData } from "../apiService/crud";
 import { Query } from "@/types/shared";
 
@@ -15,6 +16,17 @@ type TBroadcastForm = {
 
 export const getAllBroadcast = async (query?: Query) => {
   try {
+    const res = await fetch(`${config.next_public_base_api}/admin/broadcasts`, {
+      method: "GET",
+      headers: {
+        Authorization: token,
+      },
+      next: {
+        tags: ["Broadcasts"],
+        revalidate: 30,
+      },
+    });
+    const result = await res.json();
     const result = await readData("/admin/broadcasts", ["Broadcasts"], query);
     console.log(result);
     return result;
@@ -23,7 +35,7 @@ export const getAllBroadcast = async (query?: Query) => {
   }
 };
 
-export const createBroadcast = async (data: TBroadcastForm) => {
+export const createBroadcast = async (data: TCreateBroadCast) => {
   const token = await getValidToken();
   try {
     const res = await fetch(`${config.next_public_base_api}/admin/broadcasts`, {

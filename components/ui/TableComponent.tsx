@@ -48,7 +48,10 @@ const TableComponent = <T,>({ data, columns }: TableProps<T>) => {
               className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted"
             >
               {row.getVisibleCells().map((cell) => (
-                <td key={cell.id} className="p-4 align-middle font-medium">
+                <td
+                  key={cell.id}
+                  className="p-4 align-middle font-medium text-sm whitespace-nowrap"
+                >
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
                 </td>
               ))}

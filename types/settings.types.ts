@@ -1,0 +1,21 @@
+export type TBranding = {
+  id: number;
+  accentColor: string | null;
+  backgroundColor: string;
+  faviconPublicId: string | null;
+  faviconUrl: string | null;
+  fontFamily: string;
+  logoPublicId: null;
+  logoUrl: string | null;
+  metaDescription: string | null;
+  primaryColor: string;
+  privacyPolicyUrl: string | null;
+  secondaryColor: string;
+  sidebarColor: string;
+  siteDescription: string | null;
+  siteName: string;
+  supportEmail: string | null;
+  supportPhone: string | null;
+  termsUrl: string | null;
+  updatedAt: string;
+};

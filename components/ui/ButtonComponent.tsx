@@ -49,10 +49,11 @@ const ButtonComponent = forwardRef<HTMLButtonElement, TButtonComponentProps>(
       <button
         ref={ref}
         type="button"
+        onClick={handleSubmit}
         {...rest}
         className={cn(
           "relative cursor-pointer bg-white/5 rounded-xl py-2 flex items-center justify-center px-4 overflow-hidden",
-          clasName
+          clasName,
         )}
       >
         {/* top and bottom line */}
@@ -68,8 +69,8 @@ const ButtonComponent = forwardRef<HTMLButtonElement, TButtonComponentProps>(
                 varient === "green"
                   ? "text-success"
                   : varient === "red"
-                  ? "text-[#F50F0F]"
-                  : "text-white"
+                    ? "text-[#F50F0F]"
+                    : "text-white"
               }
             />
           )}
@@ -181,7 +182,7 @@ const ButtonComponent = forwardRef<HTMLButtonElement, TButtonComponentProps>(
         )}
       </button>
     );
-  }
+  },
 );
 
 ButtonComponent.displayName = "ButtonComponent";
