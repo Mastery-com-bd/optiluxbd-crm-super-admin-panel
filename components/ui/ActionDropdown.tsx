@@ -23,6 +23,10 @@ type TDropdownProps = {
     setLoading: Dispatch<SetStateAction<boolean>>,
   ) => Promise<void>;
   children?: ReactNode;
+  buttonName?: string;
+  acceptButtonName?: string;
+  title?: string;
+  description?: string;
 };
 
 const ActionDropdown = ({
@@ -31,6 +35,10 @@ const ActionDropdown = ({
   type,
   handleDelete,
   children,
+  buttonName,
+  acceptButtonName,
+  title,
+  description,
 }: TDropdownProps) => {
   const [loading, setLoading] = useState(false);
   return (
@@ -62,6 +70,10 @@ const ActionDropdown = ({
               onChange={handleDelete}
               loading={loading}
               setLoading={setLoading}
+              buttonName={buttonName}
+              acceptButtonName={acceptButtonName}
+              title={title}
+              description={description}
             />
           ) : (
             <DeleteComponent

@@ -7,6 +7,7 @@ import {
   Settings,
   Tag,
   Tv,
+  User,
 } from "lucide-react";
 import { LucideIcon } from "lucide-react";
 
@@ -30,6 +31,11 @@ export const crmRoutes: TCrmNavigation = {
       title: "Dashboard",
       icon: CircleGauge,
       path: "/dashboard",
+    },
+    {
+      title: "User",
+      icon: User,
+      path: "/dashboard/user",
     },
     {
       title: "Organizations",
