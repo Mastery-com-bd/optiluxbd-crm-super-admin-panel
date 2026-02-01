@@ -13,7 +13,7 @@ const PermissionModal = ({ permissions }: { permissions: TPermission[] }) => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <button className="cursor-pointer bg-transparent p-2 ">
+        <button className="cursor-pointer bg-transparent px-2 py-1 text-sm hover:bg-gray-700 rounded-lg">
           View Permission
         </button>
       </DialogTrigger>

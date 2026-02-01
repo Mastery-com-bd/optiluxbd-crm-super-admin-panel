@@ -139,3 +139,29 @@ export const assignRole = async (id: string, data: TUserRoleData) => {
     return Error(error);
   }
 };
+
+type TSetPermission = {
+  permissionKeys: string[];
+};
+
+export const setPermission = async (id: string, data: TSetPermission) => {
+  const token = await getValidToken();
+  try {
+    const res = await fetch(
+      `${config.next_public_base_api}/admin/roles/${id}/permissions`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: token,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      },
+    );
+    const result = await res.json();
+    revalidatePath("/dashboard/roles");
+    return result;
+  } catch (error: any) {
+    return Error(error);
+  }
+};
