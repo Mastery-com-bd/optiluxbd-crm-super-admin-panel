@@ -23,13 +23,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
   Table,
   TableBody,
   TableCell,
@@ -42,7 +35,7 @@ import {
   updateOrganizationStatus,
   updateOrganizationSuspendStatus,
 } from "@/service/OrganaizationService";
-import { OrganizationData, Organizations } from "@/types/organizations";
+import { Organization, Organizations } from "@/types/organizations";
 import { ChangeInput } from "@/types/shared";
 import {
   Eye,
@@ -50,7 +43,6 @@ import {
   MoreVertical,
   Pencil,
   Plus,
-  Search,
   Trash2,
 } from "lucide-react";
 import Image from "next/image";
@@ -61,12 +53,14 @@ import { toast } from "sonner";
 import UpdatePlanModal from "./UpdatePlanModal";
 import { Switch } from "@/components/ui/switch";
 const keys = [
-  "NAME",
-  "STATUS",
-  "IS SUSPENDED",
+  "ORGANIZATION",
+  "EMAIL",
   "PLAN",
-  "MRR",
-  "JOINED DATE",
+  "PLAN EXPIRES",
+  "IS ACTIVE",
+  "IS SUSPENDED",
+  "USERS",
+  "CREATED AT",
   "ACTIONS",
 ];
 export default function AllOrganizations({
@@ -79,7 +73,7 @@ export default function AllOrganizations({
   const pathName = usePathname();
   const searchParams = useSearchParams();
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
-  const [selectedOrg, setSelectedOrg] = useState<OrganizationData | null>(null);
+  const [selectedOrg, setSelectedOrg] = useState<Organization | null>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [deleteProductId, setDeleteProductId] = useState<number | null>(null);
 
@@ -118,10 +112,10 @@ export default function AllOrganizations({
       console.error(error);
     }
   };
-  const handleToggleSuspend = async (id: number, status: boolean) => {
+  const handleToggleSuspend = async (id: number) => {
     const toastId = toast.loading("Updating...");
     try {
-      const r = await updateOrganizationSuspendStatus(id, status);
+      const r = await updateOrganizationSuspendStatus(id);
       if (r.success) toast.success(r.message, { id: toastId });
       else toast.error(r.message, { id: toastId });
     } catch (error) {
@@ -150,48 +144,6 @@ export default function AllOrganizations({
               </Button>
             </div>
             <div className="flex flex-wrap items-center gap-3">
-              {/* <Select
-                                value={category}
-                                onValueChange={(value) => {
-                                    setCategory(value);
-                                    setFilters((prev) => ({
-                                        ...prev,
-                                        category: value === "all" ? undefined : value,
-                                        page: 1,
-                                    }));
-                                }}>
-                                <SelectTrigger className="w-40" aria-label="Category Filter">
-                                    <SelectValue placeholder="Category" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="all">All Categories</SelectItem>
-                                    {categories?.map((category: { id: number; name: string }) => (
-                                        <SelectItem key={category.id} value={category.name}>
-                                            {category.name}
-                                        </SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
-                            <Select
-                                value={status}
-                                onValueChange={(value) => {
-                                    setStatus(value);
-                                    setFilters((prev) => ({
-                                        ...prev,
-                                        status: value === "all" ? undefined : value,
-                                        page: 1,
-                                    }));
-                                }}>
-                                <SelectTrigger className="w-36" aria-label="Status Filter">
-                                    <SelectValue placeholder="Status" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="all">All Status</SelectItem>
-                                    <SelectItem value="Published">Published</SelectItem>
-                                    <SelectItem value="Pending">Pending</SelectItem>
-                                    <SelectItem value="Rejected">Rejected</SelectItem>
-                                </SelectContent>
-                            </Select> */}
               <Link href={"/dashboard/organizations/create-organizations"}>
                 <ButtonComponent buttonName="Create Organization" icon={Plus} />
               </Link>
@@ -217,17 +169,16 @@ export default function AllOrganizations({
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {organizations?.map((organization: OrganizationData) => (
+                {organizations?.map((organization: Organization) => (
                   <TableRow
                     key={organization.id}
                     className="border-muted hover:bg-muted/50 transition-colors"
                   >
+                    {/* Name with Image */}
                     <TableCell className="px-4 py-3">
                       <div className="flex items-center gap-3">
                         <Image
-                          src={
-                            "https://res.cloudinary.com/dbb6nen3p/image/upload/v1762848442/no_image_s3demz.png"
-                          }
+                          src="https://res.cloudinary.com/dbb6nen3p/image/upload/v1762848442/no_image_s3demz.png"
                           alt={organization.name}
                           width={48}
                           height={48}
@@ -235,93 +186,114 @@ export default function AllOrganizations({
                         />
                         <div>
                           <p className="font-medium">{organization.name}</p>
+                          <p className="text-xs text-muted-foreground">@{organization.slug}</p>
                         </div>
                       </div>
                     </TableCell>
-                    <TableCell className="px-4 py-3 text-sm text-center ">
+
+                    {/* Email */}
+                    <TableCell className="px-4 py-3 text-sm text-center">
+                      {organization.email}
+                    </TableCell>
+
+                    {/* Plan */}
+                    <TableCell className="px-4 py-3 text-sm text-center">
+                      <span className="px-2 py-1 rounded-full bg-blue-100 text-blue-800 text-xs font-medium">
+                        {organization.plan}
+                      </span>
+                    </TableCell>
+
+                    {/* Plan Expires At */}
+                    <TableCell className="px-4 py-3 text-sm text-center">
+                      {organization.planExpiresAt
+                        ? new Date(organization.planExpiresAt).toLocaleDateString("en-US", {
+                          year: "numeric",
+                          month: "short",
+                          day: "2-digit",
+                        })
+                        : "N/A"}
+                    </TableCell>
+
+                    {/* Is Active */}
+                    <TableCell className="px-4 py-3 text-sm text-center">
                       <div className="flex items-center justify-center gap-2">
                         <Switch
-                          id={`status-${organization.id}`}
+                          id={`active-${organization.id}`}
                           checked={organization.isActive}
-                          onCheckedChange={() =>
-                            handleToggleStatus(organization.id)
-                          }
+                          onCheckedChange={() => handleToggleStatus(organization.id)}
                           className={`${organization.isActive
                             ? "data-[state=checked]:bg-green-600"
                             : "data-[state=unchecked]:bg-red-600"
                             }`}
                         />
                         <span
-                          className={`text-xs font-bold ${organization.isActive ? "text-green-600" : "text-red-600"}`}
+                          className={`text-xs font-bold ${organization.isActive ? "text-green-600" : "text-red-600"
+                            }`}
                         >
-                          {organization.isActive ? "ACTIVE" : "SUSPENDED"}
+                          {organization.isActive ? "ACTIVE" : "INACTIVE"}
                         </span>
                       </div>
                     </TableCell>
-                    <TableCell className="px-4 py-3 text-sm text-center ">
+
+                    {/* Is Suspended */}
+                    <TableCell className="px-4 py-3 text-sm text-center">
                       <div className="flex items-center justify-center gap-2">
                         <Switch
-                          id={`status-${organization.id}`}
+                          id={`suspended-${organization.id}`}
                           checked={organization.isSuspended}
-                          onCheckedChange={() => {
-                            handleToggleSuspend(organization.id, organization.isSuspended);
-                          }}
+                          onCheckedChange={() =>
+                            handleToggleSuspend(organization.id)
+                          }
                           className={`${organization.isSuspended
                             ? "data-[state=checked]:bg-red-600"
                             : "data-[state=unchecked]:bg-green-600"
                             }`}
                         />
                         <span
-                          className={`text-xs font-bold ${organization.isSuspended ? " text-red-600" : "text-green-600"}`}
+                          className={`text-xs font-bold ${organization.isSuspended ? "text-red-600" : "text-green-600"
+                            }`}
                         >
-                          {organization.isSuspended ? "SUSPENDED" : "SUSPENDED"}
+                          {organization.isSuspended ? "SUSPENDED" : "ACTIVE"}
                         </span>
                       </div>
                     </TableCell>
-                    <TableCell className="px-4 py-3 text-sm text-center">
-                      {organization.plan.name}
-                    </TableCell>
+
+                    {/* Users Count */}
                     <TableCell className="px-4 py-3 text-sm font-medium text-center">
-                      ---
+                      {organization._count.users}
                     </TableCell>
+
+                    {/* Created At */}
                     <TableCell className="px-4 py-3 text-sm font-semibold text-center">
-                      {new Date(organization.createdAt).toLocaleDateString(
-                        "en-US",
-                        {
-                          year: "numeric",
-                          month: "short",
-                          day: "2-digit",
-                        },
-                      )}
+                      {new Date(organization.createdAt).toLocaleDateString("en-US", {
+                        year: "numeric",
+                        month: "short",
+                        day: "2-digit",
+                      })}
                     </TableCell>
-                    <TableCell className="px-4 py-3 text-center ">
+
+                    {/* Actions */}
+                    <TableCell className="px-4 py-3 text-center">
                       <DropdownMenu>
                         <DropdownMenuTrigger className="cursor-pointer">
                           <MoreVertical className="h-4 w-4" />
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent
-                          align="end"
-                          className="w-[180px] flex flex-col "
-                        >
-                          <Link
-                            href={`/dashboard/organizations/${organization.id}`}
-                          >
+                        <DropdownMenuContent align="end" className="w-[180px]">
+                          <Link href={`/dashboard/organizations/${organization.id}`}>
                             <DropdownMenuItem className="cursor-pointer">
-                              <Eye className="w-4 h-4 mr-2" /> view
+                              <Eye className="w-4 h-4 mr-2" /> View
                             </DropdownMenuItem>
                           </Link>
-                          <DropdownMenuItem className="cursor-pointer">
-                            <DropdownMenuItem
-                              onSelect={(e) => {
-                                e.preventDefault();
-                                setSelectedOrg(organization);
-                                setIsUpdateModalOpen(true);
-                              }}
-                              className="cursor-pointer"
-                            >
-                              <Pencil className="w-4 h-4 mr-2" />
-                              Update
-                            </DropdownMenuItem>
+                          <DropdownMenuItem
+                            onSelect={(e) => {
+                              e.preventDefault();
+                              setSelectedOrg(organization);
+                              setIsUpdateModalOpen(true);
+                            }}
+                            className="cursor-pointer"
+                          >
+                            <Pencil className="w-4 h-4 mr-2" />
+                            Update
                           </DropdownMenuItem>
                           <DropdownMenuSeparator />
                           <DropdownMenuItem
@@ -329,9 +301,9 @@ export default function AllOrganizations({
                               setDeleteProductId(organization.id);
                               setDeleteDialogOpen(true);
                             }}
-                            className="cursor-pointer"
+                            className="cursor-pointer text-destructive"
                           >
-                            <Trash2 className="w-4 h-4 text-destructive mr-2" />
+                            <Trash2 className="w-4 h-4 mr-2" />
                             Delete
                           </DropdownMenuItem>
                         </DropdownMenuContent>

@@ -5,6 +5,7 @@ export type TFeature = {
   name: string;
   planId: number;
   value: string;
+  isEnable: boolean;
 };
 
 export type TFeatureData = {
