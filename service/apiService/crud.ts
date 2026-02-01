@@ -23,7 +23,6 @@ export async function createData<T>(
       body: JSON.stringify(data),
     });
     const result = await res.json();
-    console.log(result);
     revalidatePath(revalPath);
     return result;
   } catch (error: any) {
@@ -60,14 +59,14 @@ export async function readData(
 }
 
 // delete
-export async function deleteData(endPoint: string, revalPath: string,) {
+export async function deleteData(endPoint: string, revalPath: string) {
   const token = getValidToken();
   try {
     const res = await fetch(`${config.next_public_base_api}${endPoint}`, {
       method: "DELETE",
       headers: {
         Authorization: `Bearer ${token}`,
-      }
+      },
     } as RequestInit);
     revalidatePath(revalPath);
     const result = await res.json();
@@ -84,7 +83,6 @@ export async function patchData<T>(
   data?: T,
 ) {
   const token = await getValidToken();
-  console.log("token->>>", token);
   try {
     const res = await fetch(`${config.next_public_base_api}${endPoint}`, {
       method: "PATCH",
@@ -95,7 +93,6 @@ export async function patchData<T>(
       body: JSON.stringify(data),
     } as RequestInit);
     const result = await res.json();
-    console.log("response from patch--->", result);
     revalidatePath(revalPath);
     return result;
   } catch (error: any) {

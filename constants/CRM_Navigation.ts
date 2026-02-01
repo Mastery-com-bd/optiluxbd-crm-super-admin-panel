@@ -46,10 +46,10 @@ export const crmRoutes: TCrmNavigation = {
       title: "Subscription & Plan",
       icon: Podcast,
       children: [
-        {
-          title: "All Subscriptions",
-          path: "/dashboard/subscription",
-        },
+        // {
+        //   title: "All Subscriptions",
+        //   path: "/dashboard/subscription",
+        // },
         {
           title: "All Plans",
           path: "/dashboard/plans",

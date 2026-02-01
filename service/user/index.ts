@@ -152,8 +152,6 @@ export const suspendUser = async (id: number) => {
 };
 
 export const rejectUser = async (data: TReason, id: number) => {
-  console.log(data);
-  console.log(id);
   const token = await getValidToken();
   try {
     const res = await fetch(

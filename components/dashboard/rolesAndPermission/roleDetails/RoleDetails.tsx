@@ -17,7 +17,6 @@ import AllPermission from "../allPermission/AllPermission";
 const RoleDetails = ({ role }: { role: TRoles }) => {
   const router = useRouter();
   const permissions = role?.permissions.map((item) => item?.permission);
-  console.log(permissions);
   return (
     <div className="p-6 space-y-6">
       {/* Back Button */}

@@ -104,7 +104,6 @@ export const userTableColumn = (roles: TRoles[]): ColumnDef<TUserData>[] => [
       const userRoles = allRoles.map((role) => role?.role?.name);
       const aRole = userRoles[0] || "";
       const trimmedRole = aRole.length > 6 ? aRole.slice(0, 6) + "..." : aRole;
-      console.log(row.original?.roles);
       return (
         <div className=" flex items-center gap-2">
           <RoleDropdown
