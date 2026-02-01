@@ -91,9 +91,6 @@ export const crmRoutes: TCrmNavigation = {
     },
 
     {
-      title: "Settings",
-      icon: Settings,
-      path: "/dashboard/settings",
       title: "Supports",
       icon: Tv,
       path: "/dashboard/support",
@@ -102,6 +99,11 @@ export const crmRoutes: TCrmNavigation = {
       title: "Contents",
       icon: Tv,
       path: "/dashboard/content",
+    },
+    {
+      title: "Settings",
+      icon: Settings,
+      path: "/dashboard/settings",
     },
   ],
 

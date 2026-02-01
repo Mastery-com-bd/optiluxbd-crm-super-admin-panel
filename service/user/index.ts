@@ -7,6 +7,24 @@ import { getValidToken } from "../authService/validToken";
 import { revalidatePath } from "next/cache";
 import { TReason } from "@/components/dashboard/user/allUser/UserRejectModal";
 
+export type TCreateUserData = {
+  name: string;
+  email: string;
+  roleId: number;
+  phone: string;
+  status: "ACTIVE" | "INACTIVE" | "SUSPENDED" | "DISABLED" | "REJECTED";
+  is_approved?: boolean | undefined;
+  isActive?: boolean | undefined;
+  email_verified?: boolean | undefined;
+};
+
+type TInviteUserForm = {
+  name: string;
+  email: string;
+  roleId: number;
+  phone: string;
+};
+
 export const getAllUser = async () => {
   const token = (await getAccesstoken()) as string;
   try {
@@ -27,17 +45,6 @@ export const getAllUser = async () => {
   }
 };
 
-export type TCreateUserData = {
-  name: string;
-  email: string;
-  roleId: number;
-  phone: string;
-  status: "ACTIVE" | "INACTIVE" | "SUSPENDED" | "DISABLED" | "REJECTED";
-  is_approved?: boolean | undefined;
-  isActive?: boolean | undefined;
-  email_verified?: boolean | undefined;
-};
-
 export const createUser = async (data: TCreateUserData) => {
   const token = await getValidToken();
   try {
@@ -55,13 +62,6 @@ export const createUser = async (data: TCreateUserData) => {
   } catch (error: any) {
     return Error(error);
   }
-};
-
-type TInviteUserForm = {
-  name: string;
-  email: string;
-  roleId: number;
-  phone: string;
 };
 
 export const inviteUser = async (data: TInviteUserForm) => {
