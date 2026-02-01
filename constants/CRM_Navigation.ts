@@ -30,7 +30,7 @@ export const crmRoutes: TCrmNavigation = {
     {
       title: "Dashboard",
       icon: CircleGauge,
-      path: "/dashboard",
+      path: "/",
     },
     {
       title: "User",

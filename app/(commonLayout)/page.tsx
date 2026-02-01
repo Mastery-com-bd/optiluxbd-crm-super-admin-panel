@@ -1,9 +1,9 @@
-import Organization from "@/components/dashboard/organizations/Organization";
-import RevenueSection from "@/components/dashboard/customComponent/shared/RevenewSection";
 import DashboardOverview from "@/components/dashboard/customComponent/shared/DashboardOverview";
+import RevenueSection from "@/components/dashboard/customComponent/shared/RevenewSection";
+import Organization from "@/components/dashboard/organizations/Organization";
 import { getAnalytics } from "@/service/analytics";
 
-export default async function SuperAdminDashboard() {
+const HomePage = async () => {
   const result = await getAnalytics();
   const analytics = result?.data || {};
 
@@ -14,4 +14,6 @@ export default async function SuperAdminDashboard() {
       <Organization />
     </div>
   );
-}
+};
+
+export default HomePage;
