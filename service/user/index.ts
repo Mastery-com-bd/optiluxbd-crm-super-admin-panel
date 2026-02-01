@@ -5,7 +5,7 @@ import { config } from "@/config";
 import { getAccesstoken } from "../authService";
 import { getValidToken } from "../authService/validToken";
 import { revalidatePath } from "next/cache";
-import { TReason } from "@/components/ui/ConfirmComponent";
+import { TReason } from "@/components/dashboard/user/allUser/UserRejectModal";
 
 export const getAllUser = async () => {
   const token = (await getAccesstoken()) as string;
@@ -49,6 +49,35 @@ export const createUser = async (data: TCreateUserData) => {
       },
       body: JSON.stringify(data),
     });
+    const result = await res.json();
+    revalidatePath("/dashboard/user");
+    return result;
+  } catch (error: any) {
+    return Error(error);
+  }
+};
+
+type TInviteUserForm = {
+  name: string;
+  email: string;
+  roleId: number;
+  phone: string;
+};
+
+export const inviteUser = async (data: TInviteUserForm) => {
+  const token = await getValidToken();
+  try {
+    const res = await fetch(
+      `${config.next_public_base_api}/admin/users/invite`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: token,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      },
+    );
     const result = await res.json();
     revalidatePath("/dashboard/user");
     return result;
@@ -123,12 +152,14 @@ export const suspendUser = async (id: number) => {
 };
 
 export const rejectUser = async (data: TReason, id: number) => {
+  console.log(data);
+  console.log(id);
   const token = await getValidToken();
   try {
     const res = await fetch(
       `${config.next_public_base_api}/auth/users/${id}/reject`,
       {
-        method: "PUT",
+        method: "POST",
         headers: {
           Authorization: token,
           "Content-Type": "application/json",

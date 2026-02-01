@@ -92,7 +92,11 @@ export const getRoleById = async (id: string) => {
   }
 };
 
-export const deleteRole = async (id: string) => {
+export type TUserRoleData = {
+  userId: number;
+};
+
+export const removeRole = async (id: string, data: TUserRoleData) => {
   const token = await getValidToken();
   try {
     const res = await fetch(
@@ -101,11 +105,35 @@ export const deleteRole = async (id: string) => {
         method: "POST",
         headers: {
           Authorization: token,
+          "Content-Type": "application/json",
         },
+        body: JSON.stringify(data),
       },
     );
     const result = await res.json();
-    revalidatePath("/dashboard/roles");
+    revalidatePath("/dashboard/user");
+    return result;
+  } catch (error: any) {
+    return Error(error);
+  }
+};
+
+export const assignRole = async (id: string, data: TUserRoleData) => {
+  const token = await getValidToken();
+  try {
+    const res = await fetch(
+      `${config.next_public_base_api}/admin/roles/${id}/assign`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: token,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      },
+    );
+    const result = await res.json();
+    revalidatePath("/dashboard/user");
     return result;
   } catch (error: any) {
     return Error(error);

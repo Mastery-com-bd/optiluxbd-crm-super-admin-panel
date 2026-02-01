@@ -365,9 +365,9 @@ const CreateUser = ({ user, roles }: { user?: TUserData; roles: TRoles[] }) => {
                       </Select>
                     )}
                   />
-                  {form.formState.errors.status && (
+                  {form.formState.errors.roleId && (
                     <p className="text-sm text-destructive">
-                      {form.formState.errors.status.message}
+                      {form.formState.errors.roleId.message}
                     </p>
                   )}
                 </div>

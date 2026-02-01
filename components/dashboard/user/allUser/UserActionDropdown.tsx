@@ -13,6 +13,7 @@ import { Dispatch, SetStateAction, useState } from "react";
 import { toast } from "sonner";
 import { approveUser, suspendUser } from "@/service/user";
 import ConfirmComponent from "@/components/ui/ConfirmComponent";
+import UserRejectModal from "./UserRejectModal";
 
 type TDropdownProps = {
   id: number;
@@ -20,6 +21,7 @@ type TDropdownProps = {
 
 const UserActionDropdown = ({ id }: TDropdownProps) => {
   const [loading, setLoading] = useState(false);
+  const [rejectOpen, setRejectOpen] = useState(false);
 
   const handleApprove = async (
     id: string,
@@ -119,20 +121,20 @@ const UserActionDropdown = ({ id }: TDropdownProps) => {
         </DropdownMenuItem>
 
         <DropdownMenuItem
-          className="text-red-600"
-          onClick={(e) => e.preventDefault()}
+          className="text-red-600 cursor-pointer"
+          onSelect={(e) => {
+            e.preventDefault();
+            setRejectOpen(true);
+          }}
         >
-          <ConfirmComponent
-            id={id.toString()}
-            loading={loading}
-            setLoading={setLoading}
-            buttonName="Reject"
-            acceptButtonName="Reject User"
-            title="Want to Reject this user?"
-            description="If you want to reject this user , this user will loss the system access and selected as blocked user"
-            type="reject"
-          />
+          Reject
         </DropdownMenuItem>
+
+        <UserRejectModal
+          id={id.toString()}
+          open={rejectOpen}
+          setOpen={setRejectOpen}
+        />
       </DropdownMenuContent>
     </DropdownMenu>
   );

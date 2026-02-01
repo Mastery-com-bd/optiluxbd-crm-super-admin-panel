@@ -9,7 +9,6 @@ import PermissionModal from "./PermissionModal";
 import { Dispatch, SetStateAction } from "react";
 import { toast } from "sonner";
 import ActionDropdown from "@/components/ui/ActionDropdown";
-import { deleteRole } from "@/service/rolesAndPermission";
 
 export const RoleTableColumn = (): ColumnDef<TRoles>[] => [
   {
@@ -81,20 +80,20 @@ export const RoleTableColumn = (): ColumnDef<TRoles>[] => [
       ) => {
         setLoading(true);
         const toastId = toast.loading("role deleting", { duration: 3000 });
-        try {
-          const result = await deleteRole(id);
-          if (result?.success) {
-            toast.success(result?.message, { id: toastId, duration: 3000 });
-            setLoading(false);
-            setOpen(false);
-          } else {
-            toast.error(result?.message, { id: toastId, duration: 3000 });
-            setLoading(false);
-          }
-        } catch (error: any) {
-          console.log(error);
-          setLoading(false);
-        }
+        // try {
+        //   const result = await deleteRole(id);
+        //   if (result?.success) {
+        //     toast.success(result?.message, { id: toastId, duration: 3000 });
+        //     setLoading(false);
+        //     setOpen(false);
+        //   } else {
+        //     toast.error(result?.message, { id: toastId, duration: 3000 });
+        //     setLoading(false);
+        //   }
+        // } catch (error: any) {
+        //   console.log(error);
+        //   setLoading(false);
+        // }
       };
 
       return (

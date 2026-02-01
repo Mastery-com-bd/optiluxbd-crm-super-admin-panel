@@ -8,8 +8,10 @@ import { convertDate } from "@/utils/convertDate";
 import { ColumnDef } from "@tanstack/react-table";
 import { toast } from "sonner";
 import UserActionDropdown from "./UserActionDropdown";
+import RoleDropdown from "./RoleDropdown";
+import { TRoles } from "@/types/roles.types";
 
-export const userTableColumn = (): ColumnDef<TUserData>[] => [
+export const userTableColumn = (roles: TRoles[]): ColumnDef<TUserData>[] => [
   {
     id: "name",
     header: "Name",
@@ -97,14 +99,22 @@ export const userTableColumn = (): ColumnDef<TUserData>[] => [
     accessorKey: "role",
     header: "Role",
     cell: ({ row }) => {
-      const roles = row.original?.roles;
-      const userRoles = roles.map((role) => role?.role?.name);
-
+      const allRoles = row.original?.roles ?? [];
+      const hasRole = allRoles.length > 0;
+      const userRoles = allRoles.map((role) => role?.role?.name);
+      const aRole = userRoles[0] || "";
+      const trimmedRole = aRole.length > 6 ? aRole.slice(0, 6) + "..." : aRole;
+      console.log(row.original?.roles);
       return (
-        <div className=" flex flex-col gap-1">
-          {userRoles.map((item, i) => (
-            <p key={i}>{item}</p>
-          ))}
+        <div className=" flex items-center gap-2">
+          <RoleDropdown
+            hasRole={hasRole}
+            id={row.original?.id}
+            role={aRole}
+            trimmedRole={trimmedRole}
+            roleId={row.original?.roles[0]?.role?.id}
+            roles={roles}
+          />
         </div>
       );
     },
