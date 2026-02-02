@@ -10,13 +10,23 @@ import {
 import Link from "next/link";
 import { ReactNode, useState } from "react";
 import SetPermissionModal from "./SetPermissionModal";
+import { TPermission } from "@/types/permission.types";
 
 type TDropdownProps = {
   path: string;
   children: ReactNode;
+  permissions: TPermission[];
+  rolePermissions: TPermission[];
+  roleId: number;
 };
 
-const RolesActionDropdown = ({ path, children }: TDropdownProps) => {
+const RolesActionDropdown = ({
+  path,
+  children,
+  permissions,
+  rolePermissions,
+  roleId,
+}: TDropdownProps) => {
   const [open, setOpen] = useState(false);
   return (
     <>
@@ -30,7 +40,7 @@ const RolesActionDropdown = ({ path, children }: TDropdownProps) => {
 
         <DropdownMenuContent
           align="end"
-          className="bg-white/5 backdrop-blur-3xl"
+          className="bg-white/5 backdrop-blur-3xl z-20"
         >
           <DropdownMenuItem asChild>
             <Link href={path}>Details</Link>
@@ -51,7 +61,13 @@ const RolesActionDropdown = ({ path, children }: TDropdownProps) => {
       </DropdownMenu>
 
       {/* ✅ MODAL MUST LIVE HERE */}
-      <SetPermissionModal open={open} setOpen={setOpen} />
+      <SetPermissionModal
+        open={open}
+        setOpen={setOpen}
+        permissions={permissions}
+        rolePermissions={rolePermissions}
+        roleId={roleId}
+      />
     </>
   );
 };

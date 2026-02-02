@@ -6,8 +6,11 @@ import { convertDate } from "@/utils/convertDate";
 import { ColumnDef } from "@tanstack/react-table";
 import PermissionModal from "./PermissionModal";
 import RolesActionDropdown from "./RolesActionDropdown";
+import { TPermission } from "@/types/permission.types";
 
-export const RoleTableColumn = (): ColumnDef<TRoles>[] => [
+export const RoleTableColumn = (
+  permissions: TPermission[],
+): ColumnDef<TRoles>[] => [
   {
     id: "name",
     header: "name",
@@ -65,13 +68,18 @@ export const RoleTableColumn = (): ColumnDef<TRoles>[] => [
     id: "action",
     header: "Action",
     cell: ({ row }) => {
-      const permissions = row.original?.permissions.map(
-        (item) => item?.permission,
-      );
+      const RolesPermissions =
+        row.original?.permissions.map((item) => item?.permission) || [];
+      const roleId = row.original?.id;
 
       return (
-        <RolesActionDropdown path={`/dashboard/roles/${row.original?.id}`}>
-          <PermissionModal permissions={permissions} />
+        <RolesActionDropdown
+          path={`/dashboard/roles/${row.original?.id}`}
+          permissions={permissions}
+          rolePermissions={RolesPermissions}
+          roleId={roleId}
+        >
+          <PermissionModal permissions={RolesPermissions} />
         </RolesActionDropdown>
       );
     },

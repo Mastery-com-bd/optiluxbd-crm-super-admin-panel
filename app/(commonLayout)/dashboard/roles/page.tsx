@@ -1,12 +1,18 @@
 import AllRoles from "@/components/dashboard/rolesAndPermission/allRoles/AllRoles";
-import { GetAllRoles } from "@/service/rolesAndPermission";
+import { GetAllPermissions, GetAllRoles } from "@/service/rolesAndPermission";
 
 const RolesPage = async () => {
-  const result = await GetAllRoles();
-  const roles = result?.data;
+  const [allRolesData, allPermissionData] = await Promise.all([
+    GetAllRoles(),
+    GetAllPermissions(),
+  ]);
+
+  const roles = allRolesData?.data || [];
+  const permissions = allPermissionData?.data || [];
+
   return (
     <section>
-      <AllRoles roles={roles} />
+      <AllRoles roles={roles} permissions={permissions} />
     </section>
   );
 };
