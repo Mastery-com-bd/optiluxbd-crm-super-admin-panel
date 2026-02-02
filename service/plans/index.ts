@@ -78,7 +78,36 @@ export const createPlan = async (data: TPlanForm) => {
   }
 };
 
-export const updatePlan = async (data: Partial<TPlanForm>, id: number) => {
+export type TUpdatePlanFeature = {
+  action: "remove" | "add";
+  key: string;
+  name?: string;
+  value?: string;
+};
+
+export interface TUpdatePlan {
+  features: TUpdatePlanFeature[];
+  name: string;
+  slug: string;
+  description?: string;
+  isActive: boolean;
+  isPublic: boolean;
+  priceDaily?: number;
+  priceMonthly: number;
+  priceYearly: number;
+  priceOneTime?: number;
+  maxUsers: number;
+  maxCustomers: number;
+  maxLocations: number;
+  maxProducts: number;
+  maxInvoices: number;
+  maxStorage: number;
+  maxApiCalls: number;
+  trialDays: number;
+  isOneTime: boolean;
+}
+
+export const updatePlan = async (data: Partial<TUpdatePlan>, id: number) => {
   const token = await getValidToken();
   try {
     const res = await fetch(

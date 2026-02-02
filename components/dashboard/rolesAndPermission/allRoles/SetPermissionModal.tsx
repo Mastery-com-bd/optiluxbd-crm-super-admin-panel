@@ -34,8 +34,15 @@ const SetPermissionModal = ({
   const [selectedKeys, setSelectedKeys] = useState<string[]>(
     rolePermissions.map((p) => p.key) || [],
   );
+  const [newKeys, setNewKeys] = useState<string[]>([]);
 
   const handleToggle = (key: string) => {
+    setNewKeys((prev) => {
+      const updated = prev.includes(key)
+        ? prev.filter((k) => k !== key)
+        : [...prev, key];
+      return updated;
+    });
     setSelectedKeys((prev) => {
       const updated = prev.includes(key)
         ? prev.filter((k) => k !== key)
@@ -45,6 +52,8 @@ const SetPermissionModal = ({
   };
 
   const handleSave = async () => {
+    if (!newKeys.length)
+      return toast.error("nothing to update", { duration: 3000 });
     const payload = {
       permissionKeys: selectedKeys,
     };
@@ -72,6 +81,7 @@ const SetPermissionModal = ({
         setOpen(isOpen);
         if (!isOpen) {
           setSelectedKeys(rolePermissions.map((p) => p.key));
+          setNewKeys([]);
         }
       }}
     >

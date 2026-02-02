@@ -1,7 +1,13 @@
 "use client";
 
-import CornerGlowSvg from "@/components/svgIcon/button/CornerGlowSvg";
-import ButtonComponent from "@/components/ui/ButtonComponent";
+import { TUpdatePlan, updatePlan } from "@/service/plans";
+import { TFeatureData } from "@/types/feature.types";
+import { TPlan } from "@/types/plan.types";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useEffect, useState } from "react";
+import { useFieldArray, useForm } from "react-hook-form";
+import { toast } from "sonner";
+import z from "zod";
 import {
   Dialog,
   DialogContent,
@@ -24,14 +30,9 @@ import {
   SelectItem,
   SelectTrigger,
 } from "@/components/ui/select";
-import { createPlan, TPlanForm } from "@/service/plans";
-import { TFeatureData } from "@/types/feature.types";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Plus, Trash2 } from "lucide-react";
-import { useState } from "react";
-import { useForm, useFieldArray } from "react-hook-form";
-import { toast } from "sonner";
-import z from "zod";
+import { Plus, SquarePen, Trash2 } from "lucide-react";
+import ButtonComponent from "@/components/ui/ButtonComponent";
+import { buildFeatureActions } from "@/utils/buildFeatureAction";
 
 const formSchema = z.object({
   name: z.string().min(1, "Name must be at least 1 character."),
@@ -62,12 +63,52 @@ const formSchema = z.object({
 
 type TCreatePlan = z.infer<typeof formSchema>;
 
-const CreatePlan = ({ features = [] }: { features: TFeatureData[] }) => {
+const UpdatePlanModal = ({
+  plan,
+  features = [],
+}: {
+  plan: TPlan;
+  features: TFeatureData[];
+}) => {
   const [open, setOpen] = useState(false);
 
   const form = useForm<TCreatePlan>({
     resolver: zodResolver(formSchema),
+    defaultValues: {
+      // Required
+      name: plan?.name || "",
+      priceMonthly: plan?.priceMonthly?.toString() || "0",
+
+      // Optional fields
+      description: plan?.description || "",
+      priceDaily: plan?.priceDaily?.toString() || "",
+      priceYearly: plan?.priceYearly?.toString() || "",
+      priceOneTime: plan?.priceOneTime?.toString() || "",
+      maxUsers: plan?.maxUsers?.toString() || "1",
+      maxCustomers: plan?.maxCustomers?.toString() || "100",
+      maxLocations: plan?.maxLocations?.toString() || "1",
+      maxProducts: plan?.maxProducts?.toString() || "100",
+      maxInvoices: plan?.maxInvoices?.toString() || "100",
+      maxStorage: plan?.maxStorage?.toString() || "1024",
+      maxApiCalls: plan?.maxApiCalls?.toString() || "10000",
+      trialDays: plan?.trialDays?.toString() || "0",
+      isOneTime: plan?.isOneTime || false,
+      isActive: plan?.isActive ?? true,
+      isPublic: plan?.isPublic ?? true,
+      features: plan.features.map((f) => ({ value: f.key })) || [],
+    },
   });
+
+  useEffect(() => {
+    if (plan) {
+      form.reset({
+        name: plan?.name,
+        features: plan?.features.map((f) => ({
+          value: f?.key,
+        })),
+      });
+    }
+  }, [plan, form]);
 
   const { fields, append, remove } = useFieldArray({
     control: form.control,
@@ -79,7 +120,10 @@ const CreatePlan = ({ features = [] }: { features: TFeatureData[] }) => {
   );
 
   const onSubmit = async (data: TCreatePlan) => {
-    const payload: TPlanForm = {
+    const oldFeatures = plan.features.map((f) => f.key);
+    const newFeatures = data.features.map((f) => f.value).filter(Boolean);
+    const feature = buildFeatureActions(oldFeatures, newFeatures, features);
+    const payload: Partial<TUpdatePlan> = {
       name: data.name,
       slug: data.name.toLowerCase().replace(/\s+/g, "-"),
       description: data.description,
@@ -98,15 +142,14 @@ const CreatePlan = ({ features = [] }: { features: TFeatureData[] }) => {
       isOneTime: Boolean(data.isOneTime),
       isActive: Boolean(data.isActive),
       isPublic: Boolean(data.isPublic),
-      features: data.features.map((f) => f.value),
+      features: feature,
     };
-    const toastId = toast.loading("creating plan...");
-
+    const toastId = toast.loading("updating plan...");
     try {
-      const result = await createPlan(payload);
+      const result = await updatePlan(payload, plan.id);
+
       if (result?.success) {
         toast.success(result.message, { id: toastId });
-        form.reset();
         setOpen(false);
       } else {
         toast.error(result?.message, { id: toastId });
@@ -121,20 +164,12 @@ const CreatePlan = ({ features = [] }: { features: TFeatureData[] }) => {
     <Dialog
       open={open}
       onOpenChange={(isOpen) => {
-        if (!isOpen) form.reset();
         setOpen(isOpen);
       }}
     >
       <DialogTrigger asChild>
-        <button className="relative cursor-pointer effect rounded-2xl py-2 flex items-center justify-center px-4 overflow-hidden">
-          <p className="flex items-center gap-2">
-            <Plus size={18} />
-            <span className="text-sm text-white">Create Plan</span>
-          </p>
-          <div className="pointer-events-none absolute bottom-0 left-1/2 w-[calc(100%-2rem)] -translate-x-1/2 z-20">
-            <span className="block h-[1.5px] w-full bg-[linear-gradient(to_right,rgba(255,177,63,0)_0%,#FFB13F_50%,rgba(255,177,63,0)_100%)]" />
-          </div>
-          <CornerGlowSvg />
+        <button className=" w-7 h-7 p-1.5 rounded-[12px] effect cursor-pointer">
+          <SquarePen size={16} className="text-[#58E081]" />
         </button>
       </DialogTrigger>
 
@@ -143,7 +178,7 @@ const CreatePlan = ({ features = [] }: { features: TFeatureData[] }) => {
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <DialogHeader className="flex flex-row items-center justify-between mt-4">
               <DialogTitle className="text-xl font-semibold text-white">
-                Create A New Plan
+                Update Plan
               </DialogTitle>
 
               <ButtonComponent
@@ -415,4 +450,4 @@ const CreatePlan = ({ features = [] }: { features: TFeatureData[] }) => {
   );
 };
 
-export default CreatePlan;
+export default UpdatePlanModal;
