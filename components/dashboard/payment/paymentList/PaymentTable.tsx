@@ -72,7 +72,6 @@ export const paymentTableColumn = (): ColumnDef<TPaytment>[] => [
       return <p>{plan}</p>;
     },
   },
-
   {
     accessorKey: "transactionReference",
     header: "Transaction",
@@ -121,7 +120,6 @@ export const paymentTableColumn = (): ColumnDef<TPaytment>[] => [
       );
     },
   },
-
   {
     id: "action",
     header: "Action",

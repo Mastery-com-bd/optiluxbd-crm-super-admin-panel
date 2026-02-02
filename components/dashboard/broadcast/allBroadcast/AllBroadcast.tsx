@@ -8,7 +8,7 @@ import TableComponent from "@/components/ui/TableComponent";
 const AllBroadcast = ({ broadcasts }: { broadcasts: TBroadcast[] }) => {
   const column = broadcastTableColumn();
   return (
-    <div className="bg-white/5 rounded-2xl p-6 space-y-6 min-h-screen">
+    <div className=" p-6 space-y-6 min-h-screen">
       <div className="flex items-center justify-between ">
         <PageHeader
           title="Broadcast List"
