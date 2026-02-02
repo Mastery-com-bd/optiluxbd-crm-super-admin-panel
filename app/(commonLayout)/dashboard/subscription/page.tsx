@@ -8,7 +8,7 @@ const AllSubscriptionPage = async ({
 }) => {
   const query = await searchParams;
   const result = await getAllSubscriptions(query);
-  console.log("subscription result", result);
+
   return <div>this is all subscription</div>;
 };
 

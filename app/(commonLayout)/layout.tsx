@@ -1,8 +1,8 @@
-import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import { AppSidebar } from "@/components/dashboard/customComponent/sidebar/app-sidebar";
 import Navbar from "@/components/dashboard/navbar/navbar";
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
+import { Metadata } from "next";
+import { Geist, Geist_Mono } from "next/font/google";
 
 // Load custom fonts
 const geistSans = Geist({
@@ -20,12 +20,11 @@ export const metadata: Metadata = {
   description: "This is the dashboard of Optiluxbd CRM",
 };
 
-// Root layout component
-export default function RootLayout({
+const CommonLayout = ({
   children,
 }: Readonly<{
   children: React.ReactNode;
-}>) {
+}>) => {
   return (
     <div
       className={`
@@ -50,4 +49,6 @@ export default function RootLayout({
       </div>
     </div>
   );
-}
+};
+
+export default CommonLayout;

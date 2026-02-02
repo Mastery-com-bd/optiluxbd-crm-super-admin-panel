@@ -5,7 +5,6 @@ export type TPlan = {
   name: string;
   description: string | null;
   features: TFeature[];
-
   isActive: boolean;
   isOneTime: boolean;
   isPublic: boolean;
@@ -17,13 +16,11 @@ export type TPlan = {
   maxApiCalls: number | null;
   trialDays: string;
   maxUsers: string;
-
   priceDaily: string | null;
   priceMonthly: string;
   priceOneTime: string | null;
   priceYearly: string;
   slug: string;
-
   updatedAt: string;
   createdAt: string;
 };

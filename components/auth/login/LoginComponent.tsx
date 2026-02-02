@@ -53,7 +53,7 @@ const LoginComponent = () => {
         await refetchUser();
         toast.success(res?.message, { id: toastId, duration: 3000 });
         reset();
-        router.push(redirect ? redirect : "/dashboard");
+        router.push(redirect ? redirect : "/");
       } else {
         toast.error(res?.message, { id: toastId, duration: 3000 });
       }
@@ -77,7 +77,7 @@ const LoginComponent = () => {
         await refetchUser();
         toast.success(res?.message, { id: toastId, duration: 3000 });
         reset();
-        router.push(redirect ? redirect : "/dashboard");
+        router.push(redirect ? redirect : "/");
       } else {
         toast.error(res?.message, { id: toastId, duration: 3000 });
       }

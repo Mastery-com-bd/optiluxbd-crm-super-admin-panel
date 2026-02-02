@@ -24,11 +24,10 @@ import {
   SelectItem,
   SelectTrigger,
 } from "@/components/ui/select";
-import { createPlan, TPlanForm, updatePlan } from "@/service/plans";
+import { createPlan, TPlanForm } from "@/service/plans";
 import { TFeatureData } from "@/types/feature.types";
-import { TPlan } from "@/types/plan.types";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Plus, SquarePen, Trash2 } from "lucide-react";
+import { Plus, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { toast } from "sonner";
@@ -63,55 +62,12 @@ const formSchema = z.object({
 
 type TCreatePlan = z.infer<typeof formSchema>;
 
-const CreatePlan = ({
-  plan,
-  features = [],
-}: {
-  plan?: TPlan;
-  features: TFeatureData[];
-}) => {
+const CreatePlan = ({ features = [] }: { features: TFeatureData[] }) => {
   const [open, setOpen] = useState(false);
 
   const form = useForm<TCreatePlan>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      // Required
-      name: plan?.name || "",
-      priceMonthly: plan?.priceMonthly?.toString() || "0",
-
-      // Optional fields
-      description: plan?.description || "",
-      priceDaily: plan?.priceDaily?.toString() || "",
-      priceYearly: plan?.priceYearly?.toString() || "",
-      priceOneTime: plan?.priceOneTime?.toString() || "",
-      maxUsers: plan?.maxUsers?.toString() || "1",
-      maxCustomers: plan?.maxCustomers?.toString() || "100",
-      maxLocations: plan?.maxLocations?.toString() || "1",
-      maxProducts: plan?.maxProducts?.toString() || "100",
-      maxInvoices: plan?.maxInvoices?.toString() || "100",
-      maxStorage: plan?.maxStorage?.toString() || "1024",
-      maxApiCalls: plan?.maxApiCalls?.toString() || "10000",
-      trialDays: plan?.trialDays?.toString() || "0",
-      isOneTime: plan?.isOneTime || false,
-      isActive: plan?.isActive ?? true,
-      isPublic: plan?.isPublic ?? true,
-      features:
-        plan?.features?.map((f) => ({
-          value: f.name,
-        })) || [],
-    },
   });
-
-  // useEffect(() => {
-  //   if (plan) {
-  //     form.reset({
-  //       name: plan.name,
-  //       features: plan.features.map((f) => ({
-  //         value: f.name,
-  //       })),
-  //     });
-  //   }
-  // }, [plan, form]);
 
   const { fields, append, remove } = useFieldArray({
     control: form.control,
@@ -147,10 +103,7 @@ const CreatePlan = ({
     const toastId = toast.loading("creating plan...");
 
     try {
-      const result = plan
-        ? await updatePlan(payload, plan.id)
-        : await createPlan(payload);
-
+      const result = await createPlan(payload);
       if (result?.success) {
         toast.success(result.message, { id: toastId });
         form.reset();
@@ -173,22 +126,16 @@ const CreatePlan = ({
       }}
     >
       <DialogTrigger asChild>
-        {plan ? (
-          <button className=" w-7 h-7 p-1.5 rounded-[12px] effect cursor-pointer">
-            <SquarePen size={16} className="text-[#58E081]" />
-          </button>
-        ) : (
-          <button className="relative cursor-pointer effect rounded-2xl py-2 flex items-center justify-center px-4 overflow-hidden">
-            <p className="flex items-center gap-2">
-              <Plus size={18} />
-              <span className="text-sm text-white">Create Plan</span>
-            </p>
-            <div className="pointer-events-none absolute bottom-0 left-1/2 w-[calc(100%-2rem)] -translate-x-1/2 z-20">
-              <span className="block h-[1.5px] w-full bg-[linear-gradient(to_right,rgba(255,177,63,0)_0%,#FFB13F_50%,rgba(255,177,63,0)_100%)]" />
-            </div>
-            <CornerGlowSvg />
-          </button>
-        )}
+        <button className="relative cursor-pointer effect rounded-2xl py-2 flex items-center justify-center px-4 overflow-hidden">
+          <p className="flex items-center gap-2">
+            <Plus size={18} />
+            <span className="text-sm text-white">Create Plan</span>
+          </p>
+          <div className="pointer-events-none absolute bottom-0 left-1/2 w-[calc(100%-2rem)] -translate-x-1/2 z-20">
+            <span className="block h-[1.5px] w-full bg-[linear-gradient(to_right,rgba(255,177,63,0)_0%,#FFB13F_50%,rgba(255,177,63,0)_100%)]" />
+          </div>
+          <CornerGlowSvg />
+        </button>
       </DialogTrigger>
 
       <DialogContent className="px-6 py-4 w-[40vw] max-w-150 gap-2 bg-[#1A1129] border-white/10 max-h-screen overflow-y-auto hide-scrollbar">
@@ -196,7 +143,7 @@ const CreatePlan = ({
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <DialogHeader className="flex flex-row items-center justify-between mt-4">
               <DialogTitle className="text-xl font-semibold text-white">
-                {plan ? "Update Plan" : "Create A New Plan"}
+                Create A New Plan
               </DialogTitle>
 
               <ButtonComponent

@@ -19,7 +19,7 @@ export const paymentTableColumn = (): ColumnDef<TPaytment>[] => [
       const trimedName = name.length > 10 ? name.slice(0, 10) + "..." : name;
       return (
         <div className=" flex items-center gap-2">
-          <TooltipComponent name={name} trimedName={trimedName} />;
+          <TooltipComponent name={name} trimedName={trimedName} />
         </div>
       );
     },
@@ -84,7 +84,7 @@ export const paymentTableColumn = (): ColumnDef<TPaytment>[] => [
           : transactionId;
       return (
         <div className=" flex items-center gap-2 text-xs whitespace-nowrap">
-          <TooltipComponent name={transactionId} trimedName={trimedName} />;
+          <TooltipComponent name={transactionId} trimedName={trimedName} />
         </div>
       );
     },

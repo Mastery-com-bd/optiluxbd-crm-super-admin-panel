@@ -6,8 +6,8 @@ import { TPlan } from "@/types/plan.types";
 import { Eye, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
-import CreatePlan from "./CreatePlan";
 import { TFeatureData } from "@/types/feature.types";
+import UpdatePlanModal from "./UpdatePlanModal";
 
 const PlanCard = ({
   plan,
@@ -118,7 +118,7 @@ const PlanCard = ({
             </button>
           </Link>
 
-          <CreatePlan plan={plan} features={features} />
+          <UpdatePlanModal plan={plan} features={features} />
 
           <button className=" w-7 h-7 p-1.5 rounded-[12px] effect cursor-pointer">
             <Trash2 size={16} className="text-[#F50F0F]" />
