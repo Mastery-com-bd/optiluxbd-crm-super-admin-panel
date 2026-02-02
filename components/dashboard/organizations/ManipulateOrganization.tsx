@@ -11,13 +11,24 @@ import { OrganizationData, OrgFormValues, orgSchema } from "@/types/organization
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { createOrganization } from "@/service/OrganaizationService";
 import { toast } from "sonner";
+import { useEffect, useState } from "react";
+import { getAllPlan } from "@/service/planService";
+import { TPlan } from "@/types/plan.types";
 
 interface OrgFormProps {
     initialData?: OrganizationData;
 }
 
 export default function OrganizationForm({ initialData }: OrgFormProps) {
+    const [plans, setPlans] = useState<TPlan[]>([]);
     const isUpdate = !!initialData;
+    useEffect(() => {
+        const fetchData = async () => {
+            const result = await getAllPlan();
+            setPlans(result.data || []);
+        };
+        fetchData();
+    }, []);
     const onFormSubmit = async (data: OrgFormValues) => {
         const toastId = toast.loading(isUpdate ? "Updating..." : "Creating organization...");
         try {
@@ -51,7 +62,6 @@ export default function OrganizationForm({ initialData }: OrgFormProps) {
             phone: "",
             website: "",
             slug: "",
-            plan: "STARTER",
         },
     });
 
@@ -139,9 +149,11 @@ export default function OrganizationForm({ initialData }: OrgFormProps) {
                                             </SelectTrigger>
                                         </FormControl>
                                         <SelectContent>
-                                            <SelectItem value="STARTER">Starter</SelectItem>
-                                            <SelectItem value="PRO">Pro</SelectItem>
-                                            <SelectItem value="ENTERPRISE">Enterprise</SelectItem>
+                                            {plans.map((plan) => (
+                                                <SelectItem key={plan.id} value={plan.name}>
+                                                    {plan.name}
+                                                </SelectItem>
+                                            ))}
                                         </SelectContent>
                                     </Select>
                                     <FormMessage />

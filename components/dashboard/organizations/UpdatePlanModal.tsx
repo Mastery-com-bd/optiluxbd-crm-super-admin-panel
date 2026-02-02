@@ -14,14 +14,14 @@ import {
 import { Button } from "@/components/ui/button";
 import { updateOrganizationPlan } from "@/service/OrganaizationService";
 import { toast } from "sonner";
-import { OrganizationData } from "@/types/organizations";
+import { Organization } from "@/types/organizations";
 
 export default function UpdatePlanModal({
     organization,
     open,
     setOpen
 }: {
-    organization: OrganizationData | null;
+    organization: Organization | null;
     open: boolean;
     setOpen: (open: boolean) => void
 }) {
