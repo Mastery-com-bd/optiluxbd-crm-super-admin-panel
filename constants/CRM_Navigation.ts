@@ -7,6 +7,7 @@ import {
   Settings,
   Tag,
   Tv,
+  User,
 } from "lucide-react";
 import { LucideIcon } from "lucide-react";
 
@@ -29,7 +30,12 @@ export const crmRoutes: TCrmNavigation = {
     {
       title: "Dashboard",
       icon: CircleGauge,
-      path: "/dashboard",
+      path: "/",
+    },
+    {
+      title: "User",
+      icon: User,
+      path: "/dashboard/user",
     },
     {
       title: "Organizations",
@@ -40,10 +46,10 @@ export const crmRoutes: TCrmNavigation = {
       title: "Subscription & Plan",
       icon: Podcast,
       children: [
-        {
-          title: "All Subscriptions",
-          path: "/dashboard/subscription",
-        },
+        // {
+        //   title: "All Subscriptions",
+        //   path: "/dashboard/subscription",
+        // },
         {
           title: "All Plans",
           path: "/dashboard/plans",
@@ -85,9 +91,6 @@ export const crmRoutes: TCrmNavigation = {
     },
 
     {
-      title: "Settings",
-      icon: Settings,
-      path: "/dashboard/settings",
       title: "Supports",
       icon: Tv,
       path: "/dashboard/support",
@@ -96,6 +99,11 @@ export const crmRoutes: TCrmNavigation = {
       title: "Contents",
       icon: Tv,
       path: "/dashboard/content",
+    },
+    {
+      title: "Settings",
+      icon: Settings,
+      path: "/dashboard/settings",
     },
   ],
 

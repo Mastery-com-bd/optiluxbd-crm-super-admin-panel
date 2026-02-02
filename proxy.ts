@@ -19,7 +19,6 @@ export const proxy = async (request: NextRequest) => {
   if (!token || (await isTokenExpired(token))) {
     try {
       const data = await getNewToken();
-      console.log(data);
       if (!data?.accessToken) {
         await logout();
         return NextResponse.redirect(

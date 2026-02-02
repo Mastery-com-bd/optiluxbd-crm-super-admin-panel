@@ -13,7 +13,7 @@ import {
 import { Button } from "./button";
 
 type TDeleteProps = {
-  onChange: (
+  onChange?: (
     id: string,
     setOpen: Dispatch<SetStateAction<boolean>>,
     setLoading: Dispatch<SetStateAction<boolean>>,
@@ -21,6 +21,10 @@ type TDeleteProps = {
   id: string;
   loading: boolean;
   setLoading: Dispatch<SetStateAction<boolean>>;
+  buttonName?: string;
+  acceptButtonName?: string;
+  title?: string;
+  description?: string;
 };
 
 const ConfirmComponent = ({
@@ -28,36 +32,41 @@ const ConfirmComponent = ({
   id,
   loading,
   setLoading,
+  buttonName = "Confirm Approve",
+  acceptButtonName = "Approve",
+  title = "Are you sure?",
+  description = "If you confirm this, the payment will be confirmed from the pending status to paid status",
 }: TDeleteProps) => {
   const [open, setOpen] = useState(false);
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       {/* Trigger button */}
-      <DialogTrigger asChild onClick={(e) => e.stopPropagation()}>
+      <DialogTrigger
+        asChild
+        onClick={(e) => e.stopPropagation()}
+        className="z-20"
+      >
         <button className="cursor-pointer w-full flex items-center justify-start text-white">
-          Approve
+          {buttonName}
         </button>
       </DialogTrigger>
 
-      {/* Dialog content */}
       <DialogContent className="w-37.5">
         <DialogHeader>
-          <DialogTitle>Are you sure?</DialogTitle>
-          <DialogDescription>
-            If you confirm this, the payment will be confirmed from the pending
-            status to paid status
-          </DialogDescription>
+          <DialogTitle>{title}</DialogTitle>
         </DialogHeader>
+        <DialogDescription>{description}</DialogDescription>
         <DialogFooter className="flex justify-end gap-2">
           <Button
             variant="default"
             disabled={loading}
             onClick={() => {
-              onChange(id, setOpen, setLoading);
+              onChange?.(id, setOpen, setLoading);
             }}
             className="cursor-pointer"
           >
-            Confirm Approve
+            {acceptButtonName}
           </Button>
         </DialogFooter>
       </DialogContent>

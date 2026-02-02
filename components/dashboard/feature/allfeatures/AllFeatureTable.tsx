@@ -20,7 +20,7 @@ export const featureTableColumn = (): ColumnDef<TFeatureData>[] => [
       const trimedName = name.length > 10 ? name.slice(0, 10) + "..." : name;
       return (
         <div className=" flex items-center gap-2">
-          <TooltipComponent name={name} trimedName={trimedName} />;
+          <TooltipComponent name={name} trimedName={trimedName} />
         </div>
       );
     },
