@@ -71,7 +71,7 @@ const LoginComponent = () => {
     const toastId = toast.loading("logging in");
     try {
       const res = await login(data);
-
+      console.log(res);
       if (res?.success) {
         setIsLoading(false);
         await refetchUser();
@@ -105,8 +105,8 @@ const LoginComponent = () => {
               disabled={isSubmitting}
               onClick={() =>
                 handleAdmin({
-                  email: "superadmin@optilux.com",
-                  password: "SuperAdmin@123!",
+                  email: "admin@landlord.com",
+                  password: "Password123!",
                 })
               }
               className="font-medium py-2 w-full rounded-full flex items-center justify-center text-[#C3C0D8] border border-[#2C293D] gap-2 cursor-pointer"

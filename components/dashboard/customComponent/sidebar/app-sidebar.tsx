@@ -15,22 +15,14 @@ import {
 import { crmRoutes } from "@/constants/CRM_Navigation";
 import Optilux from "../../../../public/images/OptiluxBD.png";
 import Image from "next/image";
-// import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-// import {
-//   currentUser,
-//   logOut,
-//   TAuthUSer,
-// } from "@/redux/features/auth/authSlice";
 import { useRouter } from "next/navigation";
-// import { useLogoutMutation } from "@/redux/features/auth/authApi";
 import { toast } from "sonner";
-// import { baseApi } from "@/redux/api/baseApi";
-// import { getPermissions } from "@/utills/getPermissionAndRole";
 import SidebarButtonEffect from "./buttons/ItemButton";
 import { logout } from "@/service/authService";
 import { useUser } from "@/providers/AuthProvider";
 import { TUser } from "@/types/user.types";
 import { NavUser } from "./nav-user";
+import { usePermission } from "@/providers/PermissionProvider";
 // This is sample data.
 const data = {
   teams: [
@@ -46,13 +38,10 @@ const data = {
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  // const user = useAppSelector(currentUser);
   const router = useRouter();
-  // const dispatch = useAppDispatch();
-  // const [logout] = useLogoutMutation();
-  // const user = useAppSelector(currentUser);
   const { setUser, setIsLoading, user } = useUser();
-  // const { role } = getPermissions(user as TAuthUSer);
+  const { setUserPermissions, setIsLoading: setPermissionLoading } =
+    usePermission();
   const role = ["Owner"];
   const percent = 50;
 
@@ -62,7 +51,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       const res = await logout();
       if (res.success) {
         setIsLoading(true);
+        setPermissionLoading(true);
         setUser(null);
+        setUserPermissions(null);
         toast.success(res?.message, { id: toastId, duration: 3000 });
         router.push("/login");
       } else {

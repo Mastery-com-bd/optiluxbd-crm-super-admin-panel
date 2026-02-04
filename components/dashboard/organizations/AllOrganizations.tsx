@@ -41,7 +41,7 @@ import {
   deleteOrganization,
   updateOrganizationStatus,
   updateOrganizationSuspendStatus,
-} from "@/service/OrganaizationService";
+} from "@/service/payment/OrganaizationService";
 import { OrganizationData, Organizations } from "@/types/organizations";
 import { ChangeInput } from "@/types/shared";
 import {
@@ -246,10 +246,11 @@ export default function AllOrganizations({
                           onCheckedChange={() =>
                             handleToggleStatus(organization.id)
                           }
-                          className={`${organization.isActive
-                            ? "data-[state=checked]:bg-green-600"
-                            : "data-[state=unchecked]:bg-red-600"
-                            }`}
+                          className={`${
+                            organization.isActive
+                              ? "data-[state=checked]:bg-green-600"
+                              : "data-[state=unchecked]:bg-red-600"
+                          }`}
                         />
                         <span
                           className={`text-xs font-bold ${organization.isActive ? "text-green-600" : "text-red-600"}`}
@@ -264,12 +265,16 @@ export default function AllOrganizations({
                           id={`status-${organization.id}`}
                           checked={organization.isSuspended}
                           onCheckedChange={() => {
-                            handleToggleSuspend(organization.id, organization.isSuspended);
+                            handleToggleSuspend(
+                              organization.id,
+                              organization.isSuspended,
+                            );
                           }}
-                          className={`${organization.isSuspended
-                            ? "data-[state=checked]:bg-red-600"
-                            : "data-[state=unchecked]:bg-green-600"
-                            }`}
+                          className={`${
+                            organization.isSuspended
+                              ? "data-[state=checked]:bg-red-600"
+                              : "data-[state=unchecked]:bg-green-600"
+                          }`}
                         />
                         <span
                           className={`text-xs font-bold ${organization.isSuspended ? " text-red-600" : "text-green-600"}`}

@@ -12,44 +12,39 @@ import {
   SidebarMenuSub,
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar";
-// import SubItemButton from "@/components/pages/shared/dashboard/sidebar/buttons/SubItemButton";
 import { NavRoute } from "@/constants/CRM_Navigation";
-// import { currentUser, TAuthUSer } from "@/redux/features/auth/authSlice";
-// import { useAppSelector } from "@/redux/hooks";
-// import { getPermissions } from "@/utills/getPermissionAndRole";
-// import { getSidebarRoutes } from "@/utills/getSidebarRoutes";
-// import { matchRoute } from "@/utills/matchRoute";
 import { Minus, Plus } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import SidebarButtonEffect from "../buttons/ItemButton";
 import SubItemButton from "../buttons/SubItemButton";
+import { usePermission } from "@/providers/PermissionProvider";
+import { filterRoutesByPermissions } from "@/utils/filterRouteByPermission";
 
 type TCoreManagementRoute = {
   sidebarRoutes: NavRoute[];
   platform?: string;
-  singleRoute?: NavRoute;
 };
 
-const CoreManagement = ({
-  sidebarRoutes,
-  platform,
-  singleRoute,
-}: TCoreManagementRoute) => {
-  // const user = useAppSelector(currentUser);
-  // const { role, permissions } = getPermissions(user as TAuthUSer);
+const CoreManagement = ({ sidebarRoutes, platform }: TCoreManagementRoute) => {
   const pathname = usePathname();
-  // const visibleRoutes = getSidebarRoutes(sidebarRoutes, role, permissions);
   const [open, setOpen] = useState(false);
-  const isActiveCommunication = pathname === singleRoute?.path;
+  const { userPermissions } = usePermission();
+  const permissions = userPermissions?.permissions;
+  const role = userPermissions?.roles[0];
 
+  const visibleRoutes =
+    role === "Landlord Admin"
+      ? sidebarRoutes
+      : filterRoutesByPermissions(sidebarRoutes, permissions || []);
+  console.log(visibleRoutes);
   return (
     <div>
       {platform && <SidebarGroupLabel>{platform}</SidebarGroupLabel>}
 
       <SidebarMenu>
-        {sidebarRoutes.map((item, i) => {
+        {visibleRoutes.map((item, i) => {
           const isActive = pathname === item.path;
 
           if (!item.children || item.children.length === 0) {
@@ -96,12 +91,6 @@ const CoreManagement = ({
           return (
             <Collapsible key={i} asChild className="group/collapsible">
               <SidebarMenuItem>
-                {singleRoute && (
-                  <SubItemButton
-                    isActive={isActiveCommunication}
-                    subItem={singleRoute}
-                  />
-                )}
                 <CollapsibleTrigger asChild>
                   <SidebarMenuButton
                     asChild
@@ -149,7 +138,7 @@ const CoreManagement = ({
                 <CollapsibleContent>
                   <SidebarMenuSub>
                     {item?.children?.map((subItem, i) => {
-                      const isActive = pathname === subItem.path ;
+                      const isActive = pathname === subItem.path;
                       const visibleChildrenRoute = subItem?.children;
                       const hasChildren =
                         subItem?.children && subItem?.children.length > 0
@@ -158,7 +147,7 @@ const CoreManagement = ({
                       return (
                         <SidebarMenuSubItem
                           key={i}
-                          active={isActive} 
+                          active={isActive}
                           hasChildren={hasChildren}
                         >
                           {subItem?.children && subItem?.children.length ? (
@@ -227,7 +216,7 @@ const CoreManagement = ({
                                               />
                                             </SidebarMenuSubItem>
                                           );
-                                        }
+                                        },
                                       )}
                                     </SidebarMenuSub>
                                   </CollapsibleContent>

@@ -1,11 +1,15 @@
 import DashboardOverview from "@/components/dashboard/customComponent/shared/DashboardOverview";
 import RevenueSection from "@/components/dashboard/customComponent/shared/RevenewSection";
 import Organization from "@/components/dashboard/organizations/Organization";
-import { getAnalytics } from "@/service/analytics";
+import { getAnalytics, getUsageAnalytics } from "@/service/analytics";
 
 const HomePage = async () => {
-  const result = await getAnalytics();
-  const analytics = result?.data || {};
+  const [analyticsResult, usageAnalyticsResult] = await Promise.all([
+    getAnalytics(),
+    getUsageAnalytics(),
+  ]);
+  const analytics = analyticsResult?.data || {};
+  const usageAnalytics = usageAnalyticsResult?.data;
 
   return (
     <div>
