@@ -1,6 +1,6 @@
 import AllOrganizations from "@/components/dashboard/organizations/AllOrganizations";
 import PageHeader from "@/components/shared/pageHeader";
-import { fetchOrganizations } from "@/service/OrganaizationService";
+import { fetchOrganizations } from "@/service/payment/OrganaizationService";
 import { Query, TSearchParams } from "@/types/shared";
 
 export default async function Organization({

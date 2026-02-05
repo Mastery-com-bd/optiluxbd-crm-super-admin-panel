@@ -56,7 +56,7 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 export const useUser = () => {
   const context = useContext(AuthContext);
   if (context === undefined) {
-    throw new Error("user user can be used only within the Use provider hook");
+    throw new Error(" user can be used only within the Use provider hook");
   }
   return context;
 };

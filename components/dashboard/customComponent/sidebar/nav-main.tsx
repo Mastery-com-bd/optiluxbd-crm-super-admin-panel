@@ -1,16 +1,12 @@
 "use client";
 import { SidebarGroup } from "@/components/ui/sidebar";
-import { TCrmNavigation } from "@/constants/CRM_Navigation";
 import CoreManagement from "./sidebarRoutes/CoreManagement";
+import { NavRoute } from "@/constants/CRM_Navigation";
 
-export function NavMain({ items }: { items: TCrmNavigation }) {
+export function NavMain({ items }: { items: NavRoute[] }) {
   return (
     <SidebarGroup className="space-y-2">
-      {/* core management */}
-      <CoreManagement
-        sidebarRoutes={items?.coreManagement}
-        platform="Core Management"
-      />
+      <CoreManagement sidebarRoutes={items} platform="Core Management" />
     </SidebarGroup>
   );
 }

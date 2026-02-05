@@ -18,11 +18,17 @@ const AllPlans = ({
         <CreatePlan features={features} />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        {plans.map((plan) => (
-          <PlanCard key={plan?.id} plan={plan} features={features} />
-        ))}
-      </div>
+      {plans.length ? (
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+          {plans.map((plan) => (
+            <PlanCard key={plan?.id} plan={plan} features={features} />
+          ))}
+        </div>
+      ) : (
+        <div className="flex items-center justify-center">
+          <p>No Plan available right now</p>
+        </div>
+      )}
     </div>
   );
 };
