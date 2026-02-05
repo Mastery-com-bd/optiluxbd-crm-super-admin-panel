@@ -59,10 +59,10 @@ export const featureTableColumn = (): ColumnDef<TFeatureData>[] => [
       );
 
       return (
-        <h1 className="flex flex-col items-start">
-          <span>{creationDate}</span>
-          <span>{creationTime}</span>
-        </h1>
+        <div className="flex flex-col items-center">
+          <p>{creationDate}</p>
+          <p>{creationTime}</p>
+        </div>
       );
     },
   },

@@ -7,6 +7,14 @@ import { TCreateRole } from "@/components/dashboard/rolesAndPermission/allRoles/
 import { getValidToken } from "../authService/validToken";
 import { revalidatePath } from "next/cache";
 
+export type TUserRoleData = {
+  userId: number;
+};
+
+type TSetPermission = {
+  permissionKeys: string[];
+};
+
 export const GetAllRoles = async () => {
   const token = (await getAccesstoken()) as string;
   try {
@@ -92,10 +100,6 @@ export const getRoleById = async (id: string) => {
   }
 };
 
-export type TUserRoleData = {
-  userId: number;
-};
-
 export const removeRole = async (id: string, data: TUserRoleData) => {
   const token = await getValidToken();
   try {
@@ -140,10 +144,6 @@ export const assignRole = async (id: string, data: TUserRoleData) => {
   }
 };
 
-type TSetPermission = {
-  permissionKeys: string[];
-};
-
 export const setPermission = async (id: string, data: TSetPermission) => {
   const token = await getValidToken();
   try {
@@ -156,6 +156,48 @@ export const setPermission = async (id: string, data: TSetPermission) => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(data),
+      },
+    );
+    const result = await res.json();
+    revalidatePath("/dashboard/roles");
+    return result;
+  } catch (error: any) {
+    return Error(error);
+  }
+};
+
+export const updateRole = async (id: string, data: Partial<TCreateRole>) => {
+  const token = await getValidToken();
+  try {
+    const res = await fetch(
+      `${config.next_public_base_api}/admin/roles/${id}`,
+      {
+        method: "PUT",
+        headers: {
+          Authorization: token,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      },
+    );
+    const result = await res.json();
+    revalidatePath("/dashboard/roles");
+    return result;
+  } catch (error: any) {
+    return Error(error);
+  }
+};
+
+export const deleteRole = async (id: string) => {
+  const token = await getValidToken();
+  try {
+    const res = await fetch(
+      `${config.next_public_base_api}/admin/roles/${id}`,
+      {
+        method: "DELETE",
+        headers: {
+          Authorization: token,
+        },
       },
     );
     const result = await res.json();
