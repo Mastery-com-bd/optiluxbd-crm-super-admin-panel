@@ -32,3 +32,21 @@ export const createCoupon = async (data: any) => {
     return Error(error);
   }
 };
+
+export const enableCoupon = async (id: number) => {
+  try {
+    const result = await createData<any>(`/subscriptions/admin/coupons/${id}/enable`, "/dashboard/coupons");
+    return result;
+  } catch (error: any) {
+    return Error(error);
+  }
+};
+
+export const disableCoupon = async (id: number) => {
+  try {
+    const result = await createData<any>(`/subscriptions/admin/coupons/${id}/disable`, "/dashboard/coupons");
+    return result;
+  } catch (error: any) {
+    return Error(error);
+  }
+};
