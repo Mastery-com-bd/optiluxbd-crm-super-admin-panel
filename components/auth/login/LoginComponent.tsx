@@ -12,6 +12,7 @@ import { useUser } from "@/providers/AuthProvider";
 import LargeYellowSvg from "@/components/svgIcon/LargeYellowSvg";
 import { login } from "@/service/authService";
 import { config } from "@/config";
+import { usePermission } from "@/providers/PermissionProvider";
 
 const loginSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
@@ -25,6 +26,9 @@ const LoginComponent = () => {
   const { visible, toggle } = usePasswordToggle();
   const [redirect, setRedirect] = useState<string | null>(null);
   const { refetchUser, setIsLoading } = useUser();
+  const { refetchPermission, setIsLoading: setPermissionLoading } =
+    usePermission();
+
   const {
     handleSubmit,
     register,
@@ -50,7 +54,9 @@ const LoginComponent = () => {
       const res = await login(data);
       if (res?.success) {
         setIsLoading(false);
+        setPermissionLoading(false);
         await refetchUser();
+        await refetchPermission();
         toast.success(res?.message, { id: toastId, duration: 3000 });
         reset();
         router.push(redirect ? redirect : "/");
@@ -74,7 +80,9 @@ const LoginComponent = () => {
       console.log(res);
       if (res?.success) {
         setIsLoading(false);
+        setPermissionLoading(false);
         await refetchUser();
+        await refetchPermission();
         toast.success(res?.message, { id: toastId, duration: 3000 });
         reset();
         router.push(redirect ? redirect : "/");

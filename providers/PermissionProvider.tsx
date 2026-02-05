@@ -25,7 +25,7 @@ export type TPermissionProviderValue = {
   setUserPermissions: (userPermissions: TPermissionProvider | null) => void;
   isLoading: boolean;
   setIsLoading: Dispatch<SetStateAction<boolean>>;
-  refetchUser: () => Promise<void>;
+  refetchPermission: () => Promise<void>;
 };
 
 const PermissionContext = createContext<TPermissionProviderValue | undefined>(
@@ -58,7 +58,7 @@ const PermissionProvider = ({ children }: { children: React.ReactNode }) => {
         setUserPermissions,
         isLoading,
         setIsLoading,
-        refetchUser: handlePermissions,
+        refetchPermission: handlePermissions,
       }}
     >
       {children}
