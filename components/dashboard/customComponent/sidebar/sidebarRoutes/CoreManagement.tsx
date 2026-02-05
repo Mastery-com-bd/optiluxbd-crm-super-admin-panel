@@ -39,8 +39,6 @@ const CoreManagement = ({ sidebarRoutes, platform }: TCoreManagementRoute) => {
       ? sidebarRoutes
       : filterRoutesByPermissions(sidebarRoutes, permissions || []);
 
-  console.log(visibleRoutes);
-
   return (
     <div>
       {platform && <SidebarGroupLabel>{platform}</SidebarGroupLabel>}

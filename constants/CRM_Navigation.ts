@@ -24,7 +24,7 @@ export const crmRoutes: NavRoute[] = [
   {
     title: "Dashboard",
     icon: CircleGauge,
-    path: "/",
+    path: "/dashboard",
     permissions: ["reports.view"],
   },
   {
