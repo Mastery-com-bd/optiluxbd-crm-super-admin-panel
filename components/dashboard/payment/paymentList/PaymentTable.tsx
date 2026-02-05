@@ -9,6 +9,7 @@ import { Dispatch, SetStateAction } from "react";
 import { toast } from "sonner";
 import { TPaytment, TStatus } from "@/types/payment.types";
 import { approvePayment } from "@/service/payment";
+import RejectModal from "./RejectModal";
 
 export const paymentTableColumn = (): ColumnDef<TPaytment>[] => [
   {
@@ -125,13 +126,14 @@ export const paymentTableColumn = (): ColumnDef<TPaytment>[] => [
     header: "Action",
     cell: ({ row }) => {
       const id = row.original?.id;
-      const handleDelete = async (
+
+      const handleApprove = async (
         id: string,
         setOpen: Dispatch<SetStateAction<boolean>>,
         setLoading: Dispatch<SetStateAction<boolean>>,
       ) => {
         setLoading(true);
-        const toastId = toast.loading("feature deleting", { duration: 3000 });
+        const toastId = toast.loading("payment approving", { duration: 3000 });
         try {
           const result = await approvePayment(id);
           if (result?.success) {
@@ -152,9 +154,11 @@ export const paymentTableColumn = (): ColumnDef<TPaytment>[] => [
         <ActionDropdown
           id={id.toString()}
           path={`/dashboard/payments/${row.original?.id}`}
-          handleDelete={handleDelete}
+          handleDelete={handleApprove}
           type="confirm"
-        ></ActionDropdown>
+        >
+          <RejectModal id={id.toString()} />
+        </ActionDropdown>
       );
     },
   },

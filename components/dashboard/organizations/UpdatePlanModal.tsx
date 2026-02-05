@@ -17,7 +17,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { updateOrganizationPlan } from "@/service/payment/OrganaizationService";
+import { updateOrganizationPlan } from "@/service/OrganaizationService";
 import { toast } from "sonner";
 import { Organization } from "@/types/organizations";
 

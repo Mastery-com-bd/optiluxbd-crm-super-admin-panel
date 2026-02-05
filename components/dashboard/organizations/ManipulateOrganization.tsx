@@ -26,7 +26,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { createOrganization } from "@/service/payment/OrganaizationService";
+import { createOrganization } from "@/service/OrganaizationService";
 import { toast } from "sonner";
 import { useEffect, useState } from "react";
 import { getAllPlan } from "@/service/planService";

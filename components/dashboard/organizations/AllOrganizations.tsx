@@ -19,7 +19,7 @@ import {
   deleteOrganization,
   updateOrganizationStatus,
   updateOrganizationSuspendStatus,
-} from "@/service/payment/OrganaizationService";
+} from "@/service/OrganaizationService";
 import { Organization, Organizations } from "@/types/organizations";
 import { Funnel, Plus, Search, Trash2 } from "lucide-react";
 import Image from "next/image";
