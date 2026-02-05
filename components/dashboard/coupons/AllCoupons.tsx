@@ -4,8 +4,10 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSepara
 import { Switch } from "@/components/ui/switch";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { TCoupon, TCouponList } from "@/types/coupons";
-import { MoreVertical, Pencil, Trash2 } from "lucide-react";
+import { Eye, MoreVertical, Pencil, Trash2 } from "lucide-react";
+import Link from "next/link";
 import { useState } from "react";
+import { Dropdown } from "react-day-picker";
 
 const keys = [
     "CODE",
@@ -24,8 +26,8 @@ export default function AllCoupons({ coupons }: { coupons: TCouponList }) {
     const [updateModalOpen, setIsUpdateModalOpen] = useState<boolean>(false);
     const [deleteId, setDeleteId] = useState<number | null>();
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState<boolean | null>();
-    async function handleToggleCouponStatus(id: number) {
-
+    async function handleToggleCouponStatus(id: number, isActive: boolean) {
+        
     }
     return (
         <div>
@@ -66,7 +68,7 @@ export default function AllCoupons({ coupons }: { coupons: TCouponList }) {
                             <TableCell className="px-4 py-3 text-center">
                                 <Switch
                                     checked={coupon.isActive}
-                                    onCheckedChange={() => handleToggleCouponStatus(coupon.id)}
+                                    onCheckedChange={() => handleToggleCouponStatus(coupon.id, coupon.isActive)}
                                 />
                             </TableCell>
                             <TableCell className="px-4 py-3 text-center">{coupon.usedCount}</TableCell>
@@ -77,6 +79,11 @@ export default function AllCoupons({ coupons }: { coupons: TCouponList }) {
                                         <MoreVertical className="h-4 w-4" />
                                     </DropdownMenuTrigger>
                                     <DropdownMenuContent align="end" className="w-40">
+                                        <DropdownMenuItem>
+                                            <Link href={`/dashboard/coupons/${coupon.id}`} className="flex gap-2">
+                                                <Eye className="w-4 h-4 mr-2" /> <span>View Details</span>
+                                            </Link>
+                                        </DropdownMenuItem>
                                         <DropdownMenuItem
                                             className="cursor-pointer"
                                             onSelect={() => {

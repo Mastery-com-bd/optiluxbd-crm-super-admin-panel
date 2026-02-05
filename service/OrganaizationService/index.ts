@@ -29,17 +29,27 @@ export async function updateOrganizationPlan(id: number, data: Plan) {
   return res;
 }
 
-export async function updateOrganizationStatus(id: number) {
+export async function reactivateOrganization(id: number) {
   const res = await createData(`/admin/organizations/${id}/reactivate`, "/dashboard/organizations");
   return res;
 }
 
-export async function updateOrganizationSuspendStatus(id: number) {
+export async function suspendOrganization(id: number) {
   const res = await createData(`/admin/organizations/${id}/suspend`, "/dashboard/organizations");
   return res;
 }
 
 export async function getOrganizationById(id: number) {
   const res = await readData(`/admin/organizations/${id}`, ["Organization"]);
+  return res;
+}
+
+export async function enableOrganization(id: number) {
+  const res = await createData(`/admin/organizations/${id}/enable`, "/dashboard/organizations");
+  return res;
+} 
+
+export async function disableOrganization(id: number) {
+  const res = await createData(`/admin/organizations/${id}/disable`, "/dashboard/organizations");
   return res;
 }

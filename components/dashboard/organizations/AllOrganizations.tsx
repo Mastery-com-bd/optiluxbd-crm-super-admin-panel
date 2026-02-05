@@ -17,12 +17,13 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import {
   deleteOrganization,
-  updateOrganizationStatus,
-  updateOrganizationSuspendStatus,
-} from "@/service/payment/OrganaizationService";
+  disableOrganization,
+  enableOrganization,
+  reactivateOrganization,
+  suspendOrganization,
+} from "@/service/OrganaizationService";
 import { Organization, Organizations } from "@/types/organizations";
-import { Funnel, Plus, Search, Trash2 } from "lucide-react";
-import Image from "next/image";
+import { Funnel, Plus, } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
 import UpdatePlanModal from "./UpdatePlanModal";
@@ -59,9 +60,24 @@ export default function AllOrganizations({
     try {
       let r;
       if (status)
-        r = await updateOrganizationStatus(id);
+        r = await reactivateOrganization(id);
       else
-        r = await updateOrganizationSuspendStatus(id);
+        r = await suspendOrganization(id);
+      if (r.success) toast.success(r.message, { id: toastId });
+      else toast.error(r.message, { id: toastId });
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleToggleEnable = async (id: number, status: boolean) => {
+    const toastId = toast.loading("Updating...");
+    try {
+      let r;
+      if (status)
+        r = await disableOrganization(id);
+      else
+        r = await enableOrganization(id);
       if (r.success) toast.success(r.message, { id: toastId });
       else toast.error(r.message, { id: toastId });
     } catch (error) {
@@ -73,6 +89,7 @@ export default function AllOrganizations({
     () =>
       getOrganizationColumns({
         handleToggleSuspend,
+        handleToggleEnable,
         setSelectedOrg,
         setIsUpdateModalOpen,
         setDeleteProductId,

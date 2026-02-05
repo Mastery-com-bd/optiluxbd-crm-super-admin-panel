@@ -15,6 +15,7 @@ import Link from "next/link";
 
 interface ColumnProps {
   handleToggleSuspend: (id: number, currentStatus: boolean) => void;
+  handleToggleEnable: (id: number, currentStatus: boolean) => void;
   setSelectedOrg: (org: Organization) => void;
   setIsUpdateModalOpen: (open: boolean) => void;
   setDeleteProductId: (id: number) => void;
@@ -23,6 +24,7 @@ interface ColumnProps {
 
 export const getOrganizationColumns = ({
   handleToggleSuspend,
+  handleToggleEnable,
   setSelectedOrg,
   setIsUpdateModalOpen,
   //   setDeleteProductId,
@@ -79,6 +81,28 @@ export const getOrganizationColumns = ({
       ),
     },
     {
+      accessorKey: "Is Active",
+      header: "IS ACTIVE",
+      cell: ({ row }) => (
+        <div className="flex items-center justify-center gap-2">
+          <Switch
+            checked={row.original.isActive}
+            onCheckedChange={() => handleToggleEnable(row.original.id, row.original.isActive)}
+            className={`${row.original.isActive
+              ? "data-[state=checked]:bg-green-600"
+              : "data-[state=unchecked]:bg-red-600"
+              }`}
+          />
+          <span
+            className={`text-xs font-bold ${row.original.isActive ? "text-green-600" : "text-red-600"
+              }`}
+          >
+            {row.original.isActive ? "ACTIVE" : "INACTIVE"}
+          </span>
+        </div>
+      ),
+    },
+    {
       accessorKey: "isSuspended",
       header: "IS SUSPENDED",
       cell: ({ row }) => (
@@ -95,7 +119,7 @@ export const getOrganizationColumns = ({
             className={`text-xs font-bold ${row.original.isSuspended ? "text-red-600" : "text-green-600"
               }`}
           >
-            {row.original.isSuspended ? "SUSPENDED" : "ACTIVE"}
+            {row.original.isSuspended ? "SUSPENDED" : ""}
           </span>
         </div>
       ),
@@ -129,7 +153,7 @@ export const getOrganizationColumns = ({
             <DropdownMenuTrigger className="cursor-pointer">
               <MoreVertical className="h-4 w-4" />
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-[180px]">
+            <DropdownMenuContent align="end" className="w-45 z-0">
               <Link href={`/dashboard/organizations/${row.original.id}`}>
                 <DropdownMenuItem className="cursor-pointer">
                   <Eye className="w-4 h-4 mr-2" /> View

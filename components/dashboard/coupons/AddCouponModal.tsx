@@ -52,9 +52,9 @@ export default function AddCouponModal() {
         resolver: zodResolver(CouponFormSchema),
         defaultValues: {
             code: "",
-            discountType: undefined, // Add this
-            discountValue: undefined, // Add this
-            maxUses: undefined, // Add this
+            discountType: undefined, 
+            discountValue: undefined, 
+            maxUses: undefined,
         },
     })
 
@@ -142,7 +142,7 @@ export default function AddCouponModal() {
                                                 <Input
                                                     type="number"
                                                     placeholder="Discount Value"
-                                                    value={field.value ?? ""} // Add this to handle undefined
+                                                    value={field.value ?? ""} 
                                                     onChange={(e) => field.onChange(e.target.value === '' ? undefined : Number(e.target.value))}
                                                 />
                                             </FormControl>
@@ -161,7 +161,7 @@ export default function AddCouponModal() {
                                                 <Input
                                                     type="number"
                                                     placeholder="Max Uses"
-                                                    value={field.value ?? ""} // Add this to handle undefined
+                                                    value={field.value ?? ""}
                                                     onChange={(e) => field.onChange(e.target.value === '' ? undefined : Number(e.target.value))}
                                                 />
                                             </FormControl>

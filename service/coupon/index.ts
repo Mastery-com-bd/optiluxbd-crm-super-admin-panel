@@ -3,13 +3,21 @@
 
 import { createData, readData } from "../apiService/crud";
 import { Query } from "@/types/shared";
-import { TCoupon } from "@/types/coupons";
 
 
 
 export const getAllCoupons = async (query?: Query) => {
   try {
     const result = await readData("/subscriptions/admin/coupons", ["Coupons"], query);
+    return result;
+  } catch (error: any) {
+    return Error(error);
+  }
+};
+
+export const getSingleCoupon = async (id: string) => {
+  try {
+    const result = await readData(`/subscriptions/admin/coupons/${id}`, ["Coupon"]);
     return result;
   } catch (error: any) {
     return Error(error);
