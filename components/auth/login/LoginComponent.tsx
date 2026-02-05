@@ -130,9 +130,8 @@ const LoginComponent = () => {
             id="email"
             type="email"
             placeholder="Email Address"
-            className={`${
-              errors.email && "border-red-500 dark:border-red-400"
-            } bg-transparent text-[#514D6A] placeholder:text-[#514D6A] placeholder:text-sm outline-none border border-[#2C293D] py-2 px-5 rounded-full w-full`}
+            className={`${errors.email && "border-red-500 dark:border-red-400"
+              } bg-transparent text-[#514D6A] placeholder:text-[#514D6A] placeholder:text-sm outline-none border border-[#2C293D] py-2 px-5 rounded-full w-full`}
             {...register("email", { required: "Email is required" })}
           />
 
@@ -143,9 +142,8 @@ const LoginComponent = () => {
               id="password"
               type={visible ? "text" : "password"}
               placeholder="Password"
-              className={`${
-                errors.password && "border-red-500 dark:border-red-400"
-              } bg-transparent text-[#514D6A] placeholder:text-[#514D6A] placeholder:text-sm outline-none border border-[#2C293D] py-2 px-5 rounded-full w-full`}
+              className={`${errors.password && "border-red-500 dark:border-red-400"
+                } bg-transparent text-[#514D6A] placeholder:text-[#514D6A] placeholder:text-sm outline-none border border-[#2C293D] py-2 px-5 rounded-full w-full`}
               {...register("password", { required: "Password is required" })}
             />
             <button

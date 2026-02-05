@@ -52,21 +52,16 @@ export default function AllOrganizations({
     }
   };
 
-  const handleToggleStatus = async (id: number) => {
-    const toastId = toast.loading("Updating...");
-    try {
-      const r = await updateOrganizationStatus(id);
-      if (r.success) toast.success(r.message, { id: toastId });
-      else toast.error(r.message, { id: toastId });
-    } catch (error) {
-      console.error(error);
-    }
-  };
 
-  const handleToggleSuspend = async (id: number) => {
+
+  const handleToggleSuspend = async (id: number, status: boolean) => {
     const toastId = toast.loading("Updating...");
     try {
-      const r = await updateOrganizationSuspendStatus(id);
+      let r;
+      if (status)
+        r = await updateOrganizationStatus(id);
+      else
+        r = await updateOrganizationSuspendStatus(id);
       if (r.success) toast.success(r.message, { id: toastId });
       else toast.error(r.message, { id: toastId });
     } catch (error) {
@@ -77,7 +72,6 @@ export default function AllOrganizations({
   const columns = useMemo(
     () =>
       getOrganizationColumns({
-        handleToggleStatus,
         handleToggleSuspend,
         setSelectedOrg,
         setIsUpdateModalOpen,
