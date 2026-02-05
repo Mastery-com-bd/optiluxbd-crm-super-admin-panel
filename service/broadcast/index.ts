@@ -5,43 +5,22 @@ import { config } from "@/config";
 import { getValidToken } from "../authService/validToken";
 import { revalidatePath } from "next/cache";
 import { TCreateBroadCast } from "@/components/dashboard/broadcast/allBroadcast/CreateBroadcast";
+import { createData, readData } from "../apiService/crud";
+import { Query } from "@/types/shared";
 import { getAccesstoken } from "../authService";
 
-export const getAllBroadcast = async () => {
-  const token = (await getAccesstoken()) as string;
-  try {
-    const res = await fetch(`${config.next_public_base_api}/admin/broadcasts`, {
-      method: "GET",
-      headers: {
-        Authorization: token,
-      },
-      next: {
-        tags: ["Broadcasts"],
-        revalidate: 30,
-      },
-    });
-    const result = await res.json();
-    return result;
-  } catch (error: any) {
-    return Error(error);
-  }
+type TBroadcastForm = {
+  title: string;
+  message: string;
+  priority: string;
 };
 
+export async function getAllBroadcast(query?: Query) {
+  const res = await readData("/admin/broadcasts", ["Broadcast"], query);
+  return res;
+}
+
 export const createBroadcast = async (data: TCreateBroadCast) => {
-  const token = await getValidToken();
-  try {
-    const res = await fetch(`${config.next_public_base_api}/admin/broadcasts`, {
-      method: "POST",
-      headers: {
-        Authorization: token,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    });
-    const result = await res.json();
-    revalidatePath("/dashboard/broadcasts");
-    return result;
-  } catch (error: any) {
-    return Error(error);
-  }
+  const res = await createData<TCreateBroadCast>("/admin/broadcasts", "/dashboard/broadcasts", data);
+  return res;
 };
