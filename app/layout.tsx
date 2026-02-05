@@ -5,6 +5,7 @@ import "./globals.css";
 import { ThemeProvider } from "next-themes";
 import AuthProvider from "@/providers/AuthProvider";
 import ReactProvider from "@/providers/ReactProvider";
+import PermissionProvider from "@/providers/PermissionProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -38,9 +39,11 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            <div className="w-full">
-              <AuthProvider>{children}</AuthProvider>
-            </div>
+            <AuthProvider>
+              <div className="w-full">
+                <PermissionProvider>{children}</PermissionProvider>
+              </div>
+            </AuthProvider>
 
             <Toaster position="top-center" richColors />
           </ThemeProvider>

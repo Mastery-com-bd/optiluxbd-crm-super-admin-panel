@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import { Badge } from "@/components/ui/badge";
 import TooltipComponent from "@/components/ui/TooltipComponent";
@@ -6,12 +5,12 @@ import { TRoles } from "@/types/roles.types";
 import { convertDate } from "@/utils/convertDate";
 import { ColumnDef } from "@tanstack/react-table";
 import PermissionModal from "./PermissionModal";
-import { Dispatch, SetStateAction } from "react";
-import { toast } from "sonner";
-import ActionDropdown from "@/components/ui/ActionDropdown";
-import { deleteRole } from "@/service/rolesAndPermission";
+import RolesActionDropdown from "./RolesActionDropdown";
+import { TPermission } from "@/types/permission.types";
 
-export const RoleTableColumn = (): ColumnDef<TRoles>[] => [
+export const RoleTableColumn = (
+  permissions: TPermission[],
+): ColumnDef<TRoles>[] => [
   {
     id: "name",
     header: "name",
@@ -69,42 +68,19 @@ export const RoleTableColumn = (): ColumnDef<TRoles>[] => [
     id: "action",
     header: "Action",
     cell: ({ row }) => {
-      const id = row.original?.id;
-      const permissions = row.original?.permissions.map(
-        (item) => item?.permission,
-      );
-
-      const handleDelete = async (
-        id: string,
-        setOpen: Dispatch<SetStateAction<boolean>>,
-        setLoading: Dispatch<SetStateAction<boolean>>,
-      ) => {
-        setLoading(true);
-        const toastId = toast.loading("role deleting", { duration: 3000 });
-        try {
-          const result = await deleteRole(id);
-          if (result?.success) {
-            toast.success(result?.message, { id: toastId, duration: 3000 });
-            setLoading(false);
-            setOpen(false);
-          } else {
-            toast.error(result?.message, { id: toastId, duration: 3000 });
-            setLoading(false);
-          }
-        } catch (error: any) {
-          console.log(error);
-          setLoading(false);
-        }
-      };
+      const RolesPermissions =
+        row.original?.permissions.map((item) => item?.permission) || [];
+      const roleId = row.original?.id;
 
       return (
-        <ActionDropdown
-          id={id.toString()}
+        <RolesActionDropdown
           path={`/dashboard/roles/${row.original?.id}`}
-          handleDelete={handleDelete}
+          permissions={permissions}
+          rolePermissions={RolesPermissions}
+          roleId={roleId}
         >
-          <PermissionModal permissions={permissions} />
-        </ActionDropdown>
+          <PermissionModal permissions={RolesPermissions} />
+        </RolesActionDropdown>
       );
     },
   },

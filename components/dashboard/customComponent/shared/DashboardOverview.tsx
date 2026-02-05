@@ -15,7 +15,7 @@ export default function DashboardOverview({
     {
       icon: Podcast,
       label: "Active Subscription",
-      value: analytics?.activeSubscriptions.toString(),
+      value: analytics?.activeSubscriptions?.toString(),
       change: "36.8",
       isPositive: true,
       highlight: false,
@@ -23,7 +23,7 @@ export default function DashboardOverview({
     {
       icon: Building,
       label: "Total Organization",
-      value: analytics?.totalOrganizations.toString(),
+      value: analytics?.totalOrganizations?.toString(),
       change: "36.8",
       isPositive: false,
       highlight: false,
@@ -31,7 +31,7 @@ export default function DashboardOverview({
     {
       icon: Briefcase,
       label: "MRR",
-      value: analytics?.mrr.toString(),
+      value: analytics?.mrr?.toString(),
       change: "36.8",
       isPositive: true,
       highlight: false,
@@ -39,7 +39,7 @@ export default function DashboardOverview({
     {
       icon: ArrowUpRight,
       label: "Churnrate",
-      value: analytics?.churnRate.toString(),
+      value: analytics?.churnRate?.toString(),
       change: "36.8",
       isPositive: true,
       highlight: false,

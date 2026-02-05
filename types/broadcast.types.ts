@@ -1,4 +1,5 @@
 export type TPriority = "LOW" | "NORMAL" | "HIGH" | "URGENT";
+export type TType = "INFO" | "WARNING" | "MAINTENANCE" | "URGENT";
 
 export type TBroadcast = {
   id: number;
@@ -10,6 +11,6 @@ export type TBroadcast = {
   isActive: boolean;
   isRead: boolean;
   readAt: string | null;
-  type: "INFO" | "WARNING" | "MAINTENANCE" | "URGENT";
+  type: TType;
   updatedAt: string;
 };

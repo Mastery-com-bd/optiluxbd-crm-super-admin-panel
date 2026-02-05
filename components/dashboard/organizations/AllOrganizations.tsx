@@ -19,9 +19,10 @@ import {
   deleteOrganization,
   updateOrganizationStatus,
   updateOrganizationSuspendStatus,
-} from "@/service/OrganaizationService";
+} from "@/service/payment/OrganaizationService";
 import { Organization, Organizations } from "@/types/organizations";
-import { Funnel, Plus } from "lucide-react";
+import { Funnel, Plus, Search, Trash2 } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { toast } from "sonner";
 import UpdatePlanModal from "./UpdatePlanModal";
@@ -77,7 +78,7 @@ export default function AllOrganizations({
         setDeleteProductId,
         setDeleteDialogOpen,
       }),
-    []
+    [],
   );
 
   return (

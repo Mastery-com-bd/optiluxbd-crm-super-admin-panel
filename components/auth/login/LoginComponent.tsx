@@ -12,6 +12,7 @@ import { useUser } from "@/providers/AuthProvider";
 import LargeYellowSvg from "@/components/svgIcon/LargeYellowSvg";
 import { login } from "@/service/authService";
 import { config } from "@/config";
+import { usePermission } from "@/providers/PermissionProvider";
 
 const loginSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
@@ -25,6 +26,9 @@ const LoginComponent = () => {
   const { visible, toggle } = usePasswordToggle();
   const [redirect, setRedirect] = useState<string | null>(null);
   const { refetchUser, setIsLoading } = useUser();
+  const { refetchPermission, setIsLoading: setPermissionLoading } =
+    usePermission();
+
   const {
     handleSubmit,
     register,
@@ -50,10 +54,12 @@ const LoginComponent = () => {
       const res = await login(data);
       if (res?.success) {
         setIsLoading(false);
+        setPermissionLoading(false);
         await refetchUser();
+        await refetchPermission();
         toast.success(res?.message, { id: toastId, duration: 3000 });
         reset();
-        router.push(redirect ? redirect : "/dashboard");
+        router.push(redirect ? redirect : "/");
       } else {
         toast.error(res?.message, { id: toastId, duration: 3000 });
       }
@@ -71,13 +77,15 @@ const LoginComponent = () => {
     const toastId = toast.loading("logging in");
     try {
       const res = await login(data);
-
+      console.log(res);
       if (res?.success) {
         setIsLoading(false);
+        setPermissionLoading(false);
         await refetchUser();
+        await refetchPermission();
         toast.success(res?.message, { id: toastId, duration: 3000 });
         reset();
-        router.push(redirect ? redirect : "/dashboard");
+        router.push(redirect ? redirect : "/");
       } else {
         toast.error(res?.message, { id: toastId, duration: 3000 });
       }
@@ -122,9 +130,8 @@ const LoginComponent = () => {
             id="email"
             type="email"
             placeholder="Email Address"
-            className={`${
-              errors.email && "border-red-500 dark:border-red-400"
-            } bg-transparent text-[#514D6A] placeholder:text-[#514D6A] placeholder:text-sm outline-none border border-[#2C293D] py-2 px-5 rounded-full w-full`}
+            className={`${errors.email && "border-red-500 dark:border-red-400"
+              } bg-transparent text-[#514D6A] placeholder:text-[#514D6A] placeholder:text-sm outline-none border border-[#2C293D] py-2 px-5 rounded-full w-full`}
             {...register("email", { required: "Email is required" })}
           />
 
@@ -135,9 +142,8 @@ const LoginComponent = () => {
               id="password"
               type={visible ? "text" : "password"}
               placeholder="Password"
-              className={`${
-                errors.password && "border-red-500 dark:border-red-400"
-              } bg-transparent text-[#514D6A] placeholder:text-[#514D6A] placeholder:text-sm outline-none border border-[#2C293D] py-2 px-5 rounded-full w-full`}
+              className={`${errors.password && "border-red-500 dark:border-red-400"
+                } bg-transparent text-[#514D6A] placeholder:text-[#514D6A] placeholder:text-sm outline-none border border-[#2C293D] py-2 px-5 rounded-full w-full`}
               {...register("password", { required: "Password is required" })}
             />
             <button

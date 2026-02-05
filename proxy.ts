@@ -13,13 +13,11 @@ type TRole = keyof typeof rolebasedPrivateUser;
 export const proxy = async (request: NextRequest) => {
   const { pathname } = request.nextUrl;
   let token = request.cookies.get("accessToken")?.value;
-
   const response = NextResponse.next();
 
   if (!token || (await isTokenExpired(token))) {
     try {
       const data = await getNewToken();
-      console.log(data);
       if (!data?.accessToken) {
         await logout();
         return NextResponse.redirect(
@@ -44,7 +42,6 @@ export const proxy = async (request: NextRequest) => {
       );
     }
   }
-
   // ✅ Step 2: Get user info using valid token
   const userInfo = await getCurrentUser();
 
