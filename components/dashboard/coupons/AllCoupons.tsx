@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Switch } from "@/components/ui/switch";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { disableCoupon, enableCoupon } from "@/service/coupon";
+import { deleteCoupon, disableCoupon, enableCoupon } from "@/service/coupon";
 import { TCoupon, TCouponList } from "@/types/coupons";
 import { Eye, MoreVertical, Pencil, Trash2 } from "lucide-react";
 import Link from "next/link";
@@ -12,6 +12,7 @@ import { useState } from "react";
 import { Dropdown } from "react-day-picker";
 import { toast } from "sonner";
 import { set } from "zod";
+import UpdateCoupon from "./UpdateCoupon";
 
 const keys = [
     "CODE",
@@ -47,11 +48,17 @@ export default function AllCoupons({ coupons }: { coupons: TCouponList }) {
     async function handleDelete(id: number) {
         const toastId = toast.loading("Deleting Coupon....");
         try {
-            
+            const res = await deleteCoupon(id);
+            if (res.success) {
+                toast.success("Coupon deleted successfully", { id: toastId });
+            } else {
+                toast.error("Failed to delete coupon", { id: toastId });
+            }
         } catch (error) {
             console.error("Error deleting coupon:", error);
         }
     }
+
     return (
         <div>
             <Table className="w-full my-6">
@@ -158,6 +165,7 @@ export default function AllCoupons({ coupons }: { coupons: TCouponList }) {
                     </AlertDialogFooter>
                 </AlertDialogContent>
             </AlertDialog>
+            <UpdateCoupon coupon={selectedCoupon} open={updateModalOpen} setOpen={setIsUpdateModalOpen} />
         </div>
     )
 }
