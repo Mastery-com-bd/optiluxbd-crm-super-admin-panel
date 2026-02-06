@@ -47,7 +47,7 @@ const ConfirmComponent = ({
         onClick={(e) => e.stopPropagation()}
         className="z-20"
       >
-        <button className="cursor-pointer w-full flex items-center justify-start text-white">
+        <button className="cursor-pointer w-full flex items-center justify-start text-white px-2">
           {buttonName}
         </button>
       </DialogTrigger>

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { createRole } from "@/service/rolesAndPermission";
+import { createRole, updateRole } from "@/service/rolesAndPermission";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -26,6 +26,7 @@ import {
 } from "@/components/ui/form";
 import { Plus } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { TRoles } from "@/types/roles.types";
 
 const formSchema = z.object({
   name: z
@@ -38,17 +39,25 @@ const formSchema = z.object({
 
 export type TCreateRole = z.infer<typeof formSchema>;
 
-const CreateRoles = () => {
+const CreateRoles = ({ role }: { role?: TRoles }) => {
   const [open, setOpen] = useState(false);
   const form = useForm<TCreateRole>({
     resolver: zodResolver(formSchema),
+    defaultValues: {
+      name: role?.name || "",
+      description: role?.description || "",
+    },
   });
 
   const onSubmit = async (data: TCreateRole) => {
     const toastId = toast.loading("creating role...", { duration: 3000 });
     try {
-      const result = await createRole(data);
-
+      let result;
+      if (role) {
+        result = await updateRole(role?.id.toString(), data);
+      } else {
+        result = await createRole(data);
+      }
       if (result?.success) {
         toast.success(result?.message, { id: toastId, duration: 3000 });
         form.reset();
@@ -70,16 +79,20 @@ const CreateRoles = () => {
       }}
     >
       <DialogTrigger asChild>
-        <button className="relative cursor-pointer effect rounded-2xl py-2 flex items-center justify-center px-4 overflow-hidden">
-          <p className="flex items-center gap-2">
-            <Plus size={18} />
-            <span className="text-sm text-white">Create Role</span>
-          </p>
-          <div className="pointer-events-none absolute bottom-0 left-1/2 w-[calc(100%-2rem)] -translate-x-1/2 z-20">
-            <span className="block h-[1.5px] w-full bg-[linear-gradient(to_right,rgba(255,177,63,0)_0%,#FFB13F_50%,rgba(255,177,63,0)_100%)]" />
-          </div>
-          <CornerGlowSvg />
-        </button>
+        {role ? (
+          <button className=" cursor-pointer">Update</button>
+        ) : (
+          <button className="relative cursor-pointer effect rounded-2xl py-2 flex items-center justify-center px-4 overflow-hidden">
+            <p className="flex items-center gap-2">
+              <Plus size={18} />
+              <span className="text-sm text-white">Create Role</span>
+            </p>
+            <div className="pointer-events-none absolute bottom-0 left-1/2 w-[calc(100%-2rem)] -translate-x-1/2 z-20">
+              <span className="block h-[1.5px] w-full bg-[linear-gradient(to_right,rgba(255,177,63,0)_0%,#FFB13F_50%,rgba(255,177,63,0)_100%)]" />
+            </div>
+            <CornerGlowSvg />
+          </button>
+        )}
       </DialogTrigger>
 
       <DialogContent className="px-6 py-4 w-15 gap-2 bg-[#1A1129] border-white/10 max-h-screen overflow-y-auto hide-scrollbar">
@@ -87,7 +100,7 @@ const CreateRoles = () => {
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <DialogHeader className="flex flex-row items-center justify-between mt-4">
               <DialogTitle className="text-xl font-semibold text-white">
-                Create A New Role
+                {role ? "Update the role" : "Create A New Role"}
               </DialogTitle>
 
               <ButtonComponent

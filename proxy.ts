@@ -1,14 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getCurrentUser, getNewToken, logout } from "./service/authService";
 import { isTokenExpired } from "./service/authService/validToken";
+import { getUserPermisssion } from "./service/user";
+import { permissionBasedRoutes } from "./constants/permissionBasedRoutes";
+import { hasPermission } from "./utils/hasPermission";
 
 const authRoutes = ["/login"];
-
-const rolebasedPrivateUser = {
-  LANDLORD_ADMIN: [/^\/$/, /^\/dashboard(\/.*)?$/],
-};
-
-type TRole = keyof typeof rolebasedPrivateUser;
 
 export const proxy = async (request: NextRequest) => {
   const { pathname } = request.nextUrl;
@@ -44,7 +41,8 @@ export const proxy = async (request: NextRequest) => {
   }
   // ✅ Step 2: Get user info using valid token
   const userInfo = await getCurrentUser();
-
+  const result = await getUserPermisssion();
+  const permission = result?.data?.permissions || [];
   if (!userInfo) {
     if (authRoutes.includes(pathname)) return response;
 
@@ -52,12 +50,20 @@ export const proxy = async (request: NextRequest) => {
       new URL(`/login?redirectPath=${pathname}`, request.url),
     );
   }
+  const role = userInfo.roles ? userInfo?.roles[0] : null;
+  if (!role) {
+    new URL(`/login?redirectPath=${pathname}`, request.url);
+  }
+  if (role === "LANDLORD_ADMIN") {
+    return response; // 🔥 FULL ACCESS
+  }
 
   // ✅ Step 3: Role check
-  const role = userInfo.role as TRole;
-  const allowedRoutes = rolebasedPrivateUser[role];
+  const matchedRoute = permissionBasedRoutes.find((route) =>
+    pathname.match(route.pattern),
+  );
 
-  if (!allowedRoutes?.some((r) => pathname.match(r))) {
+  if (matchedRoute && !hasPermission(permission, matchedRoute.permissions)) {
     await logout();
     return NextResponse.redirect(new URL("/login", request.url));
   }
@@ -66,5 +72,5 @@ export const proxy = async (request: NextRequest) => {
 };
 
 export const config = {
-  matcher: ["/", "/dashboard/:path*"],
+  matcher: ["/dashboard", "/dashboard/:path*"],
 };

@@ -65,7 +65,6 @@ const RoleDropdown = ({
     const data: { userId: number } = {
       userId: id,
     };
-
     const toastId = toast.loading("removing role to user...");
     try {
       const result = await removeRole(roleId.toString(), data);

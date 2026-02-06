@@ -45,6 +45,30 @@ export const getAllUser = async () => {
   }
 };
 
+export const getUserById = async (id: string) => {
+  console.log(id);
+  const token = (await getAccesstoken()) as string;
+  try {
+    const res = await fetch(
+      `${config.next_public_base_api}/admin/users/${id}`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: token,
+        },
+        next: {
+          tags: ["Users"],
+          revalidate: 30,
+        },
+      },
+    );
+    const result = await res.json();
+    return result;
+  } catch (error: any) {
+    return Error(error);
+  }
+};
+
 export const createUser = async (data: TCreateUserData) => {
   const token = await getValidToken();
   try {
@@ -187,6 +211,51 @@ export const getUserPermisssion = async () => {
       },
     });
     const result = await res.json();
+    return result;
+  } catch (error: any) {
+    return Error(error);
+  }
+};
+
+export const updateUser = async (
+  data: Partial<TCreateUserData>,
+  id: number,
+) => {
+  const token = await getValidToken();
+  try {
+    const res = await fetch(
+      `${config.next_public_base_api}/admin/users/${id}`,
+      {
+        method: "PUT",
+        headers: {
+          Authorization: token,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      },
+    );
+    const result = await res.json();
+    revalidatePath("/dashboard/user");
+    return result;
+  } catch (error: any) {
+    return Error(error);
+  }
+};
+
+export const deleteUser = async (id: number) => {
+  const token = await getValidToken();
+  try {
+    const res = await fetch(
+      `${config.next_public_base_api}/admin/users/${id}`,
+      {
+        method: "DELETE",
+        headers: {
+          Authorization: token,
+        },
+      },
+    );
+    const result = await res.json();
+    revalidatePath("/dashboard/user");
     return result;
   } catch (error: any) {
     return Error(error);

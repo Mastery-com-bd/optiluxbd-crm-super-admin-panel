@@ -1,15 +1,15 @@
 'use server'
 import { createData, patchData, readData } from "@/service/apiService/crud";
-import { OrgFormValues } from "@/types/organizations";
+import { OrganizationData, OrgFormValues, TOrgPayload, TPurchasePayload } from "@/types/organizations";
 import { Query } from "@/types/shared";
 
 type Plan = {
   planId: number
 }
 
-export async function createOrganization(data: OrgFormValues) {
+export async function createOrganization(data: TOrgPayload) {
   try {
-    const res = await createData<OrgFormValues>("/organizations/register", "/admin/organizations", data,);
+    const res = await createData<TOrgPayload>("/organizations/register", "/admin/organizations", data);
     return res;
   }
   catch (e) { return e }
@@ -47,9 +47,27 @@ export async function getOrganizationById(id: number) {
 export async function enableOrganization(id: number) {
   const res = await createData(`/admin/organizations/${id}/enable`, "/dashboard/organizations");
   return res;
-} 
+}
 
 export async function disableOrganization(id: number) {
   const res = await createData(`/admin/organizations/${id}/disable`, "/dashboard/organizations");
+  return res;
+}
+
+export async function validateCouponCode(code: string,) {
+  const res = await createData(`/subscriptions/coupons/validate`, "Coupon", {
+    "couponCode": code
+  });
+  return res;
+}
+
+export async function calculatePrice(data: { planId: number | string; billingCycle: string; couponCode?: string }) {
+  const res = await createData(`/subscriptions/calculate-price`, "PriceCalculation", data);
+  return res;
+}
+
+
+export async function manualPurchase(data: TPurchasePayload) {
+  const res = await createData(`/subscriptions/admin/manual-payment`, "Subscription", data);
   return res;
 }

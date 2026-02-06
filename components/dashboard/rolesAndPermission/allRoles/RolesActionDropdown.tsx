@@ -11,6 +11,8 @@ import Link from "next/link";
 import { ReactNode, useState } from "react";
 import SetPermissionModal from "./SetPermissionModal";
 import { TPermission } from "@/types/permission.types";
+import { TRoles } from "@/types/roles.types";
+import CreateRoles from "./CreateRoles";
 
 type TDropdownProps = {
   path: string;
@@ -18,6 +20,7 @@ type TDropdownProps = {
   permissions: TPermission[];
   rolePermissions: TPermission[];
   roleId: number;
+  role: TRoles;
 };
 
 const RolesActionDropdown = ({
@@ -26,6 +29,7 @@ const RolesActionDropdown = ({
   permissions,
   rolePermissions,
   roleId,
+  role,
 }: TDropdownProps) => {
   const [open, setOpen] = useState(false);
   return (
@@ -42,11 +46,22 @@ const RolesActionDropdown = ({
           align="end"
           className="bg-white/5 backdrop-blur-3xl z-20"
         >
-          <DropdownMenuItem asChild>
-            <Link href={path}>Details</Link>
+          <DropdownMenuItem asChild className="cursor-pointer">
+            <Link href={path} className="w-full">
+              Details
+            </Link>
           </DropdownMenuItem>
 
-          <DropdownMenuItem asChild>{children}</DropdownMenuItem>
+          <DropdownMenuItem
+            className="cursor-pointer"
+            onSelect={(e) => e.preventDefault()}
+          >
+            <CreateRoles role={role} />
+          </DropdownMenuItem>
+
+          <DropdownMenuItem asChild className="cursor-pointer">
+            {children}
+          </DropdownMenuItem>
 
           <DropdownMenuItem
             onSelect={(e) => {

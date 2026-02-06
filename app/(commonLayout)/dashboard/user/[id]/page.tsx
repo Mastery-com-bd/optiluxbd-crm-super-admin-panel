@@ -1,4 +1,5 @@
 import UserDetails from "@/components/dashboard/user/userDetails/UserDetails";
+import { getUserById } from "@/service/user";
 
 const UserDetailsPage = async ({
   params,
@@ -6,10 +7,11 @@ const UserDetailsPage = async ({
   params: Promise<{ id: string }>;
 }) => {
   const { id } = await params;
-
+  const result = await getUserById(id);
+  const user = result?.data;
   return (
     <section>
-      <UserDetails />
+      <UserDetails user={user} />
     </section>
   );
 };

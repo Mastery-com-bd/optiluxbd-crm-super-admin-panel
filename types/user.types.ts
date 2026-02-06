@@ -2,7 +2,7 @@ import { TRoles } from "./roles.types";
 
 export type TUser = {
   userId: string;
-  role: string;
+  roles: string[];
   isLandlord: boolean;
   iat: string;
   exp: number;

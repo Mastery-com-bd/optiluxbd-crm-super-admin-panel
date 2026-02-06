@@ -176,8 +176,8 @@ export const userTableColumn = (roles: TRoles[]): ColumnDef<TUserData>[] => [
     header: "Action",
     cell: ({ row }) => {
       const id = row.original?.id;
-
-      return <UserActionDropdown id={id} />;
+      const user = row.original;
+      return <UserActionDropdown id={id} roles={roles} user={user} />;
     },
   },
 ];

@@ -1,7 +1,7 @@
 import { ReactNode } from "react";
 import { Skeleton } from "../skeleton";
 
-const PageHeaderSkeleton = ({ children }: { children: ReactNode }) => {
+const PageHeaderSkeleton = ({ children }: { children?: ReactNode }) => {
   return (
     <div className="flex items-start justify-between">
       <div className="space-y-4 w-full">

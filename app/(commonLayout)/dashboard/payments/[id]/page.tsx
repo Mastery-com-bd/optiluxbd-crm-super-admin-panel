@@ -1,17 +1,18 @@
 import PaymentDetails from "@/components/dashboard/payment/payemntDetails/PaymentDetails";
+import { downloadInvoice } from "@/service/payment";
 
-const PaymentsDetails = async ({
+const PaymentsDetailsPage = async ({
   params,
 }: {
   params: Promise<{ id: string }>;
 }) => {
   const { id } = await params;
-
+  const blob = await downloadInvoice(id);
   return (
     <section>
-      <PaymentDetails />
+      <PaymentDetails blob={blob} />
     </section>
   );
 };
 
-export default PaymentsDetails;
+export default PaymentsDetailsPage;

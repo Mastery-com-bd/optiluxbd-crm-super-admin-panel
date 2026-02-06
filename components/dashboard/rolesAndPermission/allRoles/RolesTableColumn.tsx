@@ -56,10 +56,10 @@ export const RoleTableColumn = (
       );
 
       return (
-        <h1 className="flex flex-col items-start">
-          <span>{creationDate}</span>
-          <span>{creationTime}</span>
-        </h1>
+        <div className="flex flex-col items-center">
+          <p>{creationDate}</p>
+          <p>{creationTime}</p>
+        </div>
       );
     },
   },
@@ -78,6 +78,7 @@ export const RoleTableColumn = (
           permissions={permissions}
           rolePermissions={RolesPermissions}
           roleId={roleId}
+          role={row.original}
         >
           <PermissionModal permissions={RolesPermissions} />
         </RolesActionDropdown>

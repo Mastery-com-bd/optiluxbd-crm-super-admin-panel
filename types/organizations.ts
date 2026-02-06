@@ -14,9 +14,14 @@ export const orgSchema = () => z.object({
     country: z.string().min(2, "Country is required"),
     website: z.string().url("Invalid website URL"),
     slug: z.string().min(2, "Slug is required"),
-    plan: z.enum(["STARTER", "PRO", "ENTERPRISE"], {
-        message: "Please select a plan",
-    }),
+    couponCode: z.string().optional(),
+    proofUrl: z.string().url("Invalid URL"),
+    autoApprove: z.boolean(),
+    // amount: z.number().min(1, "Amount is required"),
+    transactionReference: z.string().min(5, "Transaction reference is required"),
+    paymentMethod: z.enum(["MANUAL", "STRIPE", "SSLCOMMERZ", "BKASH", "NAGAD", "BANK_TRANSFER", "CASH"], { message: "Please select a valid payment method" }),
+    planId: z.number().or(z.string()),
+    planSlug: z.string().min(1, "Plan name is required"),
     billingCycle: z.enum(["MONTHLY", "YEARLY"], {
         message: "Please select a billing cycle",
     }),
@@ -73,3 +78,30 @@ export interface Organization {
     };
 }
 export type Organizations = Organization[];
+
+export type TOrgPayload = {
+    name: string;
+    slug: string;
+    email: string;
+    phone: string;
+    address: string;
+    city: string;
+    country: string;
+    ownerName: string;
+    ownerEmail: string;
+    ownerPassword: string;
+    plan: string;
+    billingCycle: "MONTHLY" | "YEARLY";
+}
+
+
+export type TPurchasePayload = {
+    organizationId: any;
+    planId: string | number;
+    billingCycle: "MONTHLY" | "YEARLY";
+    amount: number;
+    paymentMethod: "MANUAL" | "STRIPE" | "SSLCOMMERZ" | "BKASH" | "NAGAD" | "BANK_TRANSFER" | "CASH";
+    transactionReference: string;
+    proofUrl: string;
+    autoApprove: boolean;
+}
