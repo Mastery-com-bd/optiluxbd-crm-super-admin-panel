@@ -1,6 +1,7 @@
 import DashboardOverview from "@/components/dashboard/customComponent/shared/DashboardOverview";
 import RevenueSection from "@/components/dashboard/customComponent/shared/RevenewSection";
-import Organization from "@/components/dashboard/organizations/Organization";
+import UserAnalytics from "@/components/dashboard/dashboard/UserAnalytics";
+
 import {
   getAnalytics,
   getGrowthStats,
@@ -25,17 +26,16 @@ const HomePage = async ({ searchParams }: { searchParams: TSearchParams }) => {
   ]);
 
   const analytics = analyticsResult?.data || {};
-  const usageAnalytics = usageAnalyticsResult?.data || [];
   const revenew = useRevenewResult?.data;
+  const usageAnalytics = usageAnalyticsResult?.data || [];
   const growth = growthResult?.data;
-  console.log(revenew);
   console.log(growth);
-  console.log(usageAnalytics);
+  // console.log(usageAnalytics);
   return (
     <div>
       <DashboardOverview analytics={analytics} />
-      <RevenueSection />
-      <Organization />
+      <RevenueSection reveneu={revenew} />
+      <UserAnalytics usageAnalytics={usageAnalytics} />
     </div>
   );
 };
