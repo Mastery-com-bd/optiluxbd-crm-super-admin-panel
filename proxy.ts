@@ -50,8 +50,10 @@ export const proxy = async (request: NextRequest) => {
       new URL(`/login?redirectPath=${pathname}`, request.url),
     );
   }
-  const role = userInfo?.roles[0] as string;
-
+  const role = userInfo.roles ? userInfo?.roles[0] : null;
+  if (!role) {
+    new URL(`/login?redirectPath=${pathname}`, request.url);
+  }
   if (role === "LANDLORD_ADMIN") {
     return response; // 🔥 FULL ACCESS
   }

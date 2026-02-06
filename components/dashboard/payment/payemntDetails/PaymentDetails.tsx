@@ -1,35 +1,32 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { useEffect, useState } from "react";
-import { downloadInvoice } from "@/service/payment";
+import { Button } from "@/components/ui/button";
+import { ArrowLeft } from "lucide-react";
+import { useRouter } from "next/navigation";
 
-interface PaymentDetailsProps {
-  id: string;
-}
-
-const PaymentDetails = ({ id }: PaymentDetailsProps) => {
+const PaymentDetails = ({ blob }: { blob: any }) => {
   const [invoiceUrl, setInvoiceUrl] = useState<string | null>(null);
+  const router = useRouter();
 
   useEffect(() => {
     let blobUrl: string | null = null;
-
-    const fetchInvoice = async () => {
+    const fetchInvoice = () => {
       try {
-        const blob = await downloadInvoice(id);
         blobUrl = URL.createObjectURL(blob);
         setInvoiceUrl(blobUrl);
       } catch (err) {
         console.error("Failed to load invoice", err);
       }
     };
-
     fetchInvoice();
     return () => {
       if (blobUrl) {
         URL.revokeObjectURL(blobUrl);
       }
     };
-  }, [id]);
+  }, [blob]);
 
   const handlePrint = () => {
     if (invoiceUrl) {
@@ -38,17 +35,20 @@ const PaymentDetails = ({ id }: PaymentDetailsProps) => {
     }
   };
 
-  console.log(invoiceUrl);
-
-  if (!invoiceUrl) return <p>Loading invoice...</p>;
-
   return (
     <div>
+      <Button
+        variant="outline"
+        className="cursor-pointer"
+        onClick={() => router.back()}
+      >
+        <ArrowLeft />
+      </Button>
       <h2>Payment Details</h2>
       <div style={{ marginBottom: "1rem" }}>
         <button onClick={handlePrint}>Print Invoice</button>
         <a
-          href={invoiceUrl}
+          href={invoiceUrl as string}
           download="invoice.pdf"
           style={{ marginLeft: "1rem" }}
         >
@@ -57,7 +57,7 @@ const PaymentDetails = ({ id }: PaymentDetailsProps) => {
       </div>
       {/* Use iframe to display PDF */}
       <iframe
-        src={invoiceUrl}
+        src={invoiceUrl as string}
         style={{ width: "100%", height: "80vh", border: "1px solid #ccc" }}
         title="Invoice PDF"
       />
