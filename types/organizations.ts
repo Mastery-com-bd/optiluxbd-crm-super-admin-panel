@@ -2,19 +2,23 @@
 import * as z from "zod";
 import { TPlan } from "./plan.types";
 
-export const orgSchema = (isUpdate?: boolean) => z.object({
+export const orgSchema = () => z.object({
     name: z.string().min(2, "Name is required"),
     email: z.string().email("Invalid email"),
     ownerName: z.string().min(2, "Owner name is required"),
     ownerEmail: z.string().email("Invalid owner email"),
-    ownerPassword: isUpdate
-        ? z.string().optional()
-        : z.string().min(8, "Password must be at least 8 characters"),
+    ownerPassword: z.string().min(8, "Password must be at least 8 characters"),
     phone: z.string().min(10, "Phone number is required"),
+    address: z.string().min(5, "Address is required"),
+    city: z.string().min(2, "City is required"),
+    country: z.string().min(2, "Country is required"),
     website: z.string().url("Invalid website URL"),
     slug: z.string().min(2, "Slug is required"),
     plan: z.enum(["STARTER", "PRO", "ENTERPRISE"], {
         message: "Please select a plan",
+    }),
+    billingCycle: z.enum(["MONTHLY", "YEARLY"], {
+        message: "Please select a billing cycle",
     }),
 });
 
