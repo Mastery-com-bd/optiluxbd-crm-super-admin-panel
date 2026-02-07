@@ -60,7 +60,7 @@ export async function readData(
 
 // delete
 export async function deleteData(endPoint: string, revalPath: string) {
-  const token = getValidToken();
+  const token = await getValidToken();
   try {
     const res = await fetch(`${config.next_public_base_api}${endPoint}`, {
       method: "DELETE",

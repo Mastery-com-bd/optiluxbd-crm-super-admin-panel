@@ -25,3 +25,8 @@ export async function deleteContent(id: number) {
     const res = await deleteData(`/admin/content/${id}`, "/dashboard/content");
     return res;
 }
+
+export async function getContentById(key: string) {
+    const res = await readData(`/admin/content/${key}`, ["Content"]);
+    return res;
+}
