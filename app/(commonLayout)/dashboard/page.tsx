@@ -1,21 +1,41 @@
 import DashboardOverview from "@/components/dashboard/customComponent/shared/DashboardOverview";
 import RevenueSection from "@/components/dashboard/customComponent/shared/RevenewSection";
-import Organization from "@/components/dashboard/organizations/Organization";
-import { getAnalytics, getUsageAnalytics } from "@/service/analytics";
+import UserAnalytics from "@/components/dashboard/dashboard/UserAnalytics";
 
-const HomePage = async () => {
-  const [analyticsResult, usageAnalyticsResult] = await Promise.all([
+import {
+  getAnalytics,
+  getGrowthStats,
+  getRevenewStats,
+  getUsageAnalytics,
+} from "@/service/analytics";
+import { TSearchParams } from "@/types/shared";
+
+const HomePage = async ({ searchParams }: { searchParams: TSearchParams }) => {
+  const query = await searchParams;
+
+  const [
+    analyticsResult,
+    usageAnalyticsResult,
+    useRevenewResult,
+    growthResult,
+  ] = await Promise.all([
     getAnalytics(),
     getUsageAnalytics(),
+    getRevenewStats(query),
+    getGrowthStats(query),
   ]);
-  const analytics = analyticsResult?.data || {};
-  const usageAnalytics = usageAnalyticsResult?.data;
 
+  const analytics = analyticsResult?.data || {};
+  const revenew = useRevenewResult?.data;
+  const usageAnalytics = usageAnalyticsResult?.data || [];
+  const growth = growthResult?.data;
+  console.log(growth);
+  // console.log(usageAnalytics);
   return (
     <div>
       <DashboardOverview analytics={analytics} />
-      <RevenueSection />
-      <Organization />
+      <RevenueSection reveneu={revenew} />
+      <UserAnalytics usageAnalytics={usageAnalytics} />
     </div>
   );
 };
