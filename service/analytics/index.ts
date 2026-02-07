@@ -57,6 +57,8 @@ export const getGrowthStats = async (query?: TQuery) => {
     const params = new URLSearchParams();
     if (query?.period) {
       params.append("period", query?.period.toString());
+    } else {
+      params.append("period", "month");
     }
     const res = await fetch(
       `${config.next_public_base_api}/admin/analytics/growth?${params}`,

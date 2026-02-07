@@ -18,8 +18,6 @@ const DateRangePicker = () => {
 
   const handleApply = () => {
     if (!startDate || !endDate) return;
-    console.log(startDate);
-    console.log(endDate);
     const startDateFormated = format(startDate, "yyyy-MM-dd");
     const endDateFormated = format(endDate, "yyyy-MM-dd");
     const params = new URLSearchParams();

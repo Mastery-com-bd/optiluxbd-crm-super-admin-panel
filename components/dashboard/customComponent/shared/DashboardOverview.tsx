@@ -3,7 +3,7 @@ import {
   OverviewCard,
   OverviewCardProps,
 } from "@/components/shared/overviewCard";
-import { TAnalytics } from "@/types/analutics.types";
+import { TAnalytics } from "@/types/type.analytics";
 import { ArrowUpRight, Briefcase, Building, Podcast } from "lucide-react";
 
 export default function DashboardOverview({
