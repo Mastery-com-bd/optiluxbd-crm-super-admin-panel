@@ -13,12 +13,12 @@ type TableProps<T> = {
 
 const TableComponent = <T,>({ data = [], columns }: TableProps<T>) => {
   const table = useReactTable({
-    data: data || [], 
+    data: data || [],
     columns,
     getCoreRowModel: getCoreRowModel(),
   });
 
-  const rows = table?.getRowModel()?.rows || []; 
+  const rows = table?.getRowModel()?.rows || [];
 
   return (
     <div className="overflow-x-auto w-full pb-10">
@@ -39,13 +39,13 @@ const TableComponent = <T,>({ data = [], columns }: TableProps<T>) => {
                       ind === 0
                         ? "rounded-l-2xl"
                         : ind === headerGroup.headers.length - 1
-                        ? "rounded-r-2xl"
-                        : ""
+                          ? "rounded-r-2xl"
+                          : ""
                     }`}
                   >
                     {flexRender(
                       header.column.columnDef.header,
-                      header.getContext()
+                      header.getContext(),
                     )}
                   </div>
                 </th>
@@ -63,7 +63,7 @@ const TableComponent = <T,>({ data = [], columns }: TableProps<T>) => {
                 {row.getVisibleCells().map((cell) => (
                   <td
                     key={cell.id}
-                    className="p-4 align-middle font-medium text-sm whitespace-nowrap"
+                    className="p-2 font-medium text-sm whitespace-nowrap text-center"
                   >
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </td>

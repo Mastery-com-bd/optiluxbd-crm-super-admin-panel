@@ -1,5 +1,5 @@
 import OrgDetails from "@/components/dashboard/organizations/OrgDetails";
-import { getOrganizationById } from "@/service/payment/OrganaizationService";
+import { getOrganizationById } from "@/service/OrganaizationService";
 
 export default async function OrganizationDetails({
   params,

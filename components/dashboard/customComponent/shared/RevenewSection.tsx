@@ -1,31 +1,11 @@
 "use client";
 import { Card } from "@/components/ui/card";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Button } from "@/components/ui/button";
-import { ChevronDown } from "lucide-react";
 import PieChartSection from "./PieChartSection";
 import BarChartSection from "./BarChartSection";
-import { useState } from "react";
+import { TRevenewSection } from "@/types/type.analytics";
+import DateRangePicker from "../../dashboard/DateRangePicker";
 
-const RevenueSection = () => {
-  const START_YEAR = 2020;
-  const CURRENT_YEAR = new Date().getFullYear();
-  const years = Array.from({ length: CURRENT_YEAR - START_YEAR + 1 }, (_, i) =>
-    String(START_YEAR + i),
-  );
-  const [year, setYear] = useState(years[years.length - 1]);
-  const [filters, setFilters] = useState({
-    search: "",
-    sortBy: "createdAt",
-    order: "desc",
-    limit: 10,
-    page: 1,
-  });
+const RevenueSection = ({ reveneu }: { reveneu: TRevenewSection[] }) => {
   const pieData = [
     { name: "Processing", color: "bg-[#1EAAE7]" },
     { name: "Cancelled", color: "bg-[#FF7A30]" },
@@ -43,46 +23,10 @@ const RevenueSection = () => {
           {/* header section */}
           <div className="flex items-center justify-between">
             <h1 className="text-xl text-white/70">Total revenue</h1>
-            <div className="flex items-center gap-6">
-              {/* status drodpown */}
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button
-                    variant="default"
-                    className="flex items-center text-[14px] effect font-normal border-none px-3.5 py-2 rounded-[12px] cursor-pointer bg-transparent"
-                  >
-                    <p className="flex items-center gap-2">
-                      <span className="text-[14px]">{year}</span>
-                      <ChevronDown size={18} />
-                    </p>
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent
-                  align="end"
-                  className="bg-white/5 backdrop-blur-2xl"
-                >
-                  {years.map((item) => (
-                    <DropdownMenuItem
-                      key={item}
-                      onClick={() => {
-                        setYear(item);
-                        setFilters((prev) => ({
-                          ...prev,
-                          limit: Number(item),
-                          page: 1,
-                        }));
-                      }}
-                      className={item === year ? "font-medium" : ""}
-                    >
-                      {item}
-                    </DropdownMenuItem>
-                  ))}
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
+            <DateRangePicker />
           </div>
           {/* main content */}
-          <BarChartSection />
+          <BarChartSection reveneu={reveneu} />
         </div>
       </Card>
 

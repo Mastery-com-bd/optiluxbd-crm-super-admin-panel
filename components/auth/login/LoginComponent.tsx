@@ -59,7 +59,7 @@ const LoginComponent = () => {
         await refetchPermission();
         toast.success(res?.message, { id: toastId, duration: 3000 });
         reset();
-        router.push(redirect ? redirect : "/");
+        router.push(redirect ? redirect : "/dashboard");
       } else {
         toast.error(res?.message, { id: toastId, duration: 3000 });
       }
@@ -77,7 +77,6 @@ const LoginComponent = () => {
     const toastId = toast.loading("logging in");
     try {
       const res = await login(data);
-      console.log(res);
       if (res?.success) {
         setIsLoading(false);
         setPermissionLoading(false);
@@ -85,7 +84,7 @@ const LoginComponent = () => {
         await refetchPermission();
         toast.success(res?.message, { id: toastId, duration: 3000 });
         reset();
-        router.push(redirect ? redirect : "/");
+        router.push(redirect ? redirect : "/dashboard");
       } else {
         toast.error(res?.message, { id: toastId, duration: 3000 });
       }
