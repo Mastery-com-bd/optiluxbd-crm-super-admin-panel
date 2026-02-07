@@ -5,12 +5,20 @@ import { getUserPermisssion } from "./service/user";
 import { permissionBasedRoutes } from "./constants/permissionBasedRoutes";
 import { hasPermission } from "./utils/hasPermission";
 
-const authRoutes = ["/login"];
+const authRoutes = ["/login", "/forgot-password", "/reset-password"];
 
 export const proxy = async (request: NextRequest) => {
   const { pathname } = request.nextUrl;
   let token = request.cookies.get("accessToken")?.value;
   const response = NextResponse.next();
+  if (token && authRoutes.includes(pathname)) {
+    return NextResponse.redirect(new URL("/dashboard", request.url));
+  }
+
+  // ✅ Logged-out users can access auth routes
+  if (!token && authRoutes.includes(pathname)) {
+    return NextResponse.next();
+  }
 
   if (!token || (await isTokenExpired(token))) {
     try {
@@ -52,9 +60,10 @@ export const proxy = async (request: NextRequest) => {
   }
   const role = userInfo.roles ? userInfo?.roles[0] : null;
   if (!role) {
-    new URL(`/login?redirectPath=${pathname}`, request.url);
+    new URL(`/login`, request.url);
   }
-  if (role === "LANDLORD_ADMIN") {
+
+  if (role === "Landlord Admin") {
     return response; // 🔥 FULL ACCESS
   }
 
@@ -72,5 +81,5 @@ export const proxy = async (request: NextRequest) => {
 };
 
 export const config = {
-  matcher: ["/dashboard", "/dashboard/:path*"],
+  matcher: ["/dashboard", "/dashboard/:path*", "/login"],
 };
