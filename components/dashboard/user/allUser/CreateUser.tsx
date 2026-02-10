@@ -88,8 +88,6 @@ const CreateUser = ({ user, roles }: { user?: TUserData; roles: TRoles[] }) => {
   const [touched, setTouched] = useState(false);
   const [passwordtext, setPasswordText] = useState("");
 
-  console.log(user);
-
   const form = useForm<TCreateUser>({
     resolver: zodResolver(formSchema),
     defaultValues: {
