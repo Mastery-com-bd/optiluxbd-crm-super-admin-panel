@@ -1,4 +1,5 @@
 import {
+  Anchor,
   CircleDollarSign,
   CircleGauge,
   Handbag,
@@ -77,6 +78,22 @@ export const crmRoutes: NavRoute[] = [
     ],
   },
   {
+    title: "Logs",
+    icon: Anchor,
+    children: [
+      {
+        title: "Activity Logs",
+        path: "/dashboard/logs",
+        permissions: ["logs.manage"],
+      },
+      {
+        title: "User Actions",
+        path: "/dashboard/userActions",
+        permissions: ["logs.manage"],
+      },
+    ],
+  },
+  {
     title: "Coupons",
     icon: Tag,
     path: "/dashboard/coupons",
@@ -107,6 +124,7 @@ export const crmRoutes: NavRoute[] = [
     path: "/dashboard/content",
     permissions: ["broadcasts.manage"],
   },
+ 
   {
     title: "Settings",
     icon: Settings,
