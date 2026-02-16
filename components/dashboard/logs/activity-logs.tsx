@@ -1,30 +1,27 @@
 "use client";
 
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import CustomPagination from "@/components/ui/CustomPagination";
 import { Input } from "@/components/ui/input";
 import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@/components/ui/select";
 import TableComponent from "@/components/ui/TableComponent";
 import { TAnalyticsResponse } from "@/types/auditStatistics.types";
 import {
-    AuditAction,
-    AuditLog,
-    TAuditLogsResponse,
+  AuditAction,
+  AuditLog,
+  TAuditLogsResponse,
 } from "@/types/recentLogs.types";
 import { ColumnDef } from "@tanstack/react-table";
 import { format } from "date-fns";
-import {
-    Activity,
-    Database,
-    ListChecks,
-    Search
-} from "lucide-react";
+import { Activity, Database, Eye, ListChecks, Search } from "lucide-react";
+import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 
@@ -160,6 +157,22 @@ const ActivityLogs = ({
         </span>
       ),
     },
+    {
+      header: "Actions",
+      accessorKey: "id",
+      cell: ({ row }) => (
+        <Button
+          asChild
+          onClick={() => alert(`Details for log ${row.original.id}`)}
+          className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 border border-white/20 text-white text-xs font-medium transition"
+        >
+          <Link href={`/dashboard/userActions?userId=6`}>
+            <Eye className="size-3" />
+            All
+          </Link>
+        </Button>
+      ),
+    },
   ];
 
   const totalLogs = recentLogs?.data?.total || 0;
@@ -284,7 +297,7 @@ const ActivityLogs = ({
                 handleFilterChange("action", val === "all" ? null : val)
               }
             >
-              <SelectTrigger className="w-[140px] bg-white/5 border-white/10 rounded-xl text-white h-10">
+              <SelectTrigger className="w-35 bg-white/5 border-white/10 rounded-xl text-white h-10">
                 <SelectValue placeholder="Action Type" />
               </SelectTrigger>
               <SelectContent className="bg-[#1a1a1a] border-white/10 text-white">
