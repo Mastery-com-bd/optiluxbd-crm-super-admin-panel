@@ -12,6 +12,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import TableComponent from "@/components/ui/TableComponent";
+import { Organization } from "@/types/organizations";
 import { AuditAction } from "@/types/recentLogs.types";
 import { IUserActionLog, IUserActionsResponse } from "@/types/userActions.types";
 import { ColumnDef } from "@tanstack/react-table";
@@ -20,12 +21,12 @@ import { ArrowUpDown, FilterX, Search } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 
-const UserActions = ({ userActions }: { userActions: IUserActionsResponse }) => {
+const UserActions = ({ userActions, organizationList }: { userActions: IUserActionsResponse, organizationList: Organization[] }) => {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  const [orgIdSearch, setOrgIdSearch] = useState(searchParams.get("organizationId") || "");
+  const [orgIdSearch, setOrgIdSearch] = useState(searchParams.get("organizationName") || "");
   const [searchTerm, setSearchTerm] = useState(searchParams.get("userId") || "");
   const [show, setShow] = useState(searchParams.get("limit") || "10");
 
@@ -65,8 +66,13 @@ const UserActions = ({ userActions }: { userActions: IUserActionsResponse }) => 
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      if (orgIdSearch !== (searchParams.get("organizationId") || "")) {
-        handleFilterChange("organizationId", orgIdSearch);
+      if (orgIdSearch === "") {
+        const newSearchParams = new URLSearchParams(searchParams.toString());
+        newSearchParams.delete("organizationName");
+        newSearchParams.delete("organizationId");
+        router.push(`${pathname}?${newSearchParams.toString()}`);
+      } else if (orgIdSearch !== (searchParams.get("organizationName") || "")) {
+        handleFilterChange("organizationName", orgIdSearch);
       }
     }, 500);
     return () => clearTimeout(timer);
@@ -74,7 +80,11 @@ const UserActions = ({ userActions }: { userActions: IUserActionsResponse }) => 
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      if (searchTerm !== (searchParams.get("userId") || "")) {
+      if (searchTerm === "") {
+        const newSearchParams = new URLSearchParams(searchParams.toString());
+        newSearchParams.delete("userId");
+        router.push(`${pathname}?${newSearchParams.toString()}`);
+      } else if (searchTerm !== (searchParams.get("userId") || "")) {
         handleFilterChange("userId", searchTerm);
       }
     }, 500);
@@ -168,15 +178,42 @@ const UserActions = ({ userActions }: { userActions: IUserActionsResponse }) => 
           </div>
 
           {/* Org ID Search */}
-          <div className="relative w-full md:w-60">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
-            <Input
-              placeholder="Organization ID..."
-              value={orgIdSearch}
-              onChange={(e) => setOrgIdSearch(e.target.value)}
-              className="pl-10 bg-white/5 border-white/10 rounded-xl text-white h-10 focus:ring-1 focus:ring-white/20"
-            />
-          </div>
+          {/* Search by Organization Name */}
+            <div className="flex flex-col gap-2">
+              <div className="relative w-full md:w-64">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+                <Input
+                  placeholder="Search Organization Name..."
+                  value={orgIdSearch}
+                  onChange={(e) => {
+                    setOrgIdSearch(e.target.value);
+                    if(e.target.value.trim() !== "") {
+                      handleFilterChange("organizationId", null);
+                    }
+                  }}
+                  className="pl-10 bg-white/5 border-white/10 rounded-xl text-white h-10 focus:ring-1 focus:ring-white/20"
+                />
+              </div>
+              
+              {organizationList?.length > 0 && (
+                <Select
+                  value={searchParams.get("organizationId") || "all"}
+                  onValueChange={(val) => handleFilterChange("organizationId", val === "all" ? null : val)}
+                >
+                  <SelectTrigger className="w-full md:w-64 bg-white/5 border-white/10 rounded-xl text-white h-10">
+                    <SelectValue placeholder="Select Organization" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-[#1a1a1a] border-white/10 text-white max-h-[200px]">
+                    <SelectItem value="all">All Organizations</SelectItem>
+                    {organizationList.map((org) => (
+                      <SelectItem key={org.id} value={String(org.id)}>
+                        {org.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+            </div>
 
           {/* Action Filter */}
           <Select
