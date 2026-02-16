@@ -6,21 +6,8 @@ import {
   ChartTooltipContent,
   type ChartConfig,
 } from "@/components/ui/chart";
-
-const chartData = [
-  { month: "January", ConversionRate: 0 },
-  { month: "February", ConversionRate: 30 },
-  { month: "March", ConversionRate: 55 },
-  { month: "April", ConversionRate: 60 },
-  { month: "May", ConversionRate: 70 },
-  { month: "June", ConversionRate: 90 },
-  { month: "July", ConversionRate: 65 },
-  { month: "August", ConversionRate: 80 },
-  { month: "September", ConversionRate: 55 },
-  { month: "October", ConversionRate: 95 },
-  { month: "November", ConversionRate: 60 },
-  { month: "December", ConversionRate: 75 },
-];
+import { TGrowthReport } from "@/types/type.analytics";
+import { formatMonthLabel } from "@/utils/formatMonthLabel";
 
 const chartConfig = {
   desktop: {
@@ -29,7 +16,12 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-const ChartComponent = () => {
+const ChartComponent = ({ growth }: { growth: TGrowthReport[] }) => {
+  const chartData = growth.map((item) => ({
+    month: formatMonthLabel(item.date),
+    ConversionRate: item.count,
+  }));
+
   return (
     <div>
       <ChartContainer
@@ -39,27 +31,24 @@ const ChartComponent = () => {
         <AreaChart
           accessibilityLayer
           data={chartData}
-          margin={{
-            left: 12,
-            right: 12,
-          }}
+          margin={{ left: 12, right: 12 }}
         >
           <CartesianGrid
             vertical={false}
-            horizontal={true}
+            horizontal
             stroke="#ffffff"
             strokeOpacity={0.5}
             strokeDasharray="5 5"
           />
-
           <XAxis
             dataKey="month"
+            interval={0}
+            fontSize={8}
             tickLine={false}
-            axisLine={false}
-            tickMargin={8}
-            tickFormatter={(value) => value.slice(0, 3)}
+            angle={-90}
+            textAnchor="end"
+            height={50}
           />
-
           <YAxis
             tickLine={false}
             axisLine={false}
@@ -67,12 +56,10 @@ const ChartComponent = () => {
             domain={[0, 100]}
             tickFormatter={(value) => `${value}%`}
           />
-
           <ChartTooltip
             cursor={false}
             content={<ChartTooltipContent indicator="line" />}
           />
-
           <Area
             dataKey="ConversionRate"
             type="natural"

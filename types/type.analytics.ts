@@ -11,3 +11,15 @@ export type TUsageAnalytics = {
   limit: number;
   percentage: number;
 };
+
+export type TAnalytics = {
+  activeSubscriptions: number;
+  churnRate: number;
+  mrr: number;
+  totalOrganizations: number;
+};
+
+export type TGrowthReport = {
+  count: number;
+  date: string;
+};

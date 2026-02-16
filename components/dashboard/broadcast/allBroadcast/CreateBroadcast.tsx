@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { TBroadcast } from "@/types/broadcast.types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -24,7 +23,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Plus, SquarePen } from "lucide-react";
+import { Plus } from "lucide-react";
 import { toast } from "sonner";
 import { createBroadcast } from "@/service/broadcast";
 import {
@@ -42,6 +41,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
 import { Calendar } from "@/components/ui/calendar";
+import { Organization } from "@/types/organizations";
 
 const formSchema = z.object({
   title: z
@@ -55,33 +55,33 @@ const formSchema = z.object({
     "type is required",
   ),
   expiresAt: z.string().optional(),
+  organizationIds: z.array(z.number()).optional(),
 });
 
 export type TCreateBroadCast = z.infer<typeof formSchema>;
 
-const CreateBroadcast = ({ broadcast }: { broadcast?: TBroadcast }) => {
+type TorganizationProps = {
+  organizations: Organization[];
+};
+
+const CreateBroadcast = ({ organizations }: TorganizationProps) => {
   const [open, setOpen] = useState(false);
 
   const form = useForm<TCreateBroadCast>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      title: broadcast?.title ?? "",
-      message: broadcast?.message ?? "",
-      type: broadcast?.type ?? "INFO",
-      expiresAt: broadcast?.type ?? "",
+      title: "",
+      message: "",
+      type: "INFO",
+      expiresAt: "",
+      organizationIds: [],
     },
   });
 
   const onSubmit = async (data: TCreateBroadCast) => {
     const toastId = toast.loading("creating broadcast...", { duration: 3000 });
     try {
-      let result;
-      if (broadcast) {
-        result = "update plan";
-      } else {
-        result = await createBroadcast(data);
-      }
-
+      const result = await createBroadcast(data);
       if (result?.success) {
         toast.success(result?.message, { id: toastId, duration: 3000 });
         form.reset();
@@ -104,22 +104,16 @@ const CreateBroadcast = ({ broadcast }: { broadcast?: TBroadcast }) => {
       }}
     >
       <DialogTrigger asChild>
-        {broadcast ? (
-          <button className=" w-7 h-7 p-1.5 rounded-[12px] effect cursor-pointer">
-            <SquarePen size={16} className="text-[#58E081]" />
-          </button>
-        ) : (
-          <button className="relative cursor-pointer effect rounded-2xl py-2 flex items-center justify-center px-4 overflow-hidden">
-            <p className="flex items-center gap-2">
-              <Plus size={18} />
-              <span className="text-sm text-white">Create Broadcast</span>
-            </p>
-            <div className="pointer-events-none absolute bottom-0 left-1/2 w-[calc(100%-2rem)] -translate-x-1/2 z-20">
-              <span className="block h-[1.5px] w-full bg-[linear-gradient(to_right,rgba(255,177,63,0)_0%,#FFB13F_50%,rgba(255,177,63,0)_100%)]" />
-            </div>
-            <CornerGlowSvg />
-          </button>
-        )}
+        <button className="relative cursor-pointer effect rounded-2xl py-2 flex items-center justify-center px-4 overflow-hidden">
+          <p className="flex items-center gap-2">
+            <Plus size={18} />
+            <span className="text-sm text-white">Create Broadcast</span>
+          </p>
+          <div className="pointer-events-none absolute bottom-0 left-1/2 w-[calc(100%-2rem)] -translate-x-1/2 z-20">
+            <span className="block h-[1.5px] w-full bg-[linear-gradient(to_right,rgba(255,177,63,0)_0%,#FFB13F_50%,rgba(255,177,63,0)_100%)]" />
+          </div>
+          <CornerGlowSvg />
+        </button>
       </DialogTrigger>
 
       <DialogContent className="px-6 py-4 w-15 gap-2 bg-[#1A1129] border-white/10 max-h-screen overflow-y-auto hide-scrollbar">
@@ -127,7 +121,7 @@ const CreateBroadcast = ({ broadcast }: { broadcast?: TBroadcast }) => {
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <DialogHeader className="flex flex-row items-center justify-between mt-4">
               <DialogTitle className="text-xl font-semibold text-white">
-                {broadcast ? "Update Plan" : "Create A New Plan"}
+                Create A New Plan
               </DialogTitle>
 
               <ButtonComponent
@@ -256,6 +250,69 @@ const CreateBroadcast = ({ broadcast }: { broadcast?: TBroadcast }) => {
                     <FormMessage />
                   </FormItem>
                 )}
+              />
+              <FormField
+                control={form.control}
+                name="organizationIds"
+                render={({ field }) => {
+                  const selectedIds = field.value || [];
+
+                  const toggleSelectAll = () => {
+                    if (selectedIds.length === organizations.length) {
+                      field.onChange([]);
+                    } else {
+                      field.onChange(organizations.map((org) => org.id));
+                    }
+                  };
+
+                  const toggleSingle = (id: number) => {
+                    if (selectedIds.includes(id)) {
+                      field.onChange(selectedIds.filter((item) => item !== id));
+                    } else {
+                      field.onChange([...selectedIds, id]);
+                    }
+                  };
+
+                  return (
+                    <FormItem>
+                      <FormLabel>Select Organizations (Optional)</FormLabel>
+
+                      <div className="border rounded-lg overflow-hidden">
+                        {/* Select All */}
+                        <div className="flex items-center gap-2 p-2 border-b bg-white/5">
+                          <input
+                            type="checkbox"
+                            checked={
+                              organizations.length > 0 &&
+                              selectedIds.length === organizations.length
+                            }
+                            onChange={toggleSelectAll}
+                          />
+                          <span>Select All</span>
+                        </div>
+
+                        {/* Organization Rows */}
+                        <div className="max-h-40 overflow-y-auto">
+                          {organizations.map((org) => (
+                            <div
+                              key={org.id}
+                              className="flex items-center gap-2 p-2 border-b"
+                            >
+                              <input
+                                type="checkbox"
+                                checked={selectedIds.includes(org.id)}
+                                onChange={() => toggleSingle(org.id)}
+                              />
+                              <span>{org.name}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      <FormMessage />
+                    </FormItem>
+                  );
+                }}
               />
             </div>
           </form>

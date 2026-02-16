@@ -10,7 +10,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { ChevronDown } from "lucide-react";
-import ChartComponent from "../customComponent/shared/AreaChart";
 import ProductCard from "../ProductCard";
 
 export type TProductdata = {
@@ -124,7 +123,6 @@ const Organization = () => {
               </DropdownMenu>
             </div>
           </div>
-          <ChartComponent />
         </div>
       </Card>
     </div>

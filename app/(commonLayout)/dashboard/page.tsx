@@ -29,13 +29,12 @@ const HomePage = async ({ searchParams }: { searchParams: TSearchParams }) => {
   const revenew = useRevenewResult?.data;
   const usageAnalytics = usageAnalyticsResult?.data || [];
   const growth = growthResult?.data;
-  console.log(growth);
-  // console.log(usageAnalytics);
+
   return (
     <div>
       <DashboardOverview analytics={analytics} />
       <RevenueSection reveneu={revenew} />
-      <UserAnalytics usageAnalytics={usageAnalytics} />
+      <UserAnalytics usageAnalytics={usageAnalytics} growth={growth} />
     </div>
   );
 };

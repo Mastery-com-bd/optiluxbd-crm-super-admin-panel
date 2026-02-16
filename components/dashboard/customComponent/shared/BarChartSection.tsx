@@ -8,20 +8,13 @@ import {
   type ChartConfig,
 } from "@/components/ui/chart";
 import { TRevenewSection } from "@/types/type.analytics";
+import { formatMonthLabel } from "@/utils/formatMonthLabel";
 
 const BAR_COLORS = ["#FFB13F", "#3A63DE", "#9C3ADE"];
 
 const chartConfig = {
   number: { label: "Revenue" },
 } satisfies ChartConfig;
-
-const formatMonthLabel = (value: string) => {
-  const [year, month] = value.split("-");
-  return new Date(Number(year), Number(month) - 1).toLocaleString("en-US", {
-    month: "short",
-    year: "2-digit",
-  });
-};
 
 const BarChartSection = ({ reveneu }: { reveneu: TRevenewSection[] }) => {
   const chartData = reveneu.map((item) => ({
