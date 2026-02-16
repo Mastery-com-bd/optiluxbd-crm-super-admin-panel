@@ -41,6 +41,7 @@ export async function suspendOrganization(id: number) {
 
 export async function getOrganizationById(id: number) {
   const res = await readData(`/admin/organizations/${id}`, ["Organization"]);
+  console.log(res);
   return res;
 }
 
