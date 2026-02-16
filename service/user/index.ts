@@ -6,6 +6,8 @@ import { getAccesstoken } from "../authService";
 import { getValidToken } from "../authService/validToken";
 import { revalidatePath } from "next/cache";
 import { TReason } from "@/components/dashboard/user/allUser/UserRejectModal";
+import { readData } from "../apiService/crud";
+import { Query } from "@/types/shared";
 
 export type TCreateUserData = {
   name: string;
@@ -44,6 +46,12 @@ export const getAllUser = async () => {
     return Error(error);
   }
 };
+
+
+export async function getAllUserforActivityHistory(query?: Query) {
+  const data = await readData('/admin/users', ["User"], query);
+  return data;
+}
 
 export const getUserById = async (id: string) => {
   console.log(id);
