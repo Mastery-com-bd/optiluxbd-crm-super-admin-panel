@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/select";
 import TableComponent from "@/components/ui/TableComponent";
 import { TAnalyticsResponse } from "@/types/auditStatistics.types";
+import { Organization } from "@/types/organizations";
 import {
   AuditAction,
   AuditLog,
@@ -28,18 +29,20 @@ import { useCallback, useEffect, useState } from "react";
 const ActivityLogs = ({
   recentLogs,
   auditStatistics,
+  organizationList,
 }: {
   recentLogs: TAuditLogsResponse;
   auditStatistics: TAnalyticsResponse;
+  organizationList: Organization[];
 }) => {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const [show, setShow] = useState(searchParams.get("limit") || "10");
 
   const [searchTerm, setSearchTerm] = useState(
-    searchParams.get("organizationId") || "",
+    searchParams.get("organizationName") || "",
   );
-  const [show, setShow] = useState(searchParams.get("limit") || "10");
 
   const createQueryString = useCallback(
     (params: Record<string, string | number | null>) => {
@@ -70,11 +73,16 @@ const ActivityLogs = ({
     router.push(`${pathname}?${queryString}`);
   };
 
-  // Debounce search term for organizationId
+  // Debounce search term for organizationName
   useEffect(() => {
     const timer = setTimeout(() => {
-      if (searchTerm !== (searchParams.get("organizationId") || "")) {
-        handleFilterChange("organizationId", searchTerm);
+      if (searchTerm === "") {
+        const newSearchParams = new URLSearchParams(searchParams.toString());
+        newSearchParams.delete("organizationName");
+        newSearchParams.delete("organizationId");
+        router.push(`${pathname}?${newSearchParams.toString()}`);
+      } else if (searchTerm !== (searchParams.get("organizationName") || "")) {
+        handleFilterChange("organizationName", searchTerm);
       }
     }, 500);
     return () => clearTimeout(timer);
@@ -163,10 +171,9 @@ const ActivityLogs = ({
       cell: ({ row }) => (
         <Button
           asChild
-          onClick={() => alert(`Details for log ${row.original.id}`)}
           className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 border border-white/20 text-white text-xs font-medium transition"
         >
-          <Link href={`/dashboard/userActions?userId=6`}>
+          <Link href={`/dashboard/userActions?userId=${row.original.userId}`}>
             <Eye className="size-3" />
             All
           </Link>
@@ -279,15 +286,41 @@ const ActivityLogs = ({
           </h2>
 
           <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
-            {/* Search by Organization ID */}
-            <div className="relative w-full md:w-64">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
-              <Input
-                placeholder="Search Organization ID..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 bg-white/5 border-white/10 rounded-xl text-white h-10 focus:ring-1 focus:ring-white/20"
-              />
+            {/* Search by Organization Name */}
+            <div className="flex flex-col gap-2">
+              <div className="relative w-full md:w-64">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+                <Input
+                  placeholder="Search Organization Name..."
+                  value={searchTerm}
+                  onChange={(e) => {
+                    setSearchTerm(e.target.value);
+                    if(e.target.value.trim() !== "") {
+                      handleFilterChange("organizationId", null);
+                    }
+                  }}
+                  className="pl-10 bg-white/5 border-white/10 rounded-xl text-white h-10 focus:ring-1 focus:ring-white/20"
+                />
+              </div>
+              
+              {organizationList?.length > 0 && (
+                <Select
+                  value={searchParams.get("organizationId") || "all"}
+                  onValueChange={(val) => handleFilterChange("organizationId", val === "all" ? null : val)}
+                >
+                  <SelectTrigger className="w-full md:w-64 bg-white/5 border-white/10 rounded-xl text-white h-10">
+                    <SelectValue placeholder="Select Organization" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-[#1a1a1a] border-white/10 text-white max-h-[200px]">
+                    <SelectItem value="all">All Organizations</SelectItem>
+                    {organizationList.map((org) => (
+                      <SelectItem key={org.id} value={String(org.id)}>
+                        {org.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
             </div>
 
             {/* Action Filter */}

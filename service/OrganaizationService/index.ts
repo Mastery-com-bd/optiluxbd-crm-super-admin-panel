@@ -1,6 +1,6 @@
 'use server'
 import { createData, patchData, readData } from "@/service/apiService/crud";
-import { OrganizationData, OrgFormValues, TOrgPayload, TPurchasePayload } from "@/types/organizations";
+import { TOrgPayload, TPurchasePayload } from "@/types/organizations";
 import { Query } from "@/types/shared";
 
 type Plan = {
