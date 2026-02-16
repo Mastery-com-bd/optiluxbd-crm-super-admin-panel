@@ -26,6 +26,7 @@ const UserActions = ({ userActions }: { userActions: IUserActionsResponse }) => 
   const searchParams = useSearchParams();
 
   const [orgIdSearch, setOrgIdSearch] = useState(searchParams.get("organizationId") || "");
+  const [searchTerm, setSearchTerm] = useState(searchParams.get("userId") || "");
   const [show, setShow] = useState(searchParams.get("limit") || "10");
 
   const createQueryString = useCallback(
@@ -59,6 +60,7 @@ const UserActions = ({ userActions }: { userActions: IUserActionsResponse }) => 
     const userId = searchParams.get("userId");
     router.push(`${pathname}?userId=${userId}&limit=10&offset=0`);
     setOrgIdSearch("");
+    setSearchTerm("");
   };
 
   useEffect(() => {
@@ -69,6 +71,15 @@ const UserActions = ({ userActions }: { userActions: IUserActionsResponse }) => 
     }, 500);
     return () => clearTimeout(timer);
   }, [orgIdSearch]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (searchTerm !== (searchParams.get("userId") || "")) {
+        handleFilterChange("userId", searchTerm);
+      }
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [searchTerm]);
 
   const columns: ColumnDef<IUserActionLog>[] = [
     {
@@ -145,6 +156,17 @@ const UserActions = ({ userActions }: { userActions: IUserActionsResponse }) => 
         </div>
 
         <div className="flex flex-wrap items-center gap-3">
+          {/* User Search */}
+          <div className="relative w-full md:w-60">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+            <Input
+              placeholder="Search User..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10 bg-white/5 border-white/10 rounded-xl text-white h-10 focus:ring-1 focus:ring-white/20"
+            />
+          </div>
+
           {/* Org ID Search */}
           <div className="relative w-full md:w-60">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />

@@ -10,9 +10,9 @@ const Page = async ({ searchParams }: { searchParams: Promise<{
     const offset = query.offset || "0";
     const userId = Number(query.userId);
 
-    if (!userId) {
-      return <div className="p-6 text-white bg-[#111111] rounded-3xl border border-white/10">User ID is required to view actions.</div>;
-    }
+    // if (!userId) {
+    //   return <div className="p-6 text-white bg-[#111111] rounded-3xl border border-white/10">User ID is required to view actions.</div>;
+    // }
 
     const data = await getUserActions({ 
       userId, 

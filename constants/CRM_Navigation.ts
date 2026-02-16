@@ -86,6 +86,11 @@ export const crmRoutes: NavRoute[] = [
         path: "/dashboard/logs",
         permissions: ["logs.manage"],
       },
+      {
+        title: "User Actions",
+        path: "/dashboard/userActions",
+        permissions: ["logs.manage"],
+      },
     ],
   },
   {
