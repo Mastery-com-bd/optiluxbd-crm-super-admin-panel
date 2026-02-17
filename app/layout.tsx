@@ -35,8 +35,9 @@ export default function RootLayout({
         <ReactProvider>
           <ThemeProvider
             attribute="class"
-            defaultTheme="system"
+            defaultTheme="dark"
             enableSystem
+            forcedTheme="dark"
             disableTransitionOnChange
           >
             <AuthProvider>

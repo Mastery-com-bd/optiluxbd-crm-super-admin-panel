@@ -57,6 +57,7 @@ const AllBrandList = ({ branding }: { branding: TBranding }) => {
       console.log(error);
     }
   };
+
   const handleFaviconChnage = async (image: File) => {
     const formData = new FormData();
     const toastId = toast.loading("favicon uploading", { duration: 3000 });

@@ -12,6 +12,7 @@ import { TRoles } from "@/types/roles.types";
 import { toast } from "sonner";
 import AssignRoleModal from "./AssignRoleModal";
 import { Dispatch, SetStateAction, useState } from "react";
+import { formatLabel } from "@/utils/textFormatFunction";
 
 type TRoleDropdownProps = {
   hasRole: boolean;
@@ -79,13 +80,18 @@ const RoleDropdown = ({
       toast.error("Something went wrong", { id: toastId });
     }
   };
+  const formatedRole = formatLabel(role);
+  const formatedTrimRole = formatLabel(trimmedRole);
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <button className="cursor-pointer p-1 rounded-lg bg-white/5 effect">
+        <button className="cursor-pointer text-xs p-1 rounded-lg effect w-full">
           {role ? (
-            <TooltipComponent name={role} trimedName={trimmedRole} />
+            <TooltipComponent
+              name={formatedRole}
+              trimedName={formatedTrimRole}
+            />
           ) : (
             "No Role"
           )}
