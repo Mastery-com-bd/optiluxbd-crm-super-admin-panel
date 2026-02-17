@@ -17,7 +17,7 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 const ChartComponent = ({ growth }: { growth: TGrowthReport[] }) => {
-  const chartData = growth.map((item) => ({
+  const chartData = growth?.map((item) => ({
     month: formatMonthLabel(item.date),
     ConversionRate: item.count,
   }));

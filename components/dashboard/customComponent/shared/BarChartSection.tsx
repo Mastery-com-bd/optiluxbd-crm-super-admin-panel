@@ -17,16 +17,16 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 const BarChartSection = ({ reveneu }: { reveneu: TRevenewSection[] }) => {
-  const chartData = reveneu.map((item) => ({
+  const chartData = reveneu?.map((item) => ({
     month: formatMonthLabel(item?.month),
     number: item?.amount,
   }));
   const barSize =
-    chartData.length <= 12
+    chartData?.length <= 12
       ? 35
-      : chartData.length <= 24
+      : chartData?.length <= 24
         ? 24
-        : chartData.length <= 48
+        : chartData?.length <= 48
           ? 16
           : 10;
 
@@ -64,7 +64,7 @@ const BarChartSection = ({ reveneu }: { reveneu: TRevenewSection[] }) => {
           <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
 
           <Bar dataKey="number" barSize={barSize} radius={[12, 12, 12, 12]}>
-            {chartData.map((_, index) => (
+            {chartData?.map((_, index) => (
               <Cell key={index} fill={BAR_COLORS[index % BAR_COLORS.length]} />
             ))}
           </Bar>
