@@ -12,20 +12,38 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import TableComponent from "@/components/ui/TableComponent";
+import { Organization } from "@/types/organizations";
 import { AuditAction } from "@/types/recentLogs.types";
-import { IUserActionLog, IUserActionsResponse } from "@/types/userActions.types";
+import { TUserData } from "@/types/user.types";
+import {
+  IUserActionLog,
+  IUserActionsResponse,
+} from "@/types/userActions.types";
 import { ColumnDef } from "@tanstack/react-table";
 import { format } from "date-fns";
 import { ArrowUpDown, FilterX, Search } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 
-const UserActions = ({ userActions }: { userActions: IUserActionsResponse }) => {
+const UserActions = ({
+  userActions,
+  organizationList,
+  userLists,
+}: {
+  userActions: IUserActionsResponse;
+  organizationList: Organization[];
+  userLists: TUserData[];
+}) => {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  const [orgIdSearch, setOrgIdSearch] = useState(searchParams.get("organizationId") || "");
+  const [orgIdSearch, setOrgIdSearch] = useState(
+    searchParams.get("organizationName") || "",
+  );
+  const [searchTerm, setSearchTerm] = useState(
+    searchParams.get("search") || "",
+  );
   const [show, setShow] = useState(searchParams.get("limit") || "10");
 
   const createQueryString = useCallback(
@@ -40,7 +58,7 @@ const UserActions = ({ userActions }: { userActions: IUserActionsResponse }) => 
       }
       return newSearchParams.toString();
     },
-    [searchParams]
+    [searchParams],
   );
 
   const handleFilterChange = (key: string, value: string | number | null) => {
@@ -56,26 +74,48 @@ const UserActions = ({ userActions }: { userActions: IUserActionsResponse }) => 
   };
 
   const clearFilters = () => {
-    const userId = searchParams.get("userId");
-    router.push(`${pathname}?userId=${userId}&limit=10&offset=0`);
+    const search = searchParams.get("search");
+    router.push(`${pathname}?search=${search}&limit=10&offset=0`);
     setOrgIdSearch("");
+    setSearchTerm("");
   };
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      if (orgIdSearch !== (searchParams.get("organizationId") || "")) {
-        handleFilterChange("organizationId", orgIdSearch);
+      if (orgIdSearch === "") {
+        const newSearchParams = new URLSearchParams(searchParams.toString());
+        newSearchParams.delete("organizationName");
+        newSearchParams.delete("organizationId");
+        router.push(`${pathname}?${newSearchParams.toString()}`);
+      } else if (orgIdSearch !== (searchParams.get("organizationName") || "")) {
+        handleFilterChange("organizationName", orgIdSearch);
       }
     }, 500);
     return () => clearTimeout(timer);
   }, [orgIdSearch]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (searchTerm === "") {
+        const newSearchParams = new URLSearchParams(searchParams.toString());
+        newSearchParams.delete("search");
+        router.push(`${pathname}?${newSearchParams.toString()}`);
+      } else if (searchTerm !== (searchParams.get("search") || "")) {
+        handleFilterChange("search", searchTerm);
+      }
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [searchTerm]);
 
   const columns: ColumnDef<IUserActionLog>[] = [
     {
       header: "Action",
       accessorKey: "action",
       cell: ({ row }) => (
-        <Badge variant="outline" className="capitalize border-white/20 text-white bg-white/5">
+        <Badge
+          variant="outline"
+          className="capitalize border-white/20 text-white bg-white/5"
+        >
           {row.original.action.toLowerCase().replace(/_/g, " ")}
         </Badge>
       ),
@@ -85,8 +125,12 @@ const UserActions = ({ userActions }: { userActions: IUserActionsResponse }) => 
       accessorKey: "entityType",
       cell: ({ row }) => (
         <div className="flex flex-col items-start">
-          <span className="capitalize text-white font-medium">{row.original.entityType}</span>
-          <span className="text-[10px] text-muted-foreground">ID: {row.original.entityId}</span>
+          <span className="capitalize text-white font-medium">
+            {row.original.entityType}
+          </span>
+          <span className="text-[10px] text-muted-foreground">
+            ID: {row.original.entityId}
+          </span>
         </div>
       ),
     },
@@ -96,19 +140,28 @@ const UserActions = ({ userActions }: { userActions: IUserActionsResponse }) => 
       cell: ({ row }) => (
         <div className="flex flex-col items-start gap-1">
           <div className="flex items-center gap-2">
-            <Badge variant={row.original.method === "POST" ? "default" : "secondary"} className="text-[10px]">
+            <Badge
+              variant={row.original.method === "POST" ? "default" : "secondary"}
+              className="text-[10px]"
+            >
               {row.original.method}
             </Badge>
-            <span className="text-[11px] text-muted-foreground truncate max-w-37.5">{row.original.endpoint}</span>
+            <span className="text-[11px] text-muted-foreground truncate max-w-37.5">
+              {row.original.endpoint}
+            </span>
           </div>
-          <span className="text-[10px] text-white/50">{row.original.userAgent}</span>
+          <span className="text-[10px] text-white/50">
+            {row.original.userAgent}
+          </span>
         </div>
       ),
     },
     {
       header: "IP Address",
       accessorKey: "ipAddress",
-      cell: ({ row }) => <span className="text-white text-xs">{row.original.ipAddress}</span>
+      cell: ({ row }) => (
+        <span className="text-white text-xs">{row.original.ipAddress}</span>
+      ),
     },
     {
       header: "Date",
@@ -124,7 +177,8 @@ const UserActions = ({ userActions }: { userActions: IUserActionsResponse }) => 
   const totalLogs = userActions?.data?.total || 0;
   const limit = parseInt(show);
   const totalPages = Math.ceil(totalLogs / limit);
-  const currentPage = Math.floor(parseInt(searchParams.get("offset") || "0") / limit) + 1;
+  const currentPage =
+    Math.floor(parseInt(searchParams.get("offset") || "0") / limit) + 1;
 
   // const startDate = searchParams.get("startDate");
   // const endDate = searchParams.get("endDate");
@@ -133,10 +187,12 @@ const UserActions = ({ userActions }: { userActions: IUserActionsResponse }) => 
     <div className="w-full bg-[#111111] p-6 rounded-3xl border border-white/10 space-y-6">
       <div className="flex flex-col gap-6">
         <div className="flex items-center justify-between">
-          <h2 className="text-xl font-bold text-white">User Activity History</h2>
-          <Button 
-            variant="ghost" 
-            size="sm" 
+          <h2 className="text-xl font-bold text-white">
+            User Activity History
+          </h2>
+          <Button
+            variant="ghost"
+            size="sm"
             onClick={clearFilters}
             className="text-muted-foreground hover:text-white hover:bg-white/5 gap-2"
           >
@@ -145,21 +201,110 @@ const UserActions = ({ userActions }: { userActions: IUserActionsResponse }) => 
         </div>
 
         <div className="flex flex-wrap items-center gap-3">
+          {/* User Search */}
+          <div className="flex flex-col gap-2 w-full md:w-64">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+              <Input
+                placeholder="Search User..."
+                value={searchTerm}
+                onChange={(e) => {
+                  setSearchTerm(e.target.value);
+                  if (e.target.value.trim() !== "") {
+                    handleFilterChange("userId", null);
+                  }
+                }}
+                className="pl-10 bg-white/5 border-white/10 rounded-xl text-white h-10 focus:ring-1 focus:ring-white/20"
+              />
+            </div>
+
+            {/* User List Dropdown */}
+            {userLists?.length > 0 && (
+              <Select
+                value={searchParams.get("userId") || "all"}
+                onValueChange={(val) =>
+                  handleFilterChange("userId", val === "all" ? null : val)
+                }
+              >
+                <SelectTrigger className="w-full bg-white/5 border-white/10 rounded-xl text-white h-10">
+                  <SelectValue placeholder="Select User" />
+                </SelectTrigger>
+                <SelectContent className="bg-[#1a1a1a] border-white/10 text-white max-h-50">
+                  <SelectItem value="all">All Users</SelectItem>
+                  {userLists.map((user) => (
+                    <SelectItem
+                      key={user.id}
+                      value={String(user.id)}
+                      className="flex items-center gap-3 px-3 py-2 rounded-lg transition-colors focus:bg-black/65"
+                    >
+                      <div className="flex-1 min-w-0">
+                        <div className="text-sm text-start font-medium text-white truncate">
+                          {user.name}
+                        </div>
+
+                        {user.email && (
+                          <div className="text-[10px] text-white/50 leading-tight truncate">
+                            {user.email}
+                          </div>
+                        )}
+                      </div>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
+          </div>
+
           {/* Org ID Search */}
-          <div className="relative w-full md:w-60">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
-            <Input
-              placeholder="Organization ID..."
-              value={orgIdSearch}
-              onChange={(e) => setOrgIdSearch(e.target.value)}
-              className="pl-10 bg-white/5 border-white/10 rounded-xl text-white h-10 focus:ring-1 focus:ring-white/20"
-            />
+          {/* Search by Organization Name */}
+          <div className="flex flex-col gap-2">
+            <div className="relative w-full md:w-64">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+              <Input
+                placeholder="Search Organization Name..."
+                value={orgIdSearch}
+                onChange={(e) => {
+                  setOrgIdSearch(e.target.value);
+                  if (e.target.value.trim() !== "") {
+                    handleFilterChange("organizationId", null);
+                  }
+                }}
+                className="pl-10 bg-white/5 border-white/10 rounded-xl text-white h-10 focus:ring-1 focus:ring-white/20"
+              />
+            </div>
+
+            {/* Organization Items Dropdown */}
+            {organizationList?.length > 0 && (
+              <Select
+                value={searchParams.get("organizationId") || "all"}
+                onValueChange={(val) =>
+                  handleFilterChange(
+                    "organizationId",
+                    val === "all" ? null : val,
+                  )
+                }
+              >
+                <SelectTrigger className="w-full md:w-64 bg-white/5 border-white/10 rounded-xl text-white h-10">
+                  <SelectValue placeholder="Select Organization" />
+                </SelectTrigger>
+                <SelectContent className="bg-[#1a1a1a] border-white/10 text-white max-h-[200px]">
+                  <SelectItem value="all">All Organizations</SelectItem>
+                  {organizationList.map((org) => (
+                    <SelectItem key={org.id} value={String(org.id)}>
+                      {org.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
           </div>
 
           {/* Action Filter */}
           <Select
             value={searchParams.get("action") || "all"}
-            onValueChange={(val) => handleFilterChange("action", val === "all" ? null : val)}
+            onValueChange={(val) =>
+              handleFilterChange("action", val === "all" ? null : val)
+            }
           >
             <SelectTrigger className="w-35 bg-white/5 border-white/10 rounded-xl text-white h-10">
               <SelectValue placeholder="Action" />
@@ -167,7 +312,9 @@ const UserActions = ({ userActions }: { userActions: IUserActionsResponse }) => 
             <SelectContent className="bg-[#1a1a1a] border-white/10 text-white">
               <SelectItem value="all">All Actions</SelectItem>
               {Object.values(AuditAction).map((action) => (
-                <SelectItem key={action} value={action}>{action}</SelectItem>
+                <SelectItem key={action} value={action}>
+                  {action}
+                </SelectItem>
               ))}
             </SelectContent>
           </Select>
@@ -175,7 +322,9 @@ const UserActions = ({ userActions }: { userActions: IUserActionsResponse }) => 
           {/* Entity Type Filter */}
           <Select
             value={searchParams.get("entityType") || "all"}
-            onValueChange={(val) => handleFilterChange("entityType", val === "all" ? null : val)}
+            onValueChange={(val) =>
+              handleFilterChange("entityType", val === "all" ? null : val)
+            }
           >
             <SelectTrigger className="w-35 bg-white/5 border-white/10 rounded-xl text-white h-10">
               <SelectValue placeholder="Entity" />
@@ -260,7 +409,9 @@ const UserActions = ({ userActions }: { userActions: IUserActionsResponse }) => 
             </SelectTrigger>
             <SelectContent className="bg-[#1a1a1a] border-white/10 text-white">
               {["10", "20", "50", "100"].map((l) => (
-                <SelectItem key={l} value={l}>{l}</SelectItem>
+                <SelectItem key={l} value={l}>
+                  {l}
+                </SelectItem>
               ))}
             </SelectContent>
           </Select>
@@ -280,7 +431,7 @@ const UserActions = ({ userActions }: { userActions: IUserActionsResponse }) => 
               setShow(val as string);
               handleFilterChange("limit", val as string);
             }}
-            setFilters={() => {}} 
+            setFilters={() => {}}
           />
         </div>
       )}
