@@ -1,12 +1,12 @@
 "use client";
 
+import { formatLabel } from "@/utils/textFormatFunction";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "./select";
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "./dropdown-menu";
 
 type ChangeDropdownProps<T extends string> = {
   value: T;
@@ -22,19 +22,27 @@ const ChangeDropdown = <T extends string>({
   placeholder = "Select",
 }: ChangeDropdownProps<T>) => {
   return (
-    <Select value={value} onValueChange={onChange}>
-      <SelectTrigger className="px-1 py-1 text-sm cursor-pointer">
-        <SelectValue placeholder={placeholder} className="text-sm" />
-      </SelectTrigger>
-
-      <SelectContent>
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <button className="cursor-pointer text-xs p-1 rounded-lg effect w-full">
+          {value ? formatLabel(value) : placeholder}
+        </button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent
+        align="end"
+        className="bg-white/5 backdrop-blur-3xl z-20"
+      >
         {options.map((option) => (
-          <SelectItem key={option} value={option} className="cursor-pointer">
-            {option}
-          </SelectItem>
+          <DropdownMenuItem
+            key={option}
+            onClick={() => onChange(option)}
+            className="text-xs cursor-pointer"
+          >
+            {formatLabel(option)}
+          </DropdownMenuItem>
         ))}
-      </SelectContent>
-    </Select>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 };
 
