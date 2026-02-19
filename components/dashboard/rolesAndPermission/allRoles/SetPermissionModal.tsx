@@ -2,17 +2,11 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Switch } from "@/components/ui/switch";
 import { setPermission } from "@/service/rolesAndPermission";
 import { TPermission } from "@/types/permission.types";
+import { formatLabel } from "@/utils/textFormatFunction";
 import { Dispatch, SetStateAction, useState } from "react";
 import { toast } from "sonner";
 
@@ -73,7 +67,7 @@ const SetPermissionModal = ({
       toast.error("Something went wrong", { id: toastId, duration: 3000 });
     }
   };
-
+  console.log(permissions);
   return (
     <Dialog
       open={open}
@@ -85,23 +79,22 @@ const SetPermissionModal = ({
         }
       }}
     >
-      <DialogContent className="px-6 w-[40vw] max-w-150 bg-[#1A1129] border-white/10 max-h-screen overflow-y-auto z-50">
-        <DialogHeader>
-          <DialogTitle>Set Permissions</DialogTitle>
-        </DialogHeader>
-        <DialogDescription>
-          <div className="space-y-3">
+      <DialogContent className="px-6 w-[30vw] effect ">
+        <h1>Set Permissions</h1>
+
+        <div className="mt-4 overflow-y-auto no-scrollbar max-h-[20vh] border border-red-700">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 ">
             {permissions.map((permission) => (
               <div
                 key={permission.id}
-                className="flex items-center justify-between rounded-md border border-white/10 px-4 py-3"
+                className="flex items-center justify-between rounded-md border border-white/10 px-2 py-1"
               >
                 <div>
-                  <p className="text-sm font-medium text-white">
-                    {permission.name}
+                  <p className="text-xs font-medium text-white">
+                    {formatLabel(permission?.name)}
                   </p>
-                  <p className="text-xs text-white/60">
-                    {permission.description}
+                  <p className="text-[10px] text-gray-400">
+                    {permission?.description}
                   </p>
                 </div>
 
@@ -113,22 +106,43 @@ const SetPermissionModal = ({
               </div>
             ))}
           </div>
-        </DialogDescription>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 overflow-y-auto no-scrollbar">
+            {permissions.map((permission) => (
+              <div
+                key={permission.id}
+                className="flex items-center justify-between rounded-md border border-white/10 px-2 py-1"
+              >
+                <div>
+                  <p className="text-xs font-medium text-white">
+                    {formatLabel(permission?.name)}
+                  </p>
+                  <p className="text-[10px] text-gray-400">
+                    {permission?.description}
+                  </p>
+                </div>
 
-        <DialogFooter>
-          <div className="flex justify-end gap-2 mt-6">
-            <Button
-              variant="ghost"
-              onClick={() => {
-                setSelectedKeys(rolePermissions.map((p) => p.key));
-                setOpen(false);
-              }}
-            >
-              Cancel
-            </Button>
-            <Button onClick={handleSave}>Save</Button>
+                <Switch
+                  checked={selectedKeys.includes(permission.key)}
+                  onCheckedChange={() => handleToggle(permission.key)}
+                  className={`h-7 w-30 py-1 cursor-pointer data-[state=unchecked]:bg-white/20 data-[state=checked]:bg-green-700 [&>span]:bg-white! data-[state=checked]:[&>span]:translate-x-4`}
+                />
+              </div>
+            ))}
           </div>
-        </DialogFooter>
+        </div>
+
+        <div className="flex justify-end gap-2 mt-6">
+          <Button
+            variant="ghost"
+            onClick={() => {
+              setSelectedKeys(rolePermissions.map((p) => p.key));
+              setOpen(false);
+            }}
+          >
+            Cancel
+          </Button>
+          <Button onClick={handleSave}>Save</Button>
+        </div>
       </DialogContent>
     </Dialog>
   );
