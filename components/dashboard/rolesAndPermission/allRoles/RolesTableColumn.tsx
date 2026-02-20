@@ -4,7 +4,6 @@ import TooltipComponent from "@/components/ui/TooltipComponent";
 import { TRoles } from "@/types/roles.types";
 import { convertDate } from "@/utils/convertDate";
 import { ColumnDef } from "@tanstack/react-table";
-import PermissionModal from "./PermissionModal";
 import RolesActionDropdown from "./RolesActionDropdown";
 import { TPermission } from "@/types/permission.types";
 
@@ -74,14 +73,13 @@ export const RoleTableColumn = (
 
       return (
         <RolesActionDropdown
-          path={`/dashboard/roles/${row.original?.id}`}
+          path={`/dashboard/roles/${roleId}`}
+          secondPath={`/dashboard/roles/permissions/${roleId}`}
           permissions={permissions}
           rolePermissions={RolesPermissions}
           roleId={roleId}
           role={row.original}
-        >
-          <PermissionModal permissions={RolesPermissions} />
-        </RolesActionDropdown>
+        />
       );
     },
   },

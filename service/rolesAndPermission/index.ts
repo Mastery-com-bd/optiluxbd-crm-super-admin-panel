@@ -159,7 +159,7 @@ export const setPermission = async (id: string, data: TSetPermission) => {
       },
     );
     const result = await res.json();
-    revalidatePath("/dashboard/roles");
+    revalidatePath(`/dashboard/roles/permissions/${id}`);
     return result;
   } catch (error: any) {
     return Error(error);
