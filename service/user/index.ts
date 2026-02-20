@@ -31,7 +31,7 @@ export const getAllUser = async () => {
     const res = await fetch(`${config.next_public_base_api}/admin/users`, {
       method: "GET",
       headers: {
-        Authorization: token,
+        Authorization: `Bearer ${token}`,
       },
       next: {
         tags: ["Users"],
@@ -54,7 +54,7 @@ export const getUserById = async (id: string) => {
       {
         method: "GET",
         headers: {
-          Authorization: token,
+          Authorization: `Bearer ${token}`,
         },
         next: {
           tags: ["Users"],
@@ -75,7 +75,7 @@ export const createUser = async (data: TCreateUserData) => {
     const res = await fetch(`${config.next_public_base_api}/admin/users`, {
       method: "POST",
       headers: {
-        Authorization: token,
+        Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify(data),
@@ -96,7 +96,7 @@ export const inviteUser = async (data: TInviteUserForm) => {
       {
         method: "POST",
         headers: {
-          Authorization: token,
+          Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify(data),
@@ -121,7 +121,7 @@ export const updateUserStatus = async (
       {
         method: "PUT",
         headers: {
-          Authorization: token,
+          Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify(data),
@@ -143,7 +143,7 @@ export const approveUser = async (id: number) => {
       {
         method: "POST",
         headers: {
-          Authorization: token,
+          Authorization: `Bearer ${token}`,
         },
       },
     );
@@ -163,7 +163,7 @@ export const suspendUser = async (id: number) => {
       {
         method: "POST",
         headers: {
-          Authorization: token,
+          Authorization: `Bearer ${token}`,
         },
       },
     );
@@ -183,7 +183,7 @@ export const rejectUser = async (data: TReason, id: number) => {
       {
         method: "POST",
         headers: {
-          Authorization: token,
+          Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify(data),
@@ -203,7 +203,7 @@ export const getUserPermisssion = async () => {
     const res = await fetch(`${config.next_public_base_api}/auth/permissions`, {
       method: "GET",
       headers: {
-        Authorization: token,
+        Authorization: `Bearer ${token}`,
       },
       next: {
         tags: ["Users"],
@@ -228,7 +228,7 @@ export const updateUser = async (
       {
         method: "PUT",
         headers: {
-          Authorization: token,
+          Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify(data),
@@ -250,7 +250,7 @@ export const deleteUser = async (id: number) => {
       {
         method: "DELETE",
         headers: {
-          Authorization: token,
+          Authorization: `Bearer ${token}`,
         },
       },
     );

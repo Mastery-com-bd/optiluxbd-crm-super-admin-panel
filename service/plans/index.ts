@@ -70,7 +70,7 @@ export const getAllPlans = async (query?: TQuery) => {
       {
         method: "GET",
         headers: {
-          Authorization: token,
+          Authorization: `Bearer ${token}`,
         },
         next: {
           tags: ["Plans"],
@@ -93,7 +93,7 @@ export const createPlan = async (data: TPlanForm) => {
       {
         method: "POST",
         headers: {
-          Authorization: token,
+          Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify(data),
@@ -115,7 +115,7 @@ export const updatePlan = async (data: Partial<TUpdatePlan>, id: number) => {
       {
         method: "PUT",
         headers: {
-          Authorization: token,
+          Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify(data),
@@ -137,7 +137,7 @@ export const enablePlan = async (id: number) => {
       {
         method: "POST",
         headers: {
-          Authorization: token,
+          Authorization: `Bearer ${token}`,
         },
       },
     );
@@ -157,7 +157,7 @@ export const disablePlan = async (id: number) => {
       {
         method: "POST",
         headers: {
-          Authorization: token,
+          Authorization: `Bearer ${token}`,
         },
       },
     );

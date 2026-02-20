@@ -26,10 +26,9 @@ const HomePage = async ({ searchParams }: { searchParams: TSearchParams }) => {
   ]);
 
   const analytics = analyticsResult?.data || {};
-  const revenew = useRevenewResult?.data;
+  const revenew = useRevenewResult?.data || [];
   const usageAnalytics = usageAnalyticsResult?.data || [];
-  const growth = growthResult?.data;
-
+  const growth = growthResult?.data || [];
   return (
     <div>
       <DashboardOverview analytics={analytics} />

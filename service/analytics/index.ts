@@ -13,7 +13,7 @@ export const getAnalytics = async () => {
       {
         method: "GET",
         headers: {
-          Authorization: token,
+          Authorization: `Bearer ${token}`,
         },
         next: {
           tags: ["Analytics"],
@@ -36,7 +36,7 @@ export const getUsageAnalytics = async () => {
       {
         method: "GET",
         headers: {
-          Authorization: token,
+          Authorization: `Bearer ${token}`,
         },
         next: {
           tags: ["Analytics"],
@@ -65,7 +65,7 @@ export const getGrowthStats = async (query?: TQuery) => {
       {
         method: "GET",
         headers: {
-          Authorization: token,
+          Authorization: `Bearer ${token}`,
         },
         next: {
           tags: ["Analytics"],
@@ -95,7 +95,7 @@ export const getRevenewStats = async (query?: TQuery) => {
       {
         method: "GET",
         headers: {
-          Authorization: token,
+          Authorization: `Bearer ${token}`,
         },
         next: {
           tags: ["Analytics"],

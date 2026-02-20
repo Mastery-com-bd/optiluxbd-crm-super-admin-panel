@@ -14,7 +14,7 @@ export const getAllSubscriptions = async (query?: TQuery) => {
       {
         method: "GET",
         headers: {
-          Authorization: token,
+          Authorization: `Bearer ${token}`,
         },
         next: {
           tags: ["Plans"],

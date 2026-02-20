@@ -31,7 +31,7 @@ export const getPaymentList = async () => {
       {
         method: "GET",
         headers: {
-          Authorization: token,
+          Authorization: `Bearer ${token}`,
         },
         next: {
           tags: ["Payments"],
@@ -54,7 +54,7 @@ export const approvePayment = async (id: string) => {
       {
         method: "POST",
         headers: {
-          Authorization: token,
+          Authorization: `Bearer ${token}`,
         },
       },
     );
@@ -74,7 +74,7 @@ export const rejectPayment = async (id: string) => {
       {
         method: "POST",
         headers: {
-          Authorization: token,
+          Authorization: `Bearer ${token}`,
         },
       },
     );
@@ -94,7 +94,7 @@ export const createPayment = async (data: TCreatePayment) => {
       {
         method: "POST",
         headers: {
-          Authorization: token,
+          Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify(data),
@@ -110,22 +110,18 @@ export const createPayment = async (data: TCreatePayment) => {
 
 export const downloadInvoice = async (id: string): Promise<any> => {
   const token = (await getAccesstoken()) as string;
-
   const res = await fetch(
     `${config.next_public_base_api}/subscriptions/admin/payments/${id}/invoice`,
     {
       method: "GET",
       headers: {
-        Authorization: token,
+        Authorization: `Bearer ${token}`,
       },
     },
   );
-
   if (!res.ok) {
     throw new Error(`Failed to fetch invoice: ${res.status} ${res.statusText}`);
   }
-
   const blob = await res.blob();
-
   return blob;
 };

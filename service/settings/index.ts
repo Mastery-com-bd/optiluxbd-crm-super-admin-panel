@@ -15,7 +15,7 @@ export const getBranding = async () => {
       {
         method: "GET",
         headers: {
-          Authorization: token,
+          Authorization: `Bearer ${token}`,
         },
         next: {
           tags: ["Settings"],
@@ -38,7 +38,7 @@ export const updateBranding = async (data: Partial<TBranding>) => {
       {
         method: "PUT",
         headers: {
-          Authorization: token,
+          Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify(data),
@@ -60,7 +60,7 @@ export const uploadLogo = async (data: FormData) => {
       {
         method: "POST",
         headers: {
-          Authorization: token,
+          Authorization: `Bearer ${token}`,
         },
         body: data,
       },
@@ -81,7 +81,7 @@ export const uploadFavicon = async (data: FormData) => {
       {
         method: "POST",
         headers: {
-          Authorization: token,
+          Authorization: `Bearer ${token}`,
         },
         body: data,
       },

@@ -13,7 +13,7 @@ export const getALlFeatures = async () => {
     const res = await fetch(`${config.next_public_base_api}/admin/features`, {
       method: "GET",
       headers: {
-        Authorization: token,
+        Authorization: `Bearer ${token}`,
       },
       next: {
         tags: ["Features"],
@@ -35,7 +35,7 @@ export const getFeatureById = async (id: string) => {
       {
         method: "GET",
         headers: {
-          Authorization: token,
+          Authorization: `Bearer ${token}`,
         },
         next: {
           tags: ["Features"],
@@ -56,7 +56,7 @@ export const createFeature = async (data: TCreateFeature) => {
     const res = await fetch(`${config.next_public_base_api}/admin/features`, {
       method: "POST",
       headers: {
-        Authorization: token,
+        Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify(data),
@@ -80,7 +80,7 @@ export const updateFeature = async (
       {
         method: "PUT",
         headers: {
-          Authorization: token,
+          Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify(data),
@@ -102,7 +102,7 @@ export const deleteFeature = async (id: string) => {
       {
         method: "DELETE",
         headers: {
-          Authorization: token,
+          Authorization: `Bearer ${token}`,
         },
       },
     );
