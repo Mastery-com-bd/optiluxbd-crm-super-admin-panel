@@ -80,6 +80,7 @@ const RoleDropdown = ({
       toast.error("Something went wrong", { id: toastId });
     }
   };
+
   const formatedRole = formatLabel(role);
   const formatedTrimRole = formatLabel(trimmedRole);
 
@@ -102,7 +103,27 @@ const RoleDropdown = ({
         align="end"
         className="bg-white/5 backdrop-blur-3xl z-20"
       >
-        {hasRole ? (
+        <DropdownMenuItem
+          onSelect={(e) => {
+            e.preventDefault();
+            setIsAsign(true);
+          }}
+          className="cursor-pointer"
+        >
+          Assign Role
+        </DropdownMenuItem>
+        <AssignRoleModal
+          handleAssign={handleAssignUser}
+          loading={loading}
+          setLoading={setLoading}
+          title="Assign a role to this user"
+          description="select a role which is perfect for the user and usable for all of its permissions"
+          acceptButtonName="Assign"
+          roles={roles}
+          open={isAssign}
+          setOpen={setIsAsign}
+        />
+        {hasRole && (
           <>
             <DropdownMenuItem
               onSelect={(e) => {
@@ -122,29 +143,6 @@ const RoleDropdown = ({
               description="If you want to remove this role from this user..."
               open={isRemove}
               setOpen={setIsRemove}
-            />
-          </>
-        ) : (
-          <>
-            <DropdownMenuItem
-              onSelect={(e) => {
-                e.preventDefault();
-                setIsAsign(true);
-              }}
-              className="cursor-pointer"
-            >
-              Assign Role
-            </DropdownMenuItem>
-            <AssignRoleModal
-              handleAssign={handleAssignUser}
-              loading={loading}
-              setLoading={setLoading}
-              title="Assign a role to this user"
-              description="select a role which is perfect for the user and usable for all of its permissions"
-              acceptButtonName="Assign"
-              roles={roles}
-              open={isAssign}
-              setOpen={setIsAsign}
             />
           </>
         )}

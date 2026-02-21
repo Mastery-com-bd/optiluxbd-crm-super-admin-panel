@@ -24,8 +24,10 @@ const AllUserList = ({
           title="User List"
           description="Here all the supporting users list are available"
         />
-        <InviteUser roles={roles} />
-        <CreateUser roles={roles} />
+        <div className="flex items-center gap-4">
+          <InviteUser roles={roles} />
+          <CreateUser roles={roles} />
+        </div>
       </div>
       <TableComponent data={users} columns={column} />
     </div>

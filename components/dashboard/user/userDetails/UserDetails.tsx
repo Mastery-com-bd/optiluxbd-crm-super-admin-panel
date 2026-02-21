@@ -35,7 +35,7 @@ const UserDetailsPage = ({ user }: { user: TUserData }) => {
       >
         <ArrowLeft />
       </Button>
-      {/* ================= Header ================= */}
+
       <Card className="relative overflow-hidden bg-white/5 border border-white/10">
         {/* subtle top glow */}
         <div className="pointer-events-none absolute inset-x-0 top-0 h-20 bg-linear-to-b from-white/10 to-transparent" />
@@ -43,9 +43,9 @@ const UserDetailsPage = ({ user }: { user: TUserData }) => {
         <CardContent className="relative flex flex-col sm:flex-row items-center sm:items-start gap-6 p-6">
           {/* Avatar */}
           <Avatar className="h-24 w-24 ring-2 ring-white/10 shadow-md">
-            <AvatarImage src={user.avatar_secure_url ?? undefined} />
+            <AvatarImage src={user?.avatar_secure_url ?? undefined} />
             <AvatarFallback className="text-xl font-semibold">
-              {user.name
+              {user?.name
                 .split(" ")
                 .map((n) => n[0])
                 .join("")}
@@ -58,17 +58,17 @@ const UserDetailsPage = ({ user }: { user: TUserData }) => {
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
               <div className="space-y-1">
                 <h2 className="text-2xl font-semibold leading-tight">
-                  {user.name}
+                  {user?.name}
                 </h2>
                 <p className="text-xs text-muted-foreground">
-                  User ID: <span className="font-medium">{user.userId}</span>
+                  User ID: <span className="font-medium">{user?.userId}</span>
                 </p>
               </div>
 
               <Badge
-                className={`px-3 py-1 text-xs font-medium ${statusColor[user.status]}`}
+                className={`px-3 py-1 text-xs font-medium ${statusColor[user?.status]}`}
               >
-                {user.status}
+                {user?.status}
               </Badge>
             </div>
 
@@ -76,11 +76,11 @@ const UserDetailsPage = ({ user }: { user: TUserData }) => {
             <div className="flex flex-wrap justify-center sm:justify-start gap-x-6 gap-y-2 text-sm text-muted-foreground">
               <span className="flex items-center gap-2">
                 <Mail size={14} />
-                {user.email}
+                {user?.email}
               </span>
               <span className="flex items-center gap-2">
                 <Phone size={14} />
-                {user.phone}
+                {user?.phone}
               </span>
             </div>
           </div>
@@ -109,20 +109,20 @@ const UserDetailsPage = ({ user }: { user: TUserData }) => {
 
               <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
                 <div>
-                  <b>ID:</b> {user.id}
+                  <b>ID:</b> {user?.id}
                 </div>
                 <div>
-                  <b>User Code:</b> {user.userId}
+                  <b>User Code:</b> {user?.userId}
                 </div>
                 <div>
-                  <b>Organization:</b> {user.organizationId ?? "-"}
+                  <b>Organization:</b> {user?.organizationId ?? "-"}
                 </div>
                 <div>
                   <b>Created At:</b>{" "}
-                  {new Date(user.created_at).toLocaleString()}
+                  {new Date(user?.created_at).toLocaleString()}
                 </div>
                 <div>
-                  <b>Last Login:</b> {user.last_login ?? "Never"}
+                  <b>Last Login:</b> {user?.last_login ?? "Never"}
                 </div>
               </CardContent>
             </Card>
@@ -139,12 +139,12 @@ const UserDetailsPage = ({ user }: { user: TUserData }) => {
               </CardHeader>
 
               <CardContent className="space-y-3">
-                {user.roles.length === 0 ? (
+                {user?.roles.length === 0 ? (
                   <p className="text-sm text-muted-foreground">
                     No roles assigned
                   </p>
                 ) : (
-                  user.roles.map((ur) => (
+                  user?.roles.map((ur) => (
                     <div
                       key={ur.roleId}
                       className="p-4 rounded-lg border border-white/10"
@@ -169,7 +169,7 @@ const UserDetailsPage = ({ user }: { user: TUserData }) => {
 
               <CardContent className="space-y-4 text-sm">
                 <div className="flex items-center gap-2">
-                  {user.email_verified ? (
+                  {user?.email_verified ? (
                     <ShieldCheck className="text-green-500" />
                   ) : (
                     <ShieldX className="text-red-500" />
@@ -178,7 +178,7 @@ const UserDetailsPage = ({ user }: { user: TUserData }) => {
                 </div>
 
                 <div className="flex items-center gap-2">
-                  {user.phone_verified ? (
+                  {user?.phone_verified ? (
                     <ShieldCheck className="text-green-500" />
                   ) : (
                     <ShieldX className="text-red-500" />
@@ -189,13 +189,13 @@ const UserDetailsPage = ({ user }: { user: TUserData }) => {
                 <Separator />
 
                 <div>
-                  <b>Approved:</b> {user.is_approved ? "Yes" : "No"}
+                  <b>Approved:</b> {user?.is_approved ? "Yes" : "No"}
                 </div>
                 <div>
-                  <b>Approved At:</b> {user.approved_at ?? "-"}
+                  <b>Approved At:</b> {user?.approved_at ?? "-"}
                 </div>
                 <div>
-                  <b>Approved By:</b> {user.approved_by ?? "-"}
+                  <b>Approved By:</b> {user?.approved_by ?? "-"}
                 </div>
               </CardContent>
             </Card>
