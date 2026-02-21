@@ -1,11 +1,18 @@
 'use client'
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Switch } from "@/components/ui/switch";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { deleteCoupon, disableCoupon, enableCoupon } from "@/service/coupon";
 import { TCoupon, TCouponList } from "@/types/coupons";
-import { MoreVertical, Pencil, Trash2 } from "lucide-react";
+import { Eye, MoreVertical, Pencil, Trash2 } from "lucide-react";
+import Link from "next/link";
 import { useState } from "react";
+import { Dropdown } from "react-day-picker";
+import { toast } from "sonner";
+import { set } from "zod";
+import UpdateCoupon from "./UpdateCoupon";
 
 const keys = [
     "CODE",
@@ -22,11 +29,36 @@ const keys = [
 export default function AllCoupons({ coupons }: { coupons: TCouponList }) {
     const [selectedCoupon, setSelectedCoupon] = useState<TCoupon | null>(null);
     const [updateModalOpen, setIsUpdateModalOpen] = useState<boolean>(false);
-    const [deleteId, setDeleteId] = useState<number | null>();
-    const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState<boolean | null>();
-    async function handleToggleCouponStatus(id: number) {
-
+    const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState<boolean>(false);
+    async function handleToggleCouponStatus(id: number, isActive: boolean) {
+        let r;
+        const toastId = toast.loading("Updating Coupon Status...");
+        if (isActive) {
+            r = await disableCoupon(id);
+        } else {
+            r = await enableCoupon(id);
+        }
+        if (r instanceof Error) {
+            toast.error("Failed to update coupon status", { id: toastId });
+        } else {
+            toast.success("Coupon status updated successfully", { id: toastId });
+        }
     }
+
+    async function handleDelete(id: number) {
+        const toastId = toast.loading("Deleting Coupon....");
+        try {
+            const res = await deleteCoupon(id);
+            if (res.success) {
+                toast.success("Coupon deleted successfully", { id: toastId });
+            } else {
+                toast.error("Failed to delete coupon", { id: toastId });
+            }
+        } catch (error) {
+            console.error("Error deleting coupon:", error);
+        }
+    }
+
     return (
         <div>
             <Table className="w-full my-6">
@@ -66,7 +98,7 @@ export default function AllCoupons({ coupons }: { coupons: TCouponList }) {
                             <TableCell className="px-4 py-3 text-center">
                                 <Switch
                                     checked={coupon.isActive}
-                                    onCheckedChange={() => handleToggleCouponStatus(coupon.id)}
+                                    onCheckedChange={() => handleToggleCouponStatus(coupon.id, coupon.isActive)}
                                 />
                             </TableCell>
                             <TableCell className="px-4 py-3 text-center">{coupon.usedCount}</TableCell>
@@ -77,6 +109,11 @@ export default function AllCoupons({ coupons }: { coupons: TCouponList }) {
                                         <MoreVertical className="h-4 w-4" />
                                     </DropdownMenuTrigger>
                                     <DropdownMenuContent align="end" className="w-40">
+                                        <DropdownMenuItem>
+                                            <Link href={`/dashboard/coupons/${coupon.id}`} className="flex gap-2">
+                                                <Eye className="w-4 h-4 mr-2" /> <span>View Details</span>
+                                            </Link>
+                                        </DropdownMenuItem>
                                         <DropdownMenuItem
                                             className="cursor-pointer"
                                             onSelect={() => {
@@ -90,7 +127,7 @@ export default function AllCoupons({ coupons }: { coupons: TCouponList }) {
                                         <DropdownMenuItem
                                             className="cursor-pointer text-destructive focus:text-destructive"
                                             onClick={() => {
-                                                setDeleteId(coupon.id);
+                                                setSelectedCoupon(coupon);
                                                 setIsDeleteDialogOpen(true);
                                             }}
                                         >
@@ -103,6 +140,32 @@ export default function AllCoupons({ coupons }: { coupons: TCouponList }) {
                     ))}
                 </TableBody>
             </Table>
+
+            <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            This action cannot be undone. This will permanently delete your
+                            organization and remove your data from our servers.
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction
+                            onClick={() => {
+                                if (selectedCoupon) {
+                                    handleDelete(selectedCoupon.id);
+                                    setIsDeleteDialogOpen(false);
+                                }
+                            }}
+                        >
+                            Continue
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
+            <UpdateCoupon coupon={selectedCoupon} open={updateModalOpen} setOpen={setIsUpdateModalOpen} />
         </div>
     )
 }

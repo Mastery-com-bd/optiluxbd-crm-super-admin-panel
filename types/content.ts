@@ -1,6 +1,6 @@
 
 
-export interface TContent {
+export type TContent = {
     id: number;
     key: string;
     title: string;
@@ -8,6 +8,6 @@ export interface TContent {
     isActive: boolean;
     createdAt: string;
     updatedAt: string;
-}
+};
 
 export type TContents = TContent[];

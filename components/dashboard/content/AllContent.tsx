@@ -9,6 +9,7 @@ import ContentUpdateModal from "./ContentUpdateModal";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { deleteContent } from "@/service/content";
 import { toast } from "sonner";
+import Link from "next/link";
 const keys = [
     "KEY",
     "TITLE",
@@ -88,6 +89,11 @@ export default function AllContent({ contents }: { contents: TContents }) {
                                         <MoreVertical className="h-4 w-4" />
                                     </DropdownMenuTrigger>
                                     <DropdownMenuContent align="end" className="w-40">
+                                        <DropdownMenuItem
+                                            className="cursor-pointer"
+                                        >
+                                            <Link href={`/dashboard/content/${content.key}`}><Pencil className="w-4 h-4 mr-2" /> View Details</Link>
+                                        </DropdownMenuItem>
                                         <DropdownMenuItem
                                             className="cursor-pointer"
                                             onSelect={() => {

@@ -2,23 +2,41 @@
 import * as z from "zod";
 import { TPlan } from "./plan.types";
 
-export const orgSchema = (isUpdate?: boolean) => z.object({
+export const orgSchema = () => z.object({
     name: z.string().min(2, "Name is required"),
     email: z.string().email("Invalid email"),
     ownerName: z.string().min(2, "Owner name is required"),
     ownerEmail: z.string().email("Invalid owner email"),
-    ownerPassword: isUpdate
-        ? z.string().optional()
-        : z.string().min(8, "Password must be at least 8 characters"),
+    ownerPassword: z.string().min(8, "Password must be at least 8 characters"),
     phone: z.string().min(10, "Phone number is required"),
+    address: z.string().min(5, "Address is required"),
+    city: z.string().min(2, "City is required"),
+    country: z.string().min(2, "Country is required"),
     website: z.string().url("Invalid website URL"),
     slug: z.string().min(2, "Slug is required"),
-    plan: z.enum(["STARTER", "PRO", "ENTERPRISE"], {
-        message: "Please select a plan",
+    couponCode: z.string().optional(),
+    proofUrl: z.string().url("Invalid URL"),
+    autoApprove: z.boolean(),
+    transactionReference: z.string().min(5, "Transaction reference is required"),
+    paymentMethod: z.enum(["MANUAL", "STRIPE", "SSLCOMMERZ", "BKASH", "NAGAD", "BANK_TRANSFER", "CASH"], { message: "Please select a valid payment method" }),
+    planId: z.number().or(z.string()),
+    planSlug: z.string().min(1, "Plan name is required"),
+    billingCycle: z.enum(["MONTHLY", "YEARLY"], {
+        message: "Please select a billing cycle",
     }),
 });
 
 export type OrgFormValues = z.infer<ReturnType<typeof orgSchema>>;
+
+export interface TOwner {
+    id: number;
+    name: string;
+    email: string;
+    address: string;
+    city: string;
+    country: string;
+}
+
 
 export interface OrganizationData {
     id: number;
@@ -26,9 +44,12 @@ export interface OrganizationData {
     slug: string;
     email: string;
     phone: string;
+    address: string;
+    city: string;
+    country: string;
     logo_url: string | null;
     logo_public_id: string | null;
-    website: string;
+    website: string | null;
     planId: number;
     planExpiresAt: string;
     stripeCustomerId: string | null;
@@ -38,6 +59,7 @@ export interface OrganizationData {
     maxLocations: number;
     maxProducts: number;
     maxOrdersPerMonth: number;
+    maxApiCalls: number;
     featureOverrides: Record<string, any>;
     timezone: string;
     currency: string;
@@ -48,10 +70,13 @@ export interface OrganizationData {
     isSuspended: boolean;
     suspendedAt: string | null;
     suspendedReason: string | null;
+    onboardingStep: number;
+    isOnboardingComplete: boolean;
     createdAt: string;
     updatedAt: string;
-    trialEndsAt: string;
+    trialEndsAt: string | null;
     plan: TPlan;
+    owner: TOwner;
 }
 
 export interface Organization {
@@ -69,3 +94,30 @@ export interface Organization {
     };
 }
 export type Organizations = Organization[];
+
+export type TOrgPayload = {
+    name: string;
+    slug: string;
+    email: string;
+    phone: string;
+    address: string;
+    city: string;
+    country: string;
+    ownerName: string;
+    ownerEmail: string;
+    ownerPassword: string;
+    plan: string;
+    billingCycle: "MONTHLY" | "YEARLY";
+}
+
+
+export type TPurchasePayload = {
+    organizationId: any;
+    planId: string | number;
+    billingCycle: "MONTHLY" | "YEARLY";
+    amount: number;
+    paymentMethod: "MANUAL" | "STRIPE" | "SSLCOMMERZ" | "BKASH" | "NAGAD" | "BANK_TRANSFER" | "CASH";
+    transactionReference: string;
+    proofUrl: string;
+    autoApprove: boolean;
+}
