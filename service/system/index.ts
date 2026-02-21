@@ -10,7 +10,7 @@ export const getSystemHealth = async () => {
     const res = await fetch(`${config.next_public_base_api}/health`, {
       method: "GET",
       headers: {
-        Authorization: token,
+        Authorization: `Bearer ${token}`,
       },
     });
     const result = await res.json();
@@ -28,7 +28,7 @@ export const getDashboardSummary = async () => {
       {
         method: "GET",
         headers: {
-          Authorization: token,
+          Authorization: `Bearer ${token}`,
         },
       },
     );
@@ -45,7 +45,7 @@ export const getActivityLog = async () => {
     const res = await fetch(`${config.next_public_base_api}/activity-logs`, {
       method: "GET",
       headers: {
-        Authorization: token,
+        Authorization: `Bearer ${token}`,
       },
     });
     const result = await res.json();

@@ -4,7 +4,6 @@ import TooltipComponent from "@/components/ui/TooltipComponent";
 import { TRoles } from "@/types/roles.types";
 import { convertDate } from "@/utils/convertDate";
 import { ColumnDef } from "@tanstack/react-table";
-import PermissionModal from "./PermissionModal";
 import RolesActionDropdown from "./RolesActionDropdown";
 import { TPermission } from "@/types/permission.types";
 
@@ -56,9 +55,9 @@ export const RoleTableColumn = (
       );
 
       return (
-        <div className="flex flex-col items-center">
-          <p>{creationDate}</p>
-          <p>{creationTime}</p>
+        <div className="flex flex-col text-xs leading-tight whitespace-nowrap">
+          <span className="font-medium">{creationDate}</span>
+          <span className="text-muted-foreground">{creationTime}</span>
         </div>
       );
     },
@@ -74,14 +73,13 @@ export const RoleTableColumn = (
 
       return (
         <RolesActionDropdown
-          path={`/dashboard/roles/${row.original?.id}`}
+          path={`/dashboard/roles/${roleId}`}
+          secondPath={`/dashboard/roles/permissions/${roleId}`}
           permissions={permissions}
           rolePermissions={RolesPermissions}
           roleId={roleId}
           role={row.original}
-        >
-          <PermissionModal permissions={RolesPermissions} />
-        </RolesActionDropdown>
+        />
       );
     },
   },

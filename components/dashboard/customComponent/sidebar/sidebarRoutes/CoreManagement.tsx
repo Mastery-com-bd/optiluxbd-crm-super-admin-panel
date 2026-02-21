@@ -35,7 +35,7 @@ const CoreManagement = ({ sidebarRoutes, platform }: TCoreManagementRoute) => {
   const role = userPermissions?.roles[0];
 
   const visibleRoutes =
-    role === "Landlord Admin"
+    role === "Super Admin"
       ? sidebarRoutes
       : filterRoutesByPermissions(sidebarRoutes, permissions || []);
 

@@ -15,7 +15,7 @@ const BroadcastPage = async ({
   ]);
   const broadcasts = broadcastResult?.data || [];
   const organizations = allOrganizationResult?.data || [];
-  console.log(broadcastResult?.data);
+
   return (
     <section>
       <AllBroadcast broadcasts={broadcasts} organizations={organizations} />

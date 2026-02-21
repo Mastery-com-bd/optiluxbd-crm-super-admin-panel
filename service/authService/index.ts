@@ -24,7 +24,6 @@ export const login = async (loginData: TLogin) => {
       },
     );
     const result = await res.json();
-
     if (result?.success) {
       const cookieStore = await cookies();
       cookieStore.set("accessToken", result?.data?.token, {

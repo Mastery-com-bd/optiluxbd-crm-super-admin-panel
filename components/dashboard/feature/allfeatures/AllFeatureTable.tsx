@@ -10,6 +10,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import { Dispatch, SetStateAction } from "react";
 import { toast } from "sonner";
 import CreateFeature from "./CreateFeature";
+import { formatLabel } from "@/utils/textFormatFunction";
 
 export const featureTableColumn = (): ColumnDef<TFeatureData>[] => [
   {
@@ -47,7 +48,7 @@ export const featureTableColumn = (): ColumnDef<TFeatureData>[] => [
     header: "Status",
     cell: ({ row }) => {
       const status = row.original?.status;
-      return <p>{status}</p>;
+      return <p>{formatLabel(status)}</p>;
     },
   },
   {
@@ -59,9 +60,9 @@ export const featureTableColumn = (): ColumnDef<TFeatureData>[] => [
       );
 
       return (
-        <div className="flex flex-col items-center">
-          <p>{creationDate}</p>
-          <p>{creationTime}</p>
+        <div className="flex flex-col text-xs leading-tight whitespace-nowrap">
+          <span className="font-medium">{creationDate}</span>
+          <span className="text-muted-foreground">{creationTime}</span>
         </div>
       );
     },

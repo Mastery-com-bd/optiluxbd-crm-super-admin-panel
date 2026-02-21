@@ -163,10 +163,10 @@ export const userTableColumn = (roles: TRoles[]): ColumnDef<TUserData>[] => [
       );
 
       return (
-        <h1 className="flex flex-col items-start">
-          <span>{creationDate}</span>
-          <span>{creationTime}</span>
-        </h1>
+        <div className="flex flex-col text-xs leading-tight whitespace-nowrap">
+          <span className="font-medium">{creationDate}</span>
+          <span className="text-muted-foreground">{creationTime}</span>
+        </div>
       );
     },
   },

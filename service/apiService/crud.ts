@@ -48,6 +48,7 @@ export async function readData(
         },
         next: {
           tags: [...tags],
+          revalidate: 30,
         },
       } as RequestInit,
     );

@@ -8,30 +8,20 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import Link from "next/link";
-import { ReactNode, useState } from "react";
-import SetPermissionModal from "./SetPermissionModal";
 import { TPermission } from "@/types/permission.types";
 import { TRoles } from "@/types/roles.types";
 import CreateRoles from "./CreateRoles";
 
 type TDropdownProps = {
   path: string;
-  children: ReactNode;
+  secondPath: string;
   permissions: TPermission[];
   rolePermissions: TPermission[];
   roleId: number;
   role: TRoles;
 };
 
-const RolesActionDropdown = ({
-  path,
-  children,
-  permissions,
-  rolePermissions,
-  roleId,
-  role,
-}: TDropdownProps) => {
-  const [open, setOpen] = useState(false);
+const RolesActionDropdown = ({ path, secondPath, role }: TDropdownProps) => {
   return (
     <>
       <DropdownMenu>
@@ -60,29 +50,12 @@ const RolesActionDropdown = ({
           </DropdownMenuItem>
 
           <DropdownMenuItem asChild className="cursor-pointer">
-            {children}
-          </DropdownMenuItem>
-
-          <DropdownMenuItem
-            onSelect={(e) => {
-              e.preventDefault();
-              setOpen(true);
-            }}
-            className="cursor-pointer"
-          >
-            Set Permission
+            <Link href={secondPath} className="w-full">
+              Set Permission
+            </Link>
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
-
-      {/* ✅ MODAL MUST LIVE HERE */}
-      <SetPermissionModal
-        open={open}
-        setOpen={setOpen}
-        permissions={permissions}
-        rolePermissions={rolePermissions}
-        roleId={roleId}
-      />
     </>
   );
 };

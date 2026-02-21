@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import TooltipComponent from "@/components/ui/TooltipComponent";
 import { TBroadcast } from "@/types/broadcast.types";
 import { convertDate } from "@/utils/convertDate";
+import { formatLabel } from "@/utils/textFormatFunction";
 import { ColumnDef } from "@tanstack/react-table";
 
 export const broadcastTableColumn = (): ColumnDef<TBroadcast>[] => [
@@ -34,7 +35,7 @@ export const broadcastTableColumn = (): ColumnDef<TBroadcast>[] => [
     header: "Type",
     cell: ({ row }) => {
       const type = row.original?.type;
-      return <p>{type}</p>;
+      return <p>{formatLabel(type)}</p>;
     },
   },
   {
@@ -70,20 +71,20 @@ export const broadcastTableColumn = (): ColumnDef<TBroadcast>[] => [
       return (
         <>
           {readAt && (
-            <h1 className="flex flex-col items-start">
-              <span>
+            <div className="flex flex-col text-xs leading-tight whitespace-nowrap">
+              <span className="font-medium">
                 {
                   convertDate(new Date(row.original?.readAt as string))
                     .creationDate
                 }
               </span>
-              <span>
+              <span className="text-muted-foreground">
                 {
                   convertDate(new Date(row.original?.readAt as string))
                     .creationTime
                 }
               </span>
-            </h1>
+            </div>
           )}
         </>
       );
@@ -107,10 +108,10 @@ export const broadcastTableColumn = (): ColumnDef<TBroadcast>[] => [
       );
 
       return (
-        <h1 className="flex flex-col items-start">
-          <span>{creationDate}</span>
-          <span>{creationTime}</span>
-        </h1>
+        <div className="flex flex-col text-xs leading-tight whitespace-nowrap">
+          <span className="font-medium">{creationDate}</span>
+          <span className="text-muted-foreground">{creationTime}</span>
+        </div>
       );
     },
   },

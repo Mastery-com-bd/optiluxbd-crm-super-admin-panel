@@ -21,7 +21,7 @@ export const GetAllRoles = async () => {
     const res = await fetch(`${config.next_public_base_api}/admin/roles`, {
       method: "GET",
       headers: {
-        Authorization: token,
+        Authorization: `Bearer ${token}`,
       },
       next: {
         tags: ["Roles"],
@@ -43,7 +43,7 @@ export const GetAllPermissions = async () => {
       {
         method: "GET",
         headers: {
-          Authorization: token,
+          Authorization: `Bearer ${token}`,
         },
         next: {
           tags: ["Permission"],
@@ -64,7 +64,7 @@ export const createRole = async (data: TCreateRole) => {
     const res = await fetch(`${config.next_public_base_api}/admin/roles`, {
       method: "POST",
       headers: {
-        Authorization: token,
+        Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify(data),
@@ -85,7 +85,7 @@ export const getRoleById = async (id: string) => {
       {
         method: "GET",
         headers: {
-          Authorization: token,
+          Authorization: `Bearer ${token}`,
         },
         next: {
           tags: ["Roles"],
@@ -108,7 +108,7 @@ export const removeRole = async (id: string, data: TUserRoleData) => {
       {
         method: "POST",
         headers: {
-          Authorization: token,
+          Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify(data),
@@ -130,7 +130,7 @@ export const assignRole = async (id: string, data: TUserRoleData) => {
       {
         method: "POST",
         headers: {
-          Authorization: token,
+          Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify(data),
@@ -152,14 +152,14 @@ export const setPermission = async (id: string, data: TSetPermission) => {
       {
         method: "POST",
         headers: {
-          Authorization: token,
+          Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify(data),
       },
     );
     const result = await res.json();
-    revalidatePath("/dashboard/roles");
+    revalidatePath(`/dashboard/roles/permissions/${id}`);
     return result;
   } catch (error: any) {
     return Error(error);
@@ -174,7 +174,7 @@ export const updateRole = async (id: string, data: Partial<TCreateRole>) => {
       {
         method: "PUT",
         headers: {
-          Authorization: token,
+          Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify(data),
@@ -196,7 +196,7 @@ export const deleteRole = async (id: string) => {
       {
         method: "DELETE",
         headers: {
-          Authorization: token,
+          Authorization: `Bearer ${token}`,
         },
       },
     );
